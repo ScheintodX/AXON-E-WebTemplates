@@ -1,0 +1,17 @@
+<!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
+
+<suite name="EMogul" verbose="2" parallel="false">
+		
+	<test name="WebTtemplates">
+		<groups>
+			<run>
+				<include name="webtemplate.*"/>
+			</run>
+		</groups>
+		
+        <packages>
+            <package name="de.axone.webtemplate.*"/>
+        </packages>
+	</test>
+	
+</suite>

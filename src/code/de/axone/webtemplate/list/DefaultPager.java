@@ -1,0 +1,307 @@
+package de.axone.webtemplate.list;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import de.axone.web.HttpLinkBuilder;
+import de.axone.webtemplate.WebTemplateException;
+import de.axone.webtemplate.form.Translator;
+
+/**
+ *
+ *
+ * Include boundaries
+ * [1] 2 3 4 5 6 7 8 9 ... 100 >>
+ * << 1 2 3 4 [5] 6 7 8 9 ... 100 >>
+ * << 1 ... 20 21 22 23 [24] 25 26 27 28 .. 100 >>
+ * << 1 ... 91 92 93 94 [95] 96 97 98 99 100 >>
+ * << 1 ... 91 92 93 94 95 96 97 98 99 [100]
+ *
+ * Don't include boundaries
+ * [1] 2 3 4 5 6 7 8 9 >>
+ * << 1 2 3 4 [5] 6 7 8 9 >>
+ * << 20 21 22 23 [24] 25 26 27 28 >>
+ * << 90 91 92 93 94 [95] 96 97 98 99 100 >>
+ * << 92 93 94 95 96 97 98 99 [100]
+ *
+ * @author flo
+ */
+public class DefaultPager implements Pager {
+
+	private String nameBase;
+	private int numPages;
+	private int selectedPage;
+
+	/* Calculated values */
+	private static final int offset = 5;
+
+	/* Configuration */
+	boolean renderIfOnlyOnePage = false;
+	boolean noHost = true;
+	boolean noPage = false;
+	boolean showBoundaries = true;
+	boolean showArrowheads = true;
+	boolean showSelectedArrowheads = true;
+
+	/* Templates */
+	private String leftContainer = "<div class=\"pager\">";
+	private String rightContainer = "</div>";
+	private Template leftTemplate = new Template( "<a href=\"__link__\">&lt;&lt;</a>" );
+	private Template selectedLeftTemplate = new Template( "<a class=\"active\">&lt;&lt;</a>" );
+	private Template rightTemplate = new Template( "<a href=\"__link__\">&gt;&gt;</a>" );
+	private Template selectedRightTemplate = new Template( "<a class=\"active\">&gt;&gt;</a>" );
+	private Template innerTemplate = new Template( "<a href=\"__link__\">__no__</a>" );
+	private Template selectedTemplate = new Template( "<a class=\"active\">[__no__]</a>" );
+	private Template skippedTemplate = new Template( "&hellip;" );
+	private Template spaceTemplate = new Template( "&nbsp;" );
+
+	public DefaultPager(){}
+
+	public DefaultPager( String nameBase, int selectedPage, int numPages ){
+
+		setNameBase( nameBase );
+		setNumPages( numPages );
+		setSelectedPage( selectedPage );
+	}
+
+	@Override
+	public void setNumPages( int numPages ) {
+
+		this.numPages = numPages;
+	}
+
+	@Override
+	public void setSelectedPage( int selectedPage ) {
+
+		if( selectedPage < 0 ) selectedPage = 0;
+		if( selectedPage > numPages-1 ) selectedPage = numPages-1;
+		this.selectedPage = selectedPage;
+	}
+
+	@Override
+	public void setNameBase( String nameBase ) {
+
+		this.nameBase = nameBase;
+	}
+
+	public void setRenderIfOnlyOnePage( boolean renderIfOnlyOnePage ) {
+		this.renderIfOnlyOnePage = renderIfOnlyOnePage;
+	}
+
+	public void setNoHost( boolean noHost ){
+		this.noHost = noHost;
+	}
+	public void setNoPage( boolean noPage ){
+		this.noPage = noPage;
+	}
+
+	public void setShowBoundaries( boolean showBoundaries ) {
+		this.showBoundaries = showBoundaries;
+	}
+
+	public void setShowArrowheads( boolean showArrowheads ) {
+		this.showArrowheads = showArrowheads;
+	}
+
+	public void setShowSelectedArrowheads( boolean showSelectedArrowheads ) {
+		this.showSelectedArrowheads = showSelectedArrowheads;
+	}
+
+	public void setLeftContainer( String leftContainer ) {
+		this.leftContainer = leftContainer;
+	}
+
+	public void setRightContainer( String rightContainer ) {
+		this.rightContainer = rightContainer;
+	}
+
+
+	public void setLeftTemplate( String leftTemplate ){
+
+		this.leftTemplate = new Template( leftTemplate );
+	}
+	public void setRightTemplate( String rightTemplate ){
+
+		this.rightTemplate = new Template( rightTemplate );
+	}
+	public void setSelectedLeftTemplate( String selectedLeftTemplate ){
+
+		this.selectedLeftTemplate = new Template( selectedLeftTemplate );
+	}
+	public void setSelectedRightTemplate( String selectedRightTemplate ){
+
+		this.selectedRightTemplate = new Template( selectedRightTemplate );
+	}
+	public void setInnerTemplate( String innerTemplate ){
+
+		this.innerTemplate = new Template( innerTemplate );
+	}
+	public void setSelectedTemplate( String selectedTemplate ){
+
+		this.selectedTemplate = new Template( selectedTemplate );
+	}
+	public void setSkippedTemplalte( String skippedTemplate ){
+
+		this.skippedTemplate = new Template( skippedTemplate );
+	}
+	public void setSpaceTemplalte( String spaceTemplate ){
+
+		this.spaceTemplate = new Template( spaceTemplate );
+	}
+
+	@Override
+	public void render( Object object, HttpServletRequest request,
+			HttpServletResponse response, Translator translator )
+			throws IOException, WebTemplateException, Exception {
+
+		if( ! renderIfOnlyOnePage && numPages <= 1 ) return;
+
+		PrintWriter out = response.getWriter();
+
+		int lastPage = numPages-1;
+
+		// Range around selected:
+		int start = selectedPage - offset;
+		int end = selectedPage + offset;
+
+		// Adjust range to fit into valid pages
+		if( start < 0 ){
+			end = end + ( 0 - start );
+			start = 0;
+		}
+		if( end > lastPage ){
+			start = start + ( lastPage - end );
+			end = lastPage;
+		}
+		if( start < 0 ){
+			start = 0;
+		}
+
+		// Container: left
+		if( leftContainer != null ) out.write( leftContainer );
+
+		// Arrowheads left
+		if( showArrowheads ){
+			if( selectedPage > 0 ){
+    			out.write( leftTemplate.toString( selectedPage-1, makePageLink( request, selectedPage-1 ) ) );
+    			out.write( spaceTemplate.toString( selectedPage-1 ) );
+			} else if( showSelectedArrowheads ){
+    			out.write( selectedLeftTemplate.toString( selectedPage-1, makePageLink( request, selectedPage-1 ) ) );
+    			out.write( spaceTemplate.toString( selectedPage-1 ) );
+			}
+		}
+
+		if( showBoundaries ){
+		// First Page
+    		if( start > 0 ){
+    			out.write( innerTemplate.toString( 0, makePageLink( request, 0 ) ) );
+    			out.write( spaceTemplate.toString() );
+    		}
+
+    		// Skipmark
+    		if( start > 1 ){
+    			out.write( skippedTemplate.toString() );
+    		}
+		}
+
+		// Pages
+		boolean first = true;
+		for( int p = start; p <= end; p++ ){
+
+			if( first ) first = false;
+			else out.write( spaceTemplate.toString() );
+
+			if( p == selectedPage ){
+
+				out.write( selectedTemplate.toString( p, makePageLink( request, p ) ) );
+			} else {
+				out.write( innerTemplate.toString( p, makePageLink( request, p ) ) );
+			}
+		}
+
+		if( showBoundaries ){
+    		// Skipmark
+    		if( end < lastPage-1 ){
+    			out.write( skippedTemplate.toString() );
+    		}
+
+    		// LastPage
+    		if( end < lastPage ){
+    			out.write( spaceTemplate.toString() );
+    			out.write( innerTemplate.toString( lastPage, makePageLink( request, lastPage ) ) );
+    		}
+		}
+
+		// Arrowhead right
+		if( showArrowheads ){
+			if( selectedPage < lastPage ){
+    			out.write( spaceTemplate.toString() );
+    			out.write( rightTemplate.toString( selectedPage+1, makePageLink( request, selectedPage+1 ) ) );
+			} else if( showSelectedArrowheads ){
+    			out.write( spaceTemplate.toString() );
+    			out.write( selectedRightTemplate.toString( selectedPage+1, makePageLink( request, selectedPage+1 ) ) );
+			}
+		}
+
+		// Container: right
+		if( rightContainer != null ) out.write( rightContainer );
+	}
+
+	protected String makePageLink( HttpServletRequest request, int page ){
+
+		if( noPage ){
+
+			//TODO: Da fehlen noch evtl. andere Parameter
+			return "?" + nameBase + "-page=" + page;
+		} else {
+			//TODO: Und hier ist ein & zu viel
+    		HashMap<String, String> parameters = new HashMap<String,String>();
+
+    		parameters.put( nameBase + "-page", ""+page );
+
+    		return HttpLinkBuilder.makeLink( request, noHost, parameters );
+    	}
+	}
+
+	private class Template {
+
+		String str;
+		boolean hasLink;
+		boolean hasIndex;
+		boolean hasNo;
+
+		Template( String str ){
+			this.str = str;
+
+			hasLink = str.contains( "__link__" );
+			hasIndex = str.contains( "__index__" );
+			hasNo = str.contains( "__no__" );
+		}
+
+		String toString( int index, String link ){
+
+			String s = str;
+			if( hasLink ) s = s.replaceAll( "__link__", link );
+			if( hasIndex ) s = s.replaceAll( "__index__", ""+index );
+			if( hasNo ) s = s.replaceAll( "__no__", ""+(index+1) );
+
+			return s;
+		}
+		String toString( int index ){
+
+			String s = str;
+			if( hasIndex ) s = s.replaceAll( "__index__", ""+index );
+			if( hasNo ) s = s.replaceAll( "__no__", ""+(index+1) );
+			return s;
+		}
+		@Override
+		public String toString(){
+			return str;
+		}
+	}
+
+}
