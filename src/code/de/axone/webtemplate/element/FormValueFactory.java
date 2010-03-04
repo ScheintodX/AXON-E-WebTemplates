@@ -31,8 +31,9 @@ import de.axone.webtemplate.validator.impl.LengthValidator;
 import de.axone.webtemplate.validator.impl.MinMaxValidator;
 import de.axone.webtemplate.validator.impl.NotNullValidator;
 import de.axone.webtemplate.validator.impl.PhoneValidator;
-import de.axone.webtemplate.validator.impl.PlzValidator;
+import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic;
 import de.axone.webtemplate.validator.impl.UrlValidator;
+import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic.CountryProvider;
 
 public class FormValueFactory {
 
@@ -148,11 +149,16 @@ public class FormValueFactory {
 				length, nullable );
 	}
 
-	public FormValue<String> createInputPlzValue( String name, int length,
-			boolean nullable ) {
+	public FormValue<String> createInputPostalcodeValue( String name, int length, boolean nullable, final FormValue<String> countryProvider ) {
 
 		FormValue<String> result = createInputTextValue( name, length, nullable );
-		result.addValidator( new PlzValidator( length ) );
+		result.addValidator( new PostalcodeValidator_Dynamic(
+				new CountryProvider(){
+					public String getCode(){
+						return countryProvider.getPlainValue();
+					}
+				}
+		) );
 		return result;
 	}
 

@@ -158,7 +158,7 @@ public class DataHolder implements Cloneable {
 			throw new KeyException( "Doesn't contain: " + key );
 	}
 
-	void putParameter( String key, String value ) {
+	public void putParameter( String key, String value ) {
 		parameters.put( key.toLowerCase(), value );
 	}
 
@@ -217,6 +217,7 @@ public class DataHolder implements Cloneable {
 
 		PrintWriter out = response.getWriter();
 
+		boolean render = true;
 		for( DataHolderKey key : keys ) {
 
 			DataHolderItem item = values.get( key.getName() );
@@ -237,12 +238,14 @@ public class DataHolder implements Cloneable {
     			function = functions.get( functionName );
 			}
 			if( function != null ){
+				Boolean doRender;
 				if( key.getAttributes() != null ){
-    				function.render( request, response, key.getAttributes(), value, translator );
+    				doRender = function.render( functionName, this, render, request, response, key.getAttributes(), value, translator );
 				} else {
-					function.render( request, response, new AttributeMap(), value, translator );
+					doRender = function.render( functionName, this, render, request, response, new AttributeMap(), value, translator );
 				}
-			} else if( value != null ) {
+				if( doRender != null ) render = doRender;
+			} else if( value != null && render ) {
 
 				if( value instanceof String ) {
 

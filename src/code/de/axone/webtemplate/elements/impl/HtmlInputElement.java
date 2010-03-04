@@ -95,11 +95,11 @@ public class HtmlInputElement extends AbstractHtmlInputElement {
 	/**
 	 * @deprecated This method is too static
 	 */
-	public static FormValue<String> createPlzValue( String name, int length,
-			boolean nullable ) {
+	public static FormValue<String> createPostalcodeValue( String name, int length,
+			boolean nullable, FormValue<String> countryProvider ) {
 
-		return new FormValueFactory().createInputPlzValue( name, length,
-				nullable );
+		return new FormValueFactory().createInputPostalcodeValue( name, length,
+				nullable, countryProvider );
 	}
 
 	/**

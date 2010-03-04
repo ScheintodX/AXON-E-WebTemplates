@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.testng.annotations.Test;
 
-import de.axone.tools.E;
 import de.axone.web.TestHttpServletRequest;
 import de.axone.web.TestHttpServletResponse;
 import de.axone.webtemplate.form.Translator;
@@ -42,10 +41,10 @@ public class DataHolderTest {
 		
 		assertEquals( holder.getParameter( "name" ), "TestTemplate" );
 		assertEquals( holder.getParameter( "cLass" ), "de.axon.shop.webtemplate.TestWebTemplate" );
-		assertEquals( holder.getKeys().size(), 7 );
+		assertEquals( holder.getKeys().size(), 6 );
 		assertTrue( holder.getKeys().contains( "var1" ) );
 		assertTrue( holder.getKeys().contains( "var2" ) );
-		assertTrue( holder.getKeys().contains( "func_1" ) );
+		assertTrue( holder.getKeys().contains( "func" ) );
 		assertTrue( holder.getKeys().contains( "text1" ) );
 		assertTrue( holder.getKeys().contains( "text2" ) );
 		assertTrue( holder.getKeys().contains( "text3" ) );
@@ -62,16 +61,14 @@ public class DataHolderTest {
 		
 		TestHttpServletResponse respo = new TestHttpServletResponse();
 		holder.render( null, new TestHttpServletRequest(), respo, null );
-		
-		E.rr( respo.getContent() );
 	}
 	
 	private class TestFunction implements Function {
 
 		@Override
-		public void render( HttpServletRequest request,
-				HttpServletResponse response, AttributeMap attributes,
-				Object value, Translator translator ) throws IOException, MissingAttributeException {
+		public Boolean render( String name,
+				DataHolder holder, boolean render,
+				HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws IOException, MissingAttributeException {
 			
 			PrintWriter out = response.getWriter();
 			out.write( "A:"+attributes.getAsIntRequired( "a" ) );
