@@ -149,9 +149,9 @@ public class FormValueFactory {
 				length, nullable );
 	}
 
-	public FormValue<String> createInputPostalcodeValue( String name, int length, boolean nullable, final FormValue<String> countryProvider ) {
+	public FormValue<String> createInputPostalcodeValue( String name, boolean nullable, final FormValue<String> countryProvider ) {
 
-		FormValue<String> result = createInputTextValue( name, length, nullable );
+		FormValue<String> result = createInputTextValue( name, 12, nullable );
 		result.addValidator( new PostalcodeValidator_Dynamic(
 				new CountryProvider(){
 					public String getCode(){

@@ -1,7 +1,6 @@
 package de.axone.webtemplate;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -66,9 +65,11 @@ public class DataHolderTest {
 	private class TestFunction implements Function {
 
 		@Override
-		public Boolean render( String name,
-				DataHolder holder, boolean render,
+		public void render( String name,
+				DataHolder holder, 
 				HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws IOException, MissingAttributeException {
+			
+			if( ! holder.isRender() ) return;
 			
 			PrintWriter out = response.getWriter();
 			out.write( "A:"+attributes.getAsIntRequired( "a" ) );

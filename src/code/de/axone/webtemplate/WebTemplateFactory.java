@@ -80,6 +80,10 @@ public class WebTemplateFactory {
 			throw new WebTemplateException( "Error parsing: " + file, e );
 		}
 	}
+	
+	public int getReloadCount(){
+		return DataHolderFactory.reloadCount;
+	}
 
 	private WebTemplate instantiate( File file, String className )
 			throws ClassNotFoundException, InstantiationException,

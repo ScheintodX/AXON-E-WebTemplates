@@ -21,6 +21,7 @@ public abstract class DataHolderFactory {
 
 	static Map<File, DataHolder> storage = new HashMap<File, DataHolder>();
 	static Map<File, FileWatcher> watchers = new HashMap<File, FileWatcher>();
+	static int reloadCount=0;
 
 	synchronized public static DataHolder holderFor( File file )
 			throws KeyException, IOException, ParserException {
@@ -47,6 +48,8 @@ public abstract class DataHolderFactory {
 
 	static DataHolder instantiate( File file ) throws IOException,
 			KeyException, ParserException {
+		
+		reloadCount++;
 
 		String data = slurp( file );
 

@@ -9,5 +9,5 @@ import de.axone.webtemplate.form.Translator;
 
 public interface Function {
 
-	public Boolean render( String name, DataHolder holder, boolean render, HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws Exception;
+	public void render( String name, DataHolder holder, HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws Exception;
 }

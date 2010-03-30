@@ -76,7 +76,7 @@ public class DataHolder implements Cloneable {
 		DataHolderEncodingType encoding = null;
 		if( type == DataHolderItemType.VAR ){
 			encoding = DataHolderEncodingType.matching( key );
-			if( encoding != DataHolderEncodingType.defaultEncoding ){
+			if( encoding.mustBeTrimmed() ){
 				key = key.substring( 1, key.length()-1 );
 			}
 
@@ -209,6 +209,14 @@ public class DataHolder implements Cloneable {
 
 		return clone;
 	}
+	
+	private boolean render = true;
+	public boolean isRender(){
+		return render;
+	}
+	public void setRender( boolean render ){
+		this.render = render;
+	}
 
 	public void render( Object object, HttpServletRequest request,
 			HttpServletResponse response,
@@ -217,7 +225,6 @@ public class DataHolder implements Cloneable {
 
 		PrintWriter out = response.getWriter();
 
-		boolean render = true;
 		for( DataHolderKey key : keys ) {
 
 			DataHolderItem item = values.get( key.getName() );
@@ -238,13 +245,11 @@ public class DataHolder implements Cloneable {
     			function = functions.get( functionName );
 			}
 			if( function != null ){
-				Boolean doRender;
 				if( key.getAttributes() != null ){
-    				doRender = function.render( functionName, this, render, request, response, key.getAttributes(), value, translator );
+    				function.render( functionName, this, request, response, key.getAttributes(), value, translator );
 				} else {
-					doRender = function.render( functionName, this, render, request, response, new AttributeMap(), value, translator );
+					function.render( functionName, this, request, response, new AttributeMap(), value, translator );
 				}
-				if( doRender != null ) render = doRender;
 			} else if( value != null && render ) {
 
 				if( value instanceof String ) {
@@ -311,11 +316,11 @@ public class DataHolder implements Cloneable {
 	static enum DataHolderEncodingType {
 
 		none('(',')', null ),
-		attribute('#','#', new AttributeEncoder() ),
-		amp('[',']', new AmpEncoder() ),
-		url('@', '@', new UrlEncoder() ),
-		html('{','}', new HtmlEncoder() ),
-		defaultEncoding( null, null, null );
+		attribute('#','#', AttributeEncoder.instance() ),
+		amp('[',']', AmpEncoder.instance() ),
+		url('@', '@', UrlEncoder.instance() ),
+		html('{','}', HtmlEncoder.instance() ),
+		defaultEncoding( null, null, AttributeEncoder.instance() );
 
 		Character begin, end;
 		Encoder encoder;
@@ -340,6 +345,9 @@ public class DataHolder implements Cloneable {
 				}
 			}
 			return defaultEncoding;
+		}
+		boolean mustBeTrimmed(){
+			return begin != null;
 		}
 	};
 
