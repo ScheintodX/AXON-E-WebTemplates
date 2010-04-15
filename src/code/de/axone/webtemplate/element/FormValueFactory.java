@@ -25,6 +25,7 @@ import de.axone.webtemplate.form.FormValueImpl;
 import de.axone.webtemplate.validator.impl.BooleanValidator;
 import de.axone.webtemplate.validator.impl.CountryValidator;
 import de.axone.webtemplate.validator.impl.EMailValidator;
+import de.axone.webtemplate.validator.impl.EqualsValidator;
 import de.axone.webtemplate.validator.impl.InCollectionValidator;
 import de.axone.webtemplate.validator.impl.LanguageValidator;
 import de.axone.webtemplate.validator.impl.LengthValidator;
@@ -169,6 +170,13 @@ public class FormValueFactory {
 		ajaxValidate.add( "email" );
 		FormValue<String> result = createInputTextValue( name, length, nullable, ajaxValidate );
 		result.addValidator( new EMailValidator() );
+		return result;
+	}
+	public FormValue<String> createInputRepeatValue( String name, int length,
+			boolean nullable, FormValue<?> other ) {
+		
+		FormValue<String> result = createInputTextValue( name, length, nullable );
+		result.addValidator( new EqualsValidator( other ) );
 		return result;
 	}
 

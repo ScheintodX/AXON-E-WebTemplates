@@ -7,9 +7,9 @@ public class EqualsValidator extends AbstractValidator<String> {
 	
 	private static final String NO_MATCH = "VALIDATOR_NO_MATCH";
 	
-	private FormValue<String> other;
+	private FormValue<?> other;
 	
-	public EqualsValidator( FormValue<String> other ){
+	public EqualsValidator( FormValue<?> other ){
 		this.other = other;
 	}
 
