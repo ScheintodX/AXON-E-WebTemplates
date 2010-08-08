@@ -5,24 +5,25 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.tools.E;
 import de.axone.webtemplate.Renderer;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.Translator;
 
-public class AbstractListRenderer<T> implements Renderer {
+public abstract class AbstractListRenderer<T> implements Renderer {
 
-	private String name;
-	private ListProvider<T> listProvider;
-	private Renderer itemTemplate;
-	private int itemsPerPage;
-	private int currentPage;
-	private int numPages;
+	private final String name;
+	private final ListProvider<T> listProvider;
+	private final Renderer itemTemplate;
+	private final int itemsPerPage;
+	private final int currentPage;
+	private final int numPages;
 	private String sort;
 
 	public AbstractListRenderer(HttpServletRequest request, String name,
 			int itemsPerPage, ListProvider<T> listProvider,
 			Renderer itemTemplate ) {
-
+		
 		this( 
 				name, 
 				readPage( name, calcNumPages( listProvider, itemsPerPage ), request ), 
@@ -36,6 +37,9 @@ public class AbstractListRenderer<T> implements Renderer {
 	public AbstractListRenderer(String name, int currentPage, int itemsPerPage,
 			String sort, ListProvider<T> listProvider, Renderer itemTemplate ) {
 
+		assert( listProvider != null );
+		assert( itemTemplate != null );
+		
 		this.name = name;
 		this.currentPage = currentPage;
 		this.itemsPerPage = itemsPerPage;
@@ -46,6 +50,9 @@ public class AbstractListRenderer<T> implements Renderer {
 	}
 	
 	private static int calcNumPages( ListProvider<?> listProvider, int itemsPerPage ) {
+		
+		E.rr( listProvider );
+		E.rr( itemsPerPage );
 
 		int count = (int) Math.ceil( (double) listProvider.getTotalCount()
 				/ itemsPerPage );

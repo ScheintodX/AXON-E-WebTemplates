@@ -2,6 +2,10 @@ package de.axone.webtemplate;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+
+import de.axone.logging.Log;
+import de.axone.logging.Logging;
 
 /**
  * This class is the factory for the webtemplates.
@@ -14,13 +18,14 @@ import java.io.IOException;
  * Depending on the implementation of the WebTemplate it my have different
  * purposes.
  *
- * @see templateFor()
+ * @see #templateFor( String )
  * @see AbstractFileWebTemplate
  *
  * @author flo
- *
  */
 public class WebTemplateFactory {
+	
+	private static final Log log = Logging.getLog( WebTemplateFactory.class );
 
 	/**
 	 * Create a WebTemplate for a given class name.
@@ -32,8 +37,8 @@ public class WebTemplateFactory {
 	 * reading the files meta-info a class name for the WebTemplate is
 	 * determined and this class is instantiated with the file's data.
 	 *
-	 * @param The class name
-	 * @return An WebTemplate instance
+	 * @param className to get the template for
+	 * @return WebTemplate instance
 	 * @throws WebTemplateException if something goes wrong
 	 * @throws KeyException
 	 */
@@ -59,6 +64,11 @@ public class WebTemplateFactory {
 
 		return templateFor( file, null );
 	}
+	
+	public WebTemplate templateFor( URL url ) throws WebTemplateException {
+
+		return templateFor( url, null );
+	}
 
 	public WebTemplate templateFor( File file, String className ) throws WebTemplateException {
 
@@ -81,8 +91,28 @@ public class WebTemplateFactory {
 		}
 	}
 	
+	public WebTemplate templateFor( URL url, String className ) throws WebTemplateException {
+
+		try {
+			WebTemplate result = instantiate( url, className );
+			return result;
+
+		} catch( ClassCastException e ) {
+			throw new WebTemplateException( "Cannot cast class: " + url, e );
+		} catch( ClassNotFoundException e ) {
+			throw new WebTemplateException( "Class not found in: " + url, e );
+		} catch( InstantiationException e ) {
+			throw new WebTemplateException( "Cannot instantiate: " + url, e );
+		} catch( IllegalAccessException e ) {
+			throw new WebTemplateException( "Cannot access: " + url, e );
+		} catch( IOException e ) {
+			throw new WebTemplateException( "Error reading: " + url, e );
+		} catch( KeyException e ) {
+			throw new WebTemplateException( "Error parsing: " + url, e );
+		}
+	}
 	public int getReloadCount(){
-		return DataHolderFactory.reloadCount;
+		return FileDataHolderFactory.reloadCount;
 	}
 
 	private WebTemplate instantiate( File file, String className )
@@ -93,7 +123,7 @@ public class WebTemplateFactory {
 		// Get Holder
 		DataHolder holder;
 		try {
-    		holder = DataHolderFactory.holderFor( file );
+    		holder = FileDataHolderFactory.holderFor( file );
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In file: " + file.getPath(), e );
 		}
@@ -114,6 +144,43 @@ public class WebTemplateFactory {
     		template = (AbstractFileWebTemplate) instantiate( className );
 		} catch( Exception e ){
 			throw new WebTemplateException( "Cannot instantiate '" + className + "' in file: " + file.getPath(), e );
+		}
+
+		template.setHolder( holder );
+		return template;
+	}
+
+	private WebTemplate instantiate( URL url, String className )
+			throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException, ClassCastException, IOException,
+			KeyException, WebTemplateException {
+
+		// Get Holder
+		DataHolder holder;
+		try {
+    		holder = HttpDataHolderFactory.holderFor( url );
+		} catch( WebTemplateException e ){
+			throw new WebTemplateException( "In url: " + url, e );
+		}
+
+		// First try to get classname from holder
+		String classNameFromHolder = holder.getParameter( "class" );
+
+		if( classNameFromHolder != null ){
+			className = classNameFromHolder;
+		}
+
+		if( className == null ){
+			//throw new WebTemplateException( "No @Class spezified in template and no default given: " + url );
+			className = "de.emogul.TemplatePlain";
+			log.warn( "Template missing in: " + url );
+		}
+
+		AbstractFileWebTemplate template;
+		try {
+    		template = (AbstractFileWebTemplate) instantiate( className );
+		} catch( Exception e ){
+			throw new WebTemplateException( "Cannot instantiate '" + className + "' in file: " + url, e );
 		}
 
 		template.setHolder( holder );

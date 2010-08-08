@@ -1,6 +1,5 @@
 package de.axone.webtemplate.validator.impl;
 
-import de.axone.tools.E;
 
 
 public class PostalcodeValidatorFactory {
@@ -10,11 +9,7 @@ public class PostalcodeValidatorFactory {
 	
 	public static PostalcodeValidator validatorFor( String iso2 ){
 		
-		E.rr( iso2 );
-		
 		String pattern = provider.forCode( iso2 );
-		
-		E.rr( pattern );
 		
 		if( pattern == null ){
 			return new PostalcodeValidator_Empty();

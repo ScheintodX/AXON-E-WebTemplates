@@ -22,7 +22,7 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
 	protected AbstractFileWebTemplate( File file ) throws KeyException, IOException, ParserException{
 
-		setHolder(  DataHolderFactory.holderFor( file ) );
+		setHolder(  FileDataHolderFactory.holderFor( file ) );
 	}
 
 	public void setHolder( DataHolder holder ) throws KeyException, IOException{

@@ -34,7 +34,7 @@ public class DataHolderTest {
 		
 		out.close();
 		
-		DataHolder holder = DataHolderFactory.instantiate( tmp );
+		DataHolder holder = FileDataHolderFactory.instantiate( tmp );
 		
 		//E.rr( holder.toString() );
 		
