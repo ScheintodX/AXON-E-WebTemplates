@@ -17,7 +17,7 @@ import de.axone.webtemplate.validator.Validator;
 import de.axone.webtemplate.validator.impl.LengthValidator;
 import de.axone.webtemplate.validator.impl.NotNullValidator;
 
-@Test( groups="webtemplate.webconnector" )
+@Test( groups="webtemplate.webform" )
 public class WebFormTest {
 
 	public void testCompleteWebConnector() throws Exception {

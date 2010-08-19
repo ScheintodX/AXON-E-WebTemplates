@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.axone.tools.E;
 import de.axone.webtemplate.Renderer;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.Translator;
@@ -51,9 +50,6 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 	
 	private static int calcNumPages( ListProvider<?> listProvider, int itemsPerPage ) {
 		
-		E.rr( listProvider );
-		E.rr( itemsPerPage );
-
 		int count = (int) Math.ceil( (double) listProvider.getTotalCount()
 				/ itemsPerPage );
 

@@ -150,6 +150,18 @@ public class FormValueFactory {
 				length, nullable );
 	}
 
+	public FormValue<String> createInputPostalcodeValue( String name, boolean nullable, final String countryCode ) {
+
+		FormValue<String> result = createInputTextValue( name, 12, nullable );
+		result.addValidator( new PostalcodeValidator_Dynamic(
+				new CountryProvider(){
+					public String getCode(){
+						return countryCode;
+					}
+				}
+		) );
+		return result;
+	}
 	public FormValue<String> createInputPostalcodeValue( String name, boolean nullable, final FormValue<String> countryProvider ) {
 
 		FormValue<String> result = createInputTextValue( name, 12, nullable );

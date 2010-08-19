@@ -19,7 +19,7 @@ public interface WebForm {
 
 	public Set<String> getFormValueNames();
 
-	public HtmlInput getHtmlInput( String name );
+	public HtmlInput getHtmlInput( String name ) throws WebTemplateException;
 
 	public Set<String> getValueNames();
 

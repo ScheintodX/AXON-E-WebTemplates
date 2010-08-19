@@ -26,14 +26,16 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 
 		
 		HttpWatcher watcher;
-		DataHolder result;
+		DataHolder result=null;
 		HttpUtilResponse r;
 		if( !storage.containsKey( url ) ) {
 
 			watcher = new HttpWatcher( url );
 			r=watcher.hasChanged();
-			result = instantiate( url, r );
-			
+			if( r != null ){
+				result = instantiate( url, r );
+			}
+				
 			storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
 		} else {
 			watcher = storage.get( url ).getLeft();
@@ -41,12 +43,18 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 			if( ( r=watcher.hasChanged() ) == null ) {
 				result = storage.get( url ).getRight();
 			} else {
-				result = instantiate( url, r );
+				if( r != null ){
+					result = instantiate( url, r );
+				}
 				storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
 			}
 		}
 
-		return result.clone();
+		if( result != null ){
+			return result.clone();
+		} else {
+			return null;
+		}
 	}
 	
 	static DataHolder instantiate( URL url, HttpUtilResponse response ) throws IOException,

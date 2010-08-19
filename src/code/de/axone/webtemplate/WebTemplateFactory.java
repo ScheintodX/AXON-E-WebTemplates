@@ -164,27 +164,31 @@ public class WebTemplateFactory {
 		}
 
 		// First try to get classname from holder
-		String classNameFromHolder = holder.getParameter( "class" );
-
-		if( classNameFromHolder != null ){
-			className = classNameFromHolder;
+		if( holder != null ){
+			String classNameFromHolder = holder.getParameter( "class" );
+	
+			if( classNameFromHolder != null ){
+				className = classNameFromHolder;
+			}
+	
+			if( className == null ){
+				//throw new WebTemplateException( "No @Class spezified in template and no default given: " + url );
+				className = "de.emogul.TemplatePlain";
+				log.warn( "Template missing in: " + url );
+			}
+	
+			AbstractFileWebTemplate template;
+			try {
+	    		template = (AbstractFileWebTemplate) instantiate( className );
+			} catch( Exception e ){
+				throw new WebTemplateException( "Cannot instantiate '" + className + "' in file: " + url, e );
+			}
+	
+			template.setHolder( holder );
+			return template;
+		} else {
+			return null;
 		}
-
-		if( className == null ){
-			//throw new WebTemplateException( "No @Class spezified in template and no default given: " + url );
-			className = "de.emogul.TemplatePlain";
-			log.warn( "Template missing in: " + url );
-		}
-
-		AbstractFileWebTemplate template;
-		try {
-    		template = (AbstractFileWebTemplate) instantiate( className );
-		} catch( Exception e ){
-			throw new WebTemplateException( "Cannot instantiate '" + className + "' in file: " + url, e );
-		}
-
-		template.setHolder( holder );
-		return template;
 	}
 
 	private WebTemplate instantiate( String className )

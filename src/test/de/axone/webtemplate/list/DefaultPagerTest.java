@@ -1,6 +1,6 @@
 package de.axone.webtemplate.list;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
@@ -39,7 +39,7 @@ public class DefaultPagerTest {
 		content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, dps+"[0]12345678910...99-1>>"+dpe );
+		assertEquals( content, dps+"<a class=\"active\">&lt;&lt;</a>[0]12345678910...99-1>>"+dpe );
 		
 		//----
 		
@@ -59,7 +59,7 @@ public class DefaultPagerTest {
 		content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, dps+"<<98-0...89909192939495969798[99]"+dpe );
+		assertEquals( content, dps+"<<98-0...89909192939495969798[99]<a class=\"active\">&gt;&gt;</a>"+dpe );
 		
 		//--LinkBuilding--
 		
@@ -71,7 +71,7 @@ public class DefaultPagerTest {
 		content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, dps+"1: /blah?test=1&test=2&pageme-page=0"+dpe );
+		assertEquals( content, dps+"<a class=\"active\">&lt;&lt;</a>1: /blah?test=1&test=2&pageme-page=0<a class=\"active\">&gt;&gt;</a>"+dpe );
 		
 		
 	}

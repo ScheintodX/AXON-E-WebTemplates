@@ -141,9 +141,14 @@ public class WebFormImpl implements WebForm {
 	}
 
 	@Override
-	public HtmlInput getHtmlInput( String name ) {
+	public HtmlInput getHtmlInput( String name ) throws WebTemplateException {
 
-		return getFormValue( name ).getHtmlInput();
+		FormValue<?> value = this.getFormValue( name );
+		
+		if( value == null )
+			throw new WebTemplateException( "Cannot find: " + name );
+		
+		return value.getHtmlInput();
 	}
 
 }
