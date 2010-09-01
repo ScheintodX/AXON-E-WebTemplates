@@ -19,7 +19,7 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 	private final int numPages;
 	private String sort;
 
-	public AbstractListRenderer(HttpServletRequest request, String name,
+	public AbstractListRenderer(HttpServletRequest request, String name, String defaultSort,
 			int itemsPerPage, ListProvider<T> listProvider,
 			Renderer itemTemplate ) {
 		
@@ -27,7 +27,7 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 				name, 
 				readPage( name, calcNumPages( listProvider, itemsPerPage ), request ), 
 				itemsPerPage, 
-				readSort( name, request ),
+				readSort( name, defaultSort, request ),
 				listProvider,
 				itemTemplate
 		);
@@ -87,10 +87,11 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 		}
 	}
 
-	private static String readSort( String baseName, HttpServletRequest request ) {
+	private static String readSort( String baseName, String defaultSort, HttpServletRequest request ) {
 
 		String name = makeName( baseName, "sort" );
 		String sort = request.getParameter( name );
+		if( sort == null ) sort = defaultSort;
 		return sort;
 	}
 
@@ -99,6 +100,12 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 		pager.setNameBase( name );
 		pager.setNumPages( numPages );
 		pager.setSelectedPage( currentPage );
+	}
+	
+	public void initSortSelectorc( SortSelector sortSelector ){
+		
+		sortSelector.setNameBase( name );
+		sortSelector.setSelectedSort( sort );
 	}
 
 	@Override

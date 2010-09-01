@@ -1,6 +1,6 @@
 package de.axone.webtemplate.list;
 
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -71,7 +71,7 @@ public class CompleteListDemo {
 
 		public MyListRenderer(HttpServletRequest req, ListProvider<Integer> listProvider,
 				Renderer itemTemplate ) {
-			super( req, "mylist", 10, listProvider, itemTemplate );
+			super( req, "mylist", "name", 10, listProvider, itemTemplate );
 		}
 	}
 

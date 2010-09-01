@@ -1,6 +1,7 @@
 package de.axone.webtemplate.list;
 
 
+// TODO: DAs auf eine weniger Resourcen verbrauchende Art & Weise lösen.
 public interface ListProvider<T> {
 
 	public int getTotalCount();

@@ -21,4 +21,5 @@ public interface Renderer {
 	public void render( Object object, HttpServletRequest request,
 			HttpServletResponse response, Translator translator ) throws IOException, WebTemplateException, Exception;
 
+
 }

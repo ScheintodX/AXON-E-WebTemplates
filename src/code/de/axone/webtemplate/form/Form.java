@@ -73,6 +73,11 @@ public @interface Form {
 		CREATE,
 		
 		/**
+		 * Parse on show
+		 */
+		SHOW,
+		
+		/**
 		 * Parse on edit
 		 */
 		EDIT,
