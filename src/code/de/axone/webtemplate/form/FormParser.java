@@ -9,12 +9,18 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.axone.logging.Log;
+import de.axone.logging.Logging;
 import de.axone.webtemplate.DataHolder;
 import de.axone.webtemplate.KeyException;
 import de.axone.webtemplate.WebTemplateException;
+import de.axone.webtemplate.converter.ConverterException;
 import de.axone.webtemplate.form.Form.On;
 
 public class FormParser<T> {
+	
+	private static final Log log = 
+			Logging.getLog( FormParser.class );
 	
 	private static final HashSet<Method> COMMON_METHODS 
 			= new HashSet<Method>( Arrays.asList( Object.class.getMethods() ) );
@@ -280,39 +286,14 @@ public class FormParser<T> {
 		}
 	}
 	
-	public Object convertFromString( Class<?> argType, String value ) throws FormParserException{
-		
-		Object val;
-		if( argType == boolean.class || argType == Boolean.class ){
-			val = Boolean.valueOf( value );
-		} else if( argType == char.class || argType == Character.class ){
-			val = value.charAt( 0 );
-		} else if( argType == short.class || argType == Short.class ){
-			val = Short.valueOf( value );
-		} else if( argType == int.class || argType == Integer.class ){
-			val = Integer.valueOf( value );
-		} else if( argType == long.class || argType == Long.class ){
-			val = Long.valueOf( value );
-		} else if( argType == float.class || argType == Float.class ){
-			val = Float.valueOf( value );
-		} else if( argType == double.class || argType == Double.class ){
-			val = Double.valueOf( value );
-		} else if( argType == String.class ){
-			val = value;
-		} else if( argType == Date.class ){
-			val = new Date( Long.parseLong( value ) );
-		} else if( argType == BigDecimal.class ){
-			val = new BigDecimal( value );
-		} else {
-			throw new FormParserException( "Unsupported type: " + argType );
-		}
-		return val;
-	}
-	
 	public String convertToString( Class<?> argType, Object value ) throws FormParserException{
 		
+		if( value == null ) return null;
+		
 		String val;
-		if( argType == boolean.class || argType == Boolean.class ){
+		if( value == null ){
+			val = "";
+		} else if( argType == boolean.class || argType == Boolean.class ){
 			val = ""+value;
 		} else if( argType == char.class || argType == Character.class ){
 			val = ""+value;
@@ -338,18 +319,20 @@ public class FormParser<T> {
 		return val;
 	}
 	
-	private void putInPojoByMethod( Method setter, String value ) throws FormParserException {
+	private void putInPojoByMethod( Method setter, Object value ) throws FormParserException {
 		
-		Class<?> argType = setter.getParameterTypes()[ 0 ];
-		Object val = convertFromString( argType, value );
+		//Class<?> argType = setter.getParameterTypes()[ 0 ];
+		//Object val = convertFromString( argType, value );
+		
+		log.trace( "setMethod: " + setter.getName() + " to " + value );
 		
 		try {
-			setter.invoke( pojo, val );
+			setter.invoke( pojo, value );
 		} catch( Exception e ){
 			throw new FormParserException( "Error calling " + setter, e );
 		}
 	}
-	private String getFromPojoByMethod( Method getter ) throws FormParserException {
+	private Object getFromPojoByMethod( Method getter ) throws FormParserException {
 		
 		Object value;
 		
@@ -359,23 +342,25 @@ public class FormParser<T> {
 			throw new FormParserException( "Error calling " + getter, e );
 		}
 		
-		Class<?> argType = getter.getReturnType();
-		
-		return convertToString( argType, value );
+		//Class<?> argType = getter.getReturnType();
+		//return convertToString( argType, value );
+		return value;
 	}
 	
-	private void putInPojoByField( Field field, String value ) throws FormParserException {
+	private void putInPojoByField( Field field, Object value ) throws FormParserException {
 		
-		Class<?> argType = field.getType();
-		Object val = convertFromString( argType, value );
+		//Class<?> argType = field.getType();
+		//Object val = convertFromString( argType, value );
+		
+		log.trace( "setField: " + field.getName() + " to " + value );
 		
 		try {
-			field.set( pojo, val );
+			field.set( pojo, value );
 		} catch( Exception e ){
 			throw new FormParserException( "Error accessing " + field, e );
 		}
 	}
-	private String getFromPojoByField( Field field ) throws FormParserException {
+	private Object getFromPojoByField( Field field ) throws FormParserException {
 		
 		Object value;
 		
@@ -385,16 +370,17 @@ public class FormParser<T> {
 			throw new FormParserException( "Error accessing " + field, e );
 		}
 		
-		Class<?> argType = field.getType();
-		
-		return convertToString( argType, value );
+		//Class<?> argType = field.getType();
+		//return convertToString( argType, value );
+		return value;
 	}
 	
 	public void putInPojo( WebForm form ) throws WebTemplateException {
 		
 		for( FormField field : parsed ){
 			
-			String value = form.getHtmlInput( field.formName ).getValue();
+			//String value = form.getHtmlInput( field.formName ).getValue();
+			Object value = form.getFormValue( field.formName ).getValue();
 			
 			if( field.getter != null ){
 				putInPojoByMethod( field.setter, value );
@@ -403,19 +389,35 @@ public class FormParser<T> {
 			}
 		}
 	}
+	
 	public void putInForm( WebForm form ) throws WebTemplateException {
 		
 		for( FormField field : parsed ){
 			
-			String value;
+			Object value;
 			if( field.getter != null ){
 				value = getFromPojoByMethod( field.getter );
 			} else {
 				value = getFromPojoByField( field.field );
 			}
-			form.getHtmlInput( field.formName ).setValue( value );
+			//form.getHtmlInput( field.formName ).setValue( value );
+			FormValue<?> fVal = form.getFormValue( field.formName );
+			
+			forceInto( fVal, value ); //fVal.setValue( value );
 		}
 	}
+	
+	@SuppressWarnings( "unchecked" )
+	private void forceInto( FormValue val, Object x ) throws ConverterException{
+		
+		// This is stupid. But needed.
+		try {
+			val.setValue( x );
+		} catch( ClassCastException e ){
+			throw new ConverterException( "Error casting " + x + " in " + val.getHtmlInput().getName(), e );
+		}
+	}
+	
 	public static void putInputsInHolder( DataHolder holder, String prefix, WebForm form ) throws KeyException, WebTemplateException {
 		
 		for( String name : form.getFormValueNames() ){
@@ -427,6 +429,27 @@ public class FormParser<T> {
 			holder.setValue( holderName, form.getHtmlInput( name ) );
 		}
 		
+	}
+	
+	public void putInHolder( DataHolder holder, String prefix ) throws KeyException, WebTemplateException {
+		
+		for( FormField field : parsed ){
+			
+			Object value;
+			if( field.getter != null ){
+				value = getFromPojoByMethod( field.getter );
+			} else {
+				value = getFromPojoByField( field.field );
+			}
+			//E.rr( prefix + field.formName + " -> " + value );
+			//holder.setValue( prefix + field.formName, value );
+			// TODO: Da muss das WebForm zum konvertieren rein.
+			if( value != null ){
+				holder.setValue( prefix + field.formName, value.toString() );
+			} else {
+				holder.setValue( prefix + field.formName, "--NIX--" );
+			}
+		}
 	}
 	
 	public static class FormParserException extends WebTemplateException {

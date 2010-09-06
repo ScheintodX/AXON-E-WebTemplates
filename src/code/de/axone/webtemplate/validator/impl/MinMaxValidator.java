@@ -7,29 +7,29 @@ import de.axone.webtemplate.validator.AbstractValidator;
  * 
  * @author flo
  */
-public class MinMaxValidator extends AbstractValidator<Integer> {
+public class MinMaxValidator extends AbstractValidator<Number> {
 	
 	private static final String TO_BIG = "VALIDATOR_TO_BIG";
 	private static final String TO_SMALL = "VALIDATOR_TO_SMALL";
 	
-	private Integer min, max;
+	private Number min, max;
 	
-	public MinMaxValidator( Integer min, Integer max ){
+	public MinMaxValidator( Number min, Number max ){
 		
 		this.min = min;
 		this.max = max;
 	}
 
 	@Override
-	protected String check( Integer value ) {
+	protected String check( Number value ) {
 		
 		if( value == null ) return null;
 			
-		if( min != null && value < min )
-			return TO_SMALL + ":" + value.intValue() + ":" + min;
+		if( min != null && value.doubleValue() < min.doubleValue() )
+			return TO_SMALL + ":" + value + ":" + min;
         			
-		if( max != null && value > max )
-			return TO_BIG + ":" + value.intValue() + ":" + max;
+		if( max != null && value.doubleValue() > max.doubleValue() )
+			return TO_BIG + ":" + value + ":" + max;
 		
 		return null;
 	}

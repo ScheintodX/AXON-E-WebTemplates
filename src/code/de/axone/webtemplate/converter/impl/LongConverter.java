@@ -7,17 +7,17 @@ import java.util.Locale;
 import de.axone.webtemplate.converter.AbstractConverter;
 import de.axone.webtemplate.converter.ConverterException;
 
-public class IntegerConverter extends AbstractConverter<Integer> {
+public class LongConverter extends AbstractConverter<Long> {
 	
 	private NumberFormat numberFormat;
 	
-	public IntegerConverter( Locale locale ){
+	public LongConverter( Locale locale ){
 		
 		numberFormat = NumberFormat.getIntegerInstance( locale );
 	}
 
 	@Override
-	public Integer convertFromString( String value )
+	public Long convertFromString( String value )
 		throws ConverterException {
 		
 		if( value == null )
@@ -27,7 +27,7 @@ public class IntegerConverter extends AbstractConverter<Integer> {
 			return null;
 		
 		try {
-			return numberFormat.parse( value ).intValue();
+			return numberFormat.parse( value ).longValue();
 			
 		} catch( ParseException e ) {
 			throw new ConverterException( e );
@@ -35,7 +35,7 @@ public class IntegerConverter extends AbstractConverter<Integer> {
 	}
 	
 	@Override
-	public String convertToString( Integer number )
+	public String convertToString( Long number )
 		throws ConverterException {
 		
 		if( number == null ) return null;

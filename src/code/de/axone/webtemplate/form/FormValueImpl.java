@@ -81,7 +81,7 @@ public class FormValueImpl<T> implements FormValue<T> {
 	public void setValue( T value )
 		throws ConverterException {
 		
-		htmlInput.setValue( converter.convertToString( value ) );
+		htmlInput.setValue( converter.convertToString( (T) value ) );
 	}
 	
 	@Override

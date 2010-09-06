@@ -14,9 +14,14 @@ public class WebFormImpl implements WebForm {
 
 	private HashMap<String, FormValue<?>> connectorValues = new HashMap<String, FormValue<?>>();
 
-	private Translator textProvider;
+	private Translator translator;
 
 	private boolean showInvalid = false;
+	
+	@Override
+	public String getName(){
+		return this.getClass().getSimpleName();
+	}
 
 	@Override
 	public void initialize( HttpServletRequest request ){
@@ -50,9 +55,9 @@ public class WebFormImpl implements WebForm {
 	}
 
 	@Override
-	public void setTranslationProvider( Translator textProvider ) {
+	public void setTranslationProvider( Translator translator ) {
 
-		this.textProvider = textProvider;
+		this.translator = translator;
 	}
 
 	@Override
@@ -109,11 +114,11 @@ public class WebFormImpl implements WebForm {
 			if( r == null || r.size() == 0 )
 				continue;
 
-			if( textProvider != null ) {
+			if( translator != null ) {
 
 				for( String text : r ) {
 
-					text = textProvider.translate( text );
+					text = translator.translate( text );
 
 					messages.addLast( text );
 				}
@@ -146,7 +151,7 @@ public class WebFormImpl implements WebForm {
 		FormValue<?> value = this.getFormValue( name );
 		
 		if( value == null )
-			throw new WebTemplateException( "Cannot find: " + name );
+			throw new WebTemplateException( "Cannot find " + getName() + "'s value: " + name );
 		
 		return value.getHtmlInput();
 	}

@@ -1,6 +1,8 @@
 package de.axone.webtemplate.element;
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +13,10 @@ import java.util.Set;
 import de.axone.webtemplate.Decorator;
 import de.axone.webtemplate.DefaultDecorator;
 import de.axone.webtemplate.converter.ConverterException;
+import de.axone.webtemplate.converter.impl.BigDecimalConverter;
+import de.axone.webtemplate.converter.impl.DateConverter;
 import de.axone.webtemplate.converter.impl.IntegerConverter;
+import de.axone.webtemplate.converter.impl.LongConverter;
 import de.axone.webtemplate.converter.impl.StringConverter;
 import de.axone.webtemplate.elements.impl.HtmlCheckboxElement;
 import de.axone.webtemplate.elements.impl.HtmlInputElement;
@@ -39,6 +44,7 @@ import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic.CountryPr
 public class FormValueFactory {
 
 	private Decorator decorator = new DefaultDecorator();
+	private Locale defaultLocale = Locale.US;
 
 	public Decorator getDecorator() {
 		return decorator;
@@ -49,6 +55,13 @@ public class FormValueFactory {
 
 	public String getStandardClass(){
 		return decorator.getStandardClass();
+	}
+	
+	public void setLocale( Locale locale ){
+		this.defaultLocale = locale;
+	}
+	public Locale getLocale(){
+		return defaultLocale;
 	}
 
 	/*
@@ -230,13 +243,84 @@ public class FormValueFactory {
 		result.addValidator( new LanguageValidator() );
 		return result;
 	}
-
-	public FormValue<Integer> createInputIntegerValue(
+	
+	public FormValue<Date> createInputDateValue(
 			HtmlInputElement.InputType type, Locale locale, String name,
-			Integer min, Integer max, boolean nullable ) {
+			boolean nullable,
+			AjaxValidate ajaxValidate ){
+		
+		FormValueImpl<Date> result = new FormValueImpl<Date>();
+		HtmlInputElement element = new HtmlInputElement( type, name );
+		element.setDecorator( decorator );
+		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
+		DateConverter converter = DateConverter.ForLocale.get( locale );
+		result.setHtmlInput( element );
+		result.setConverter( converter );
+		
+		return result;
+	}
+	
+	public FormValue<Date> createInputDateValue(
+			String name, Locale locale,
+			boolean nullable
+			){
+		
+		return createInputDateValue(
+				HtmlInputElement.InputType.TEXT,
+				locale, name, nullable, new AjaxValidate() );
+	}
+		
+	public FormValue<Date> createInputDateValue(
+			String name,
+			boolean nullable
+			){
+		
+		return createInputDateValue(
+				HtmlInputElement.InputType.TEXT,
+				defaultLocale, name, nullable, new AjaxValidate() );
+	}
+		
 
-		return createInputIntegerValue( type, locale, name, min, max, nullable,
-				new AjaxValidate() );
+	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
+			HtmlInputElement.InputType type, Locale locale, String name,
+			BigDecimal min, BigDecimal max, boolean nullable,
+			AjaxValidate ajaxValidate ){
+		
+		FormValueImpl<BigDecimal> result = new FormValueImpl<BigDecimal>();
+		HtmlInputElement element = new HtmlInputElement( type, name );
+		element.setDecorator( decorator );
+		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
+		BigDecimalConverter converter = new BigDecimalConverter( BigDecimalConverter.EUR_DE_FORMAT );
+		result.setHtmlInput( element );
+		result.setConverter( converter );
+		
+		ajaxValidate.add( "number" );
+		
+		if( min != null || max != null ) {
+			result.addValidator( new MinMaxValidator( min, max ) );
+			// No ajax available
+		}
+		
+		if( !nullable ) {
+			result.addValidator( new NotNullValidator() );
+			ajaxValidate.add( "required" );
+		}
+		
+		return result;
+	}
+	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
+			String name, Locale locale, boolean nullable ) {
+			
+		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.TEXT,
+				locale, name, null, null, nullable, new AjaxValidate() );
+				
+	}
+	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
+			String name, boolean nullable ) {
+			
+		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.TEXT,
+				defaultLocale, name, null, null, nullable, new AjaxValidate() );
+				
 	}
 
 	public FormValue<Integer> createInputIntegerValue(
@@ -267,6 +351,14 @@ public class FormValueFactory {
 		return result;
 	}
 
+	public FormValue<Integer> createInputIntegerValue(
+			HtmlInputElement.InputType type, Locale locale, String name,
+			Integer min, Integer max, boolean nullable ) {
+
+		return createInputIntegerValue( type, locale, name, min, max, nullable,
+				new AjaxValidate() );
+	}
+
 	public FormValue<Integer> createInputIntegerValue( String name,
 			Locale locale, Integer min, Integer max, boolean nullable ) {
 		return createInputIntegerValue( HtmlInputElement.InputType.TEXT,
@@ -278,18 +370,36 @@ public class FormValueFactory {
 		return createInputIntegerValue( name, locale, Integer.MIN_VALUE,
 				Integer.MAX_VALUE, nullable );
 	}
+	public FormValue<Integer> createInputIntegerValue( String name, boolean nullable ){
+		
+		return createInputIntegerValue( name, defaultLocale, nullable );
+	}
 
 	public FormValue<String> createInputHiddenValue( String name ) {
 
 		FormValueImpl<String> result = new FormValueImpl<String>();
 		HtmlInputElement element = new HtmlInputElement(
 				HtmlInputElement.InputType.HIDDEN, name );
-		//element.setDecorator( decorator );
 		StringConverter converter = new StringConverter();
 		result.setHtmlInput( element );
 		result.setConverter( converter );
 
 		return result;
+	}
+
+	public FormValue<Long> createInputHiddenLongValue( String name, Locale locale ) {
+
+		FormValueImpl<Long> result = new FormValueImpl<Long>();
+		HtmlInputElement element = new HtmlInputElement(
+				HtmlInputElement.InputType.HIDDEN, name );
+		result.setHtmlInput( element );
+		result.setConverter( new LongConverter( locale ) );
+
+		return result;
+	}
+	public FormValue<Long> createInputHiddenLongValue( String name ) {
+
+		return createInputHiddenLongValue( name, defaultLocale );
 	}
 
 	/*

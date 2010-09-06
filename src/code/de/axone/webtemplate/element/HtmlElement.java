@@ -7,7 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.axone.web.encoding.HtmlEncoder;
+import de.axone.web.encoding.AttributeEncoder;
 import de.axone.webtemplate.Renderer;
 import de.axone.webtemplate.form.Translator;
 
@@ -66,7 +66,7 @@ public class HtmlElement implements Renderer {
 				out.write( ' ' );
 				out.write( attributeName );
 				out.write( "=\"" );
-				out.write( HtmlEncoder.ENCODE( value ) );
+				out.write( AttributeEncoder.ENCODE( value ) );
 				out.write( '"' );
 			}
 		}

@@ -5,7 +5,7 @@ import de.axone.webtemplate.form.FormParser.FormField;
 public class FormClassDecoratorImpl implements FormClassDecorator {
 
 	private String className = "UnknownClass";
-	private Class dbo = Object.class;
+	private Class<?> dbo = Object.class;
 
 	@Override
 	public void setClassName( String className ) {
@@ -13,13 +13,15 @@ public class FormClassDecoratorImpl implements FormClassDecorator {
 	}
 
 	@Override
-	public void setDbo( Class dbo ) {
+	public void setDbo( Class<?> dbo ) {
 		this.dbo = dbo;
 	}
 	
+	/*
 	private String dboPath(){
 		return dbo.getName();
 	}
+	*/
 	private String dbo(){
 		return dbo.getSimpleName();
 	}

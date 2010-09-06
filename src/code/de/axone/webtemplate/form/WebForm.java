@@ -10,6 +10,8 @@ import de.axone.webtemplate.element.HtmlInput;
 
 
 public interface WebForm {
+	
+	public String getName();
 
 	public void initialize( HttpServletRequest request );
 

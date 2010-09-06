@@ -107,12 +107,12 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 		private static final String ATTRIBUTE_SELECTED = "selected";
 		private static final List<String> ATTRIBUTES = Arrays.asList( ATTRIBUTE_VALUE, ATTRIBUTE_SELECTED );
 
-		public HtmlOptionElement( Option option ) {
+		public HtmlOptionElement( String value, String text ) {
 			
 			super( TAGNAME, ATTRIBUTES );
 			
-			setContent( option.getText() );
-			setAttribute( ATTRIBUTE_VALUE, option.getValue() );
+			setContent( text );
+			setAttribute( ATTRIBUTE_VALUE, value );
 		}
 		
 		public void setSelected( boolean selected ){
@@ -134,9 +134,15 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 			
 			for( Option option : options ){
 				
-				HtmlOptionElement optionElement = new HtmlOptionElement( option );
+				String value = option.getValue();
+				String text = option.getText();
 				
-    			if( option.getValue() != null && option.getValue().equals( selected ) ){
+				if( option.isTranslateValues() ) value = translator.translate( value );
+				if( option.isTranslateText() ) text = translator.translate( text );
+				
+				HtmlOptionElement optionElement = new HtmlOptionElement( text, value );
+				
+    			if( value != null && value.equals( selected ) ){
     				optionElement.setSelected( true );
     			}
     			
@@ -152,16 +158,25 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 	public static interface Option {
 		public String getValue();
 		public String getText();
+		public boolean isTranslateText();
+		public boolean isTranslateValues();
 	}
 	
 	public static class OptionImpl implements Option {
 		
 		private String value;
 		private String text;
+		private boolean translateText;
+		private boolean translateValues;
 		
 		public OptionImpl( String value, String text ){
+			this( value, text, false, false );
+		}
+		public OptionImpl( String value, String text, boolean translateText, boolean translateValues ){
 			this.value = value;
 			this.text = text;
+			this.translateText = translateText;
+			this.translateValues = translateValues;
 		}
 		
 		public String getValue() { return value; }
@@ -169,6 +184,12 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 		
 		public String getText() { return text; }
 		public void setText( String text ) { this.text = text; }
+
+		public boolean isTranslateText() { return translateText; }
+		public void setTranslateText( boolean translateText ) { this.translateText = translateText; }
+
+		public boolean isTranslateValues() { return translateValues; }
+		public void setTranslateValues( boolean translateValues ) { this.translateValues = translateValues; }
 		
 	}
 	
