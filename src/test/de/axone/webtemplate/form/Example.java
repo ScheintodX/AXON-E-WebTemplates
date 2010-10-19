@@ -15,7 +15,6 @@ import de.axone.web.TestHttpServletResponse;
 import de.axone.webtemplate.AbstractFileWebTemplate;
 import de.axone.webtemplate.DataHolder;
 import de.axone.webtemplate.FileDataHolderFactory;
-import de.axone.webtemplate.KeyException;
 import de.axone.webtemplate.WebTemplate;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.converter.ConverterException;
@@ -143,7 +142,7 @@ public class Example {
 	
 	private static class ExamplePage extends AbstractFileWebTemplate {
 
-		public ExamplePage() throws KeyException, IOException, ParserException {
+		public ExamplePage() throws Exception {
 			super( new File( "src/test/de/axone/webtemplate/form/example.xhtml" ) );
 		}
 

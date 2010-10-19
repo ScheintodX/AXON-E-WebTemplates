@@ -3,6 +3,7 @@ package de.axone.webtemplate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.axone.tools.E;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 /**
@@ -22,8 +23,8 @@ public abstract class AttributeParser {
 	
 	public static final String TAG_NAME = "TAG";
 	
-	static final String NAMECHAR = "[a-zA-Z0-9_]";
-	static final String TAGSTARTCHAR = "[a-zA-Z]";
+	static final String NAMECHAR = "[a-zA-Z0-9äöüÄÖÜ_]";
+	static final String TAGSTARTCHAR = "[a-zA-ZäöüÄÖÜ]";
 	static final String STRINGVALCHAR = "[^ ]";
 	static final String INTVALCHAR = "[0-9]";
 	static final String QUOT = "\"";
@@ -37,8 +38,8 @@ public abstract class AttributeParser {
 
 	static final String NAME = NAMECHAR + "+";
 	static final String INTVAL = "(-?" + INTVALCHAR + "+)";
-	static final String STRINGVAL_IN_QUOT = QUOT + "(" + STRINGVALCHAR_IN_QUOT + "+)" + QUOT;
-	static final String STRINGVAL_IN_APOS = APOS + "(" + STRINGVALCHAR_IN_APOS + "+)" + APOS;
+	static final String STRINGVAL_IN_QUOT = QUOT + "(" + STRINGVALCHAR_IN_QUOT + "*)" + QUOT;
+	static final String STRINGVAL_IN_APOS = APOS + "(" + STRINGVALCHAR_IN_APOS + "*)" + APOS;
 	
 	static final String TAGNAME = TAGSTARTCHAR + NAMECHAR + "*";
 	static final String ATTRIBUTE = "(" +NAME + ")(?:" + EQUAL + "("+ INTVAL + "|" + STRINGVAL_IN_APOS + "|" + STRINGVAL_IN_QUOT + "))?";
@@ -49,6 +50,11 @@ public abstract class AttributeParser {
 	static final Pattern attributePattern = Pattern.compile( ATTRIBUTE );
 	
 	static final String testtag = "tag att1 att2=123 att3=\"abc\" att4='abc' att5='a\"b c' att6 = 'abc'";
+	
+	public static void main( String [] args ){
+		
+		E.rr( attributePattern );
+	}
 	
 	public static AttributeMap parse( String value ) throws ParserException {
 		

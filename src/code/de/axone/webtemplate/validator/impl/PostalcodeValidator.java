@@ -3,9 +3,9 @@ package de.axone.webtemplate.validator.impl;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.axone.webtemplate.validator.Validator;
+import de.axone.webtemplate.validator.AbstractValidator;
 
-public class PostalcodeValidator implements Validator<String> {
+public class PostalcodeValidator extends AbstractValidator<String> {
 	
 	private static final String NO_VALID_POSTAL_CODE
 			="VALIDATOR_NO_VALID_POSTAL_CODE";
@@ -23,7 +23,7 @@ public class PostalcodeValidator implements Validator<String> {
 	}
 	
 	@Override
-	public String validate( String check ){
+	public String check( String check ){
 		
 		if( check == null ) return null;
 		
@@ -31,11 +31,6 @@ public class PostalcodeValidator implements Validator<String> {
 		if( ! matcher.matches() ) return NO_VALID_POSTAL_CODE;
 		
 		return null;
-	}
-
-	@Override
-	public boolean isValid( String value ) {
-		return validate( (String)value ) == null;
 	}
 
 }

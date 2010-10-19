@@ -20,7 +20,7 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
 	public AbstractFileWebTemplate() {}
 
-	protected AbstractFileWebTemplate( File file ) throws KeyException, IOException, ParserException{
+	protected AbstractFileWebTemplate( File file ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
 
 		setHolder(  FileDataHolderFactory.holderFor( file ) );
 	}

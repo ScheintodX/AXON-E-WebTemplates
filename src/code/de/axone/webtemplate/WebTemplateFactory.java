@@ -25,7 +25,9 @@ import de.axone.logging.Logging;
  */
 public class WebTemplateFactory {
 	
+	
 	private static final Log log = Logging.getLog( WebTemplateFactory.class );
+	
 
 	/**
 	 * Create a WebTemplate for a given class name.
@@ -147,6 +149,7 @@ public class WebTemplateFactory {
 		}
 
 		template.setHolder( holder );
+		
 		return template;
 	}
 
@@ -162,9 +165,10 @@ public class WebTemplateFactory {
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In url: " + url, e );
 		}
-
+		
 		// First try to get classname from holder
 		if( holder != null ){
+			
 			String classNameFromHolder = holder.getParameter( "class" );
 	
 			if( classNameFromHolder != null ){
@@ -185,6 +189,7 @@ public class WebTemplateFactory {
 			}
 	
 			template.setHolder( holder );
+			
 			return template;
 		} else {
 			return null;
@@ -195,8 +200,7 @@ public class WebTemplateFactory {
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, ClassCastException, IOException {
 
-		@SuppressWarnings("unchecked")
-		Class clazz = Class.forName( className );
+		Class<?> clazz = Class.forName( className );
 
 		Object object = clazz.newInstance();
 

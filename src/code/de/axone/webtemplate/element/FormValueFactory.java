@@ -14,6 +14,7 @@ import de.axone.webtemplate.Decorator;
 import de.axone.webtemplate.DefaultDecorator;
 import de.axone.webtemplate.converter.ConverterException;
 import de.axone.webtemplate.converter.impl.BigDecimalConverter;
+import de.axone.webtemplate.converter.impl.BooleanCheckboxConverter;
 import de.axone.webtemplate.converter.impl.DateConverter;
 import de.axone.webtemplate.converter.impl.IntegerConverter;
 import de.axone.webtemplate.converter.impl.LongConverter;
@@ -27,7 +28,6 @@ import de.axone.webtemplate.elements.impl.HtmlSelectElement.OptionComparator;
 import de.axone.webtemplate.elements.impl.HtmlSelectElement.OptionImpl;
 import de.axone.webtemplate.form.FormValue;
 import de.axone.webtemplate.form.FormValueImpl;
-import de.axone.webtemplate.validator.impl.BooleanValidator;
 import de.axone.webtemplate.validator.impl.CountryValidator;
 import de.axone.webtemplate.validator.impl.EMailValidator;
 import de.axone.webtemplate.validator.impl.EqualsValidator;
@@ -96,16 +96,26 @@ public class FormValueFactory {
 				Integer.MAX_VALUE );
 	}
 
-	public FormValue<Integer> createCheckboxBooleanValue( String name )
-			throws ConverterException {
+	public FormValue<Boolean> createCheckboxBooleanValue( 
+			HtmlCheckboxElement.InputType type, String name
+			) throws ConverterException {
 
-		FormValue<Integer> result = createCheckboxIntegerValue( name,
-				Locale.GERMANY, 0, 1 );
-		result.addValidator( new BooleanValidator() );
+		FormValueImpl<Boolean> result = new FormValueImpl<Boolean>();
+		HtmlCheckboxElement element = new HtmlCheckboxElement( name );
+		element.setDecorator( decorator );
+		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
+		BooleanCheckboxConverter converter = new BooleanCheckboxConverter();
+		result.setHtmlInput( element );
+		result.setConverter( converter );
 
 		return result;
 	}
-
+	public FormValue<Boolean> createCheckboxBooleanValue( String name )
+			throws ConverterException {
+		
+		return createCheckboxBooleanValue( HtmlCheckboxElement.InputType.CHECKBOX, name );
+	}
+	
 	/*
 	 * Input
 	 */

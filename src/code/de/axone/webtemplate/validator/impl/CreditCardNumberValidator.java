@@ -1,6 +1,6 @@
 package de.axone.webtemplate.validator.impl;
 
-import de.axone.webtemplate.validator.Validator;
+import de.axone.webtemplate.validator.AbstractValidator;
 
 
 /**
@@ -11,21 +11,16 @@ import de.axone.webtemplate.validator.Validator;
  * 
  * @author flo
  */
-public class CreditCardNumberValidator implements Validator<String> {
+public class CreditCardNumberValidator extends AbstractValidator<String> {
 	
 	private static final String NOT_A_NUMBER = "VALIDATOR_NOT_A_NUMBER";
 	private static final String NOT_A_CC_NUMBER = "VALIDATOR_NOT_A_CC_NUMBER";
 
-	@Override
-	public boolean isValid( String value ) {
-		return false;
-	}
-	
 	private static final int lookupMulSum[] = { 0, 2, 4, 6, 8, 1, 3, 5, 7, 9 };
 	
 
 	@Override
-	public String validate( String value ) {
+	protected String check( String value ) {
 		
 		// Empty values are valid
 		if( value == null || value.length() == 0 ) return null;
@@ -64,5 +59,6 @@ public class CreditCardNumberValidator implements Validator<String> {
 			return NOT_A_CC_NUMBER;
 		}
 	}
+
 
 }

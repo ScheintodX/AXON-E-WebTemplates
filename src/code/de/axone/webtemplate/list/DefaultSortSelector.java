@@ -18,6 +18,8 @@ public class DefaultSortSelector implements SortSelector {
 	private String nameBase;
 	private String sort;
 	
+	private boolean keepPageOnSort = false;
+	
 	public void setMethods( String ... sortMethods ){
 		this.sortMethods = sortMethods;
 	}
@@ -30,6 +32,10 @@ public class DefaultSortSelector implements SortSelector {
 	@Override
 	public void setSelectedSort( String sort ) {
 		this.sort = sort;
+	}
+	
+	public void setKeepPageOnSort( boolean keepPageOnSort ){
+		this.keepPageOnSort = keepPageOnSort;
 	}
 
 	@Override
@@ -56,29 +62,38 @@ public class DefaultSortSelector implements SortSelector {
 			);
 		}
 		
+		String select = Tag.simple( 
+				"select", options.toString(), false,
+				"name", nameBase + "-sort",
+				"class",
+				"submit_on_change"
+		);
 		/*
 		out.write(
 			Tag.simple(
 				"form", 
-				Tag.simple( 
-					"select", options.toString(), false,
-					"name", nameBase + "-sort",
-					"class",
-					"submit_on_change"
-				), false,
+				select,
+				false,
 				"method", "GET",
 				"action", ""
 			) 
 		);
 		*/
-		out.write(
-			Tag.simple( 
-				"select", options.toString(), false,
-				"name", nameBase + "-sort",
-				"class",
-				"submit_on_change"
-			)
-		);
+		out.write( select );
+		
+		String q = request.getParameter( "q" );
+		if( q != null ){
+			out.write( Tag.hiddenInput( "q", q ) );
+		}
+		
+		if( keepPageOnSort ){
+			String pageName = nameBase + "-page";
+			String page = request.getParameter( pageName );
+			if( page != null ){
+				out.write( Tag.hiddenInput( pageName, page ) );
+			}
+		}
+		
 	}
 
 }

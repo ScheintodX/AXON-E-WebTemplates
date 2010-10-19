@@ -25,7 +25,7 @@ public abstract class FileDataHolderFactory extends AbstractDataHolderFactory {
 	static int reloadCount=0;
 
 	synchronized public static DataHolder holderFor( File file )
-			throws KeyException, IOException, ParserException {
+			throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
 		FileWatcher watcher;
 		DataHolder result;
@@ -50,14 +50,14 @@ public abstract class FileDataHolderFactory extends AbstractDataHolderFactory {
 	}
 	
 	static DataHolder instantiate( File file ) throws IOException,
-			KeyException, ParserException {
+			KeyException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 
 		String data = slurp( file );
 		
 		DataHolder holder = instantiate( data );
-		holder.putParameter( "file", file.getPath() );
+		holder.setParameter( "file", file.getPath() );
 		
 		log.trace( "DataHolder for " + file + " created" );
 

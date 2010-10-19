@@ -17,7 +17,7 @@ public class AutomatedFileWebTemplate extends AbstractFileWebTemplate {
 		super();
 	}
 	
-	public AutomatedFileWebTemplate( File file ) throws KeyException, IOException, ParserException{
+	public AutomatedFileWebTemplate( File file ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
 		super( file );
 	}
 	

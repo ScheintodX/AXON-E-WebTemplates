@@ -13,8 +13,8 @@ import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 
-	private static final String END_TEMPLATE = "__END_TEMPLATE__";
 	private static final String BEGIN_TEMPLATE = "__BEGIN_TEMPLATE__";
+	private static final String END_TEMPLATE = "__END_TEMPLATE__";
 
 	private static Log log = Logging.getLog( HttpDataHolderFactory.class );
 
@@ -22,34 +22,38 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	static int reloadCount=0;
 
 	synchronized public static DataHolder holderFor( URL url )
-			throws KeyException, IOException, ParserException {
+			throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
+		log.debug( url );
 		
 		HttpWatcher watcher;
 		DataHolder result=null;
 		HttpUtilResponse r;
 		if( !storage.containsKey( url ) ) {
-
+			
 			watcher = new HttpWatcher( url );
 			r=watcher.hasChanged();
 			if( r != null ){
 				result = instantiate( url, r );
 			}
-				
 			storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
+			
 		} else {
 			watcher = storage.get( url ).getLeft();
 			
 			if( ( r=watcher.hasChanged() ) == null ) {
+				
 				result = storage.get( url ).getRight();
+				
 			} else {
+				
 				if( r != null ){
 					result = instantiate( url, r );
 				}
 				storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
 			}
 		}
-
+		
 		if( result != null ){
 			return result.clone();
 		} else {
@@ -58,7 +62,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	}
 	
 	static DataHolder instantiate( URL url, HttpUtilResponse response ) throws IOException,
-			KeyException, ParserException {
+			KeyException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 
@@ -68,7 +72,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		String data = removeMarker( new String( response.content, encoding ) );
 		
 		DataHolder holder = instantiate( data );
-		holder.putParameter( "url", url.toString() );
+		holder.setParameter( "url", url.toString() );
 		
 		log.trace( "DataHolder for " + url.toString() + " created" );
 

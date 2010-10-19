@@ -253,18 +253,11 @@ public class DefaultPager implements Pager {
 
 	protected String makePageLink( HttpServletRequest request, int page ){
 
-		if( noPage ){
+		HashMap<String, String> parameters = new HashMap<String,String>();
 
-			//TODO: Da fehlen noch evtl. andere Parameter
-			return "?" + nameBase + "-page=" + page;
-		} else {
-			//TODO: Und hier ist ein & zu viel
-    		HashMap<String, String> parameters = new HashMap<String,String>();
+		parameters.put( nameBase + "-page", ""+page );
 
-    		parameters.put( nameBase + "-page", ""+page );
-
-    		return HttpLinkBuilder.makeLink( request, noHost, parameters );
-    	}
+		return HttpLinkBuilder.makeLink( request, noHost, noPage, parameters );
 	}
 
 	private class Template {

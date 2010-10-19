@@ -2,22 +2,17 @@ package de.axone.webtemplate.validator.impl;
 
 import java.util.Date;
 
+import de.axone.webtemplate.validator.AbstractValidator;
 import de.axone.webtemplate.validator.Validator;
 
-public class CreditCardDateValidator implements Validator<Date> {
+public class CreditCardDateValidator extends AbstractValidator<Date> {
 
 	//TODO: Implementierung fehlt. Vor allem Durchblick und eine Idee.
 
 	private static final String TOO_OLD = "VALIDATOR_TOO_OLD";
 
 	@Override
-	public boolean isValid( Date value ) {
-
-		return validate( value ) == null;
-	}
-
-	@Override
-	public String validate( Date value ) {
+	public String check( Date value ) {
 
 		Date now = new Date();
 

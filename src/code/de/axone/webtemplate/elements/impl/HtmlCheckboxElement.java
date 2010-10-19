@@ -2,12 +2,8 @@ package de.axone.webtemplate.elements.impl;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
-import de.axone.webtemplate.converter.ConverterException;
 import de.axone.webtemplate.element.AbstractHtmlInputElement;
-import de.axone.webtemplate.element.FormValueFactory;
-import de.axone.webtemplate.form.FormValue;
 
 public class HtmlCheckboxElement extends AbstractHtmlInputElement {
 
@@ -92,39 +88,4 @@ public class HtmlCheckboxElement extends AbstractHtmlInputElement {
 		return checked;
 	}
 
-	/**
-	 * @deprecated This method is too static
-	 */
-	public static FormValue<Integer> createIntegerValue( InputType type,
-			Locale locale, String name, Integer min, Integer max )
-			throws ConverterException {
-
-		return new FormValueFactory().createCheckboxIntegerValue( type, locale,
-				name, min, max );
-	}
-
-	/**
-	 * @deprecated This method is too static
-	 */
-	public static FormValue<Integer> createIntegerValue( String name,
-			Locale locale, Integer min, Integer max ) throws ConverterException {
-		return new FormValueFactory().createCheckboxIntegerValue( name, locale, min, max );
-	}
-
-	/**
-	 * @deprecated This method is too static
-	 */
-	public static FormValue<Integer> createIntegerValue( String name,
-			Locale locale ) throws ConverterException {
-		return new FormValueFactory().createCheckboxIntegerValue( name, locale );
-	}
-
-	/**
-	 * @deprecated This method is too static
-	 */
-	public static FormValue<Integer> createBooleanValue( String name )
-			throws ConverterException {
-
-		return new FormValueFactory().createCheckboxBooleanValue( name );
-	}
 }

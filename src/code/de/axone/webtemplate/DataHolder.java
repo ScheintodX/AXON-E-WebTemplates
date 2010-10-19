@@ -158,7 +158,7 @@ public class DataHolder implements Cloneable {
 			throw new KeyException( "Doesn't contain: " + key );
 	}
 
-	public void putParameter( String key, String value ) {
+	public void setParameter( String key, String value ) {
 		parameters.put( key.toLowerCase(), value );
 	}
 
