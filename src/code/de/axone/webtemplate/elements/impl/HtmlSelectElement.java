@@ -20,7 +20,7 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 
 	private static String ATTRIBUTE_NAME = "name";
 	private static String ATTRIBUTE_SIZE = "size";
-	private static String ATTRIBUTE_MULTIPLE = "size";
+	private static String ATTRIBUTE_MULTIPLE = "multiple";
 
 	private static List<String> ATTRIBUTES = Arrays.asList(ATTRIBUTE_NAME,
 			ATTRIBUTE_SIZE, ATTRIBUTE_MULTIPLE);
@@ -28,14 +28,10 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 	private List<Option> options;
 	private String selected;
 
-	public enum InputType {
-		TEXT, PASSWORD, HIDDEN
-	};
-
 	public HtmlSelectElement( String name, List<Option> options ) {
-		this(name, null, options);
+		
+		this( name, null, options );
 	}
-
 	public HtmlSelectElement( String name, String value, List<Option> options ) {
 
 		super(TAGNAME, ATTRIBUTES);
@@ -44,10 +40,9 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 		setName(name);
 		setValue(value);
 
-		// This is "super" because the method is
-		// locked in "this".
+		// This is "super" because this method is forbidden in this class
+		// because the content is generated vie OptionRenderer
 		super.setContent( new OptionRenderer() );
-
 	}
 
 	// --- Name ---

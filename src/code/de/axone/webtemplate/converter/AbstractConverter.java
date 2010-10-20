@@ -7,7 +7,7 @@ public abstract class AbstractConverter<T> extends AbstractValidator<String> imp
 	private static final String CANNOT_CONVERT = "CONVERTER_CANNOT_CONVERT";
 
 	@Override
-	protected String check( String value ) {
+	public String validate( String value ) {
 		try{
 			convertFromString( value );
 		} catch( ConverterException e ){

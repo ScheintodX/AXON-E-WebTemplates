@@ -71,12 +71,6 @@ public class WebFormImpl implements WebForm {
 	}
 
 	@Override
-	public Set<String> getValueNames() {
-
-		return connectorValues.keySet();
-	}
-
-	@Override
 	public FormValue<?> getFormValue( String name ) {
 
 		return connectorValues.get( name );

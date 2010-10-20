@@ -15,7 +15,7 @@ public class BooleanValidator extends AbstractValidator<Integer> {
 	public BooleanValidator(){}
 
 	@Override
-	protected String check(Integer value) {
+	public String validate(Integer value) {
 		
 		if( value == null ) return null;
 		

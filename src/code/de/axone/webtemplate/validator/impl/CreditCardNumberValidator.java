@@ -20,7 +20,7 @@ public class CreditCardNumberValidator extends AbstractValidator<String> {
 	
 
 	@Override
-	protected String check( String value ) {
+	public String validate( String value ) {
 		
 		// Empty values are valid
 		if( value == null || value.length() == 0 ) return null;

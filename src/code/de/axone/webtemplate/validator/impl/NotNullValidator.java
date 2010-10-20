@@ -15,7 +15,7 @@ public class NotNullValidator extends AbstractValidator<Object> {
 	private static final String IS_EMPTY = "VALIDATOR_IS_EMPTY";
 	
 	@Override
-	protected String check( Object value ) {
+	public String validate( Object value ) {
 		
 		if( value == null )
 			return IS_NULL;

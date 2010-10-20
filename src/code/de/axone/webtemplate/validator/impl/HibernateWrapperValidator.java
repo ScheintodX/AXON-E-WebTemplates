@@ -14,7 +14,7 @@ public class HibernateWrapperValidator extends AbstractValidator<Object> {
 	}
 
 	@Override
-	protected String check( Object value ) {
+	public String validate( Object value ) {
 		
 		if( ! hibernateValidator.isValid( value ) )
 			return FAIL;

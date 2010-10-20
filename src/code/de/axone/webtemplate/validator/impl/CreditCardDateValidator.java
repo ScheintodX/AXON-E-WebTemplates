@@ -12,7 +12,7 @@ public class CreditCardDateValidator extends AbstractValidator<Date> {
 	private static final String TOO_OLD = "VALIDATOR_TOO_OLD";
 
 	@Override
-	public String check( Date value ) {
+	public String validate( Date value ) {
 
 		Date now = new Date();
 

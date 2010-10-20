@@ -15,17 +15,7 @@ public class PhoneValidator extends PatternValidator {
 	private static Pattern pattern = Pattern.compile( patternString );
 	
 	public PhoneValidator(){
-		
-		super( pattern );
-	}
-
-	@Override
-	protected String check( String value ) {
-		
-		if( super.check( value ) != null )
-			return NO_PHONE;
-		
-		return null;
+		super( pattern, NO_PHONE );
 	}
 
 }

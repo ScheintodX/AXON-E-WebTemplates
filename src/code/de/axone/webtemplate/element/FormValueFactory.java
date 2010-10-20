@@ -15,12 +15,14 @@ import de.axone.webtemplate.DefaultDecorator;
 import de.axone.webtemplate.converter.ConverterException;
 import de.axone.webtemplate.converter.impl.BigDecimalConverter;
 import de.axone.webtemplate.converter.impl.BooleanCheckboxConverter;
+import de.axone.webtemplate.converter.impl.BooleanConverter;
 import de.axone.webtemplate.converter.impl.DateConverter;
 import de.axone.webtemplate.converter.impl.IntegerConverter;
 import de.axone.webtemplate.converter.impl.LongConverter;
 import de.axone.webtemplate.converter.impl.StringConverter;
 import de.axone.webtemplate.elements.impl.HtmlCheckboxElement;
 import de.axone.webtemplate.elements.impl.HtmlInputElement;
+import de.axone.webtemplate.elements.impl.HtmlRadioElement;
 import de.axone.webtemplate.elements.impl.HtmlSelectElement;
 import de.axone.webtemplate.elements.impl.HtmlTextAreaElement;
 import de.axone.webtemplate.elements.impl.HtmlSelectElement.Option;
@@ -74,7 +76,7 @@ public class FormValueFactory {
 		FormValueImpl<Integer> result = new FormValueImpl<Integer>();
 		HtmlCheckboxElement element = new HtmlCheckboxElement( name );
 		element.setDecorator( decorator );
-		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		IntegerConverter converter = new IntegerConverter( locale );
 		result.setHtmlInput( element );
 		result.setConverter( converter );
@@ -103,7 +105,7 @@ public class FormValueFactory {
 		FormValueImpl<Boolean> result = new FormValueImpl<Boolean>();
 		HtmlCheckboxElement element = new HtmlCheckboxElement( name );
 		element.setDecorator( decorator );
-		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		BooleanCheckboxConverter converter = new BooleanCheckboxConverter();
 		result.setHtmlInput( element );
 		result.setConverter( converter );
@@ -125,12 +127,17 @@ public class FormValueFactory {
 
 		FormValueImpl<String> result = new FormValueImpl<String>();
 
+		// HtmlInputElement
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
-		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
-		StringConverter converter = new StringConverter();
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		result.setHtmlInput( element );
+		
+		// Converter
+		StringConverter converter = new StringConverter();
 		result.setConverter( converter );
+		
+		// Validator
 		if( length >= 0 ) {
 			result.addValidator( new LengthValidator( length ) );
 			validate.add( "length[0," + length + "]" );
@@ -139,7 +146,7 @@ public class FormValueFactory {
 			result.addValidator( new NotNullValidator() );
 			validate.add( "required" );
 		}
-		addClassToElement( element, validate.text() );
+		element.addClassAttribute( validate.text() );
 
 		return result;
 	}
@@ -262,7 +269,7 @@ public class FormValueFactory {
 		FormValueImpl<Date> result = new FormValueImpl<Date>();
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
-		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		DateConverter converter = DateConverter.ForLocale.get( locale );
 		result.setHtmlInput( element );
 		result.setConverter( converter );
@@ -299,7 +306,7 @@ public class FormValueFactory {
 		FormValueImpl<BigDecimal> result = new FormValueImpl<BigDecimal>();
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
-		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		BigDecimalConverter converter = new BigDecimalConverter( BigDecimalConverter.EUR_DE_FORMAT );
 		result.setHtmlInput( element );
 		result.setConverter( converter );
@@ -341,7 +348,7 @@ public class FormValueFactory {
 		FormValueImpl<Integer> result = new FormValueImpl<Integer>();
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
-		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		IntegerConverter converter = new IntegerConverter( locale );
 		result.setHtmlInput( element );
 		result.setConverter( converter );
@@ -356,7 +363,7 @@ public class FormValueFactory {
 			ajaxValidate.add( "required" );
 		}
 
-		addClassToElement( element, ajaxValidate.text() );
+		element.addClassAttribute( ajaxValidate.text() );
 
 		return result;
 	}
@@ -412,6 +419,56 @@ public class FormValueFactory {
 		return createInputHiddenLongValue( name, defaultLocale );
 	}
 
+	public FormValue<Boolean> createRadioBooleanValue( String name, String trueValue, String falseValue, boolean nullable ){
+		
+		LinkedList<Option> options = new LinkedList<Option>();
+		options.addLast( new OptionImpl( "true", trueValue ) );
+		options.addLast( new OptionImpl( "false", falseValue ) );
+		
+		FormValue<Boolean> result = new FormValueImpl<Boolean>();
+		
+		HtmlRadioElement element = new HtmlRadioElement( name, options );
+		element.setDecorator( decorator );
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
+		result.setHtmlInput( element );
+		
+		BooleanConverter converter = new BooleanConverter();
+		result.setConverter( converter );
+		
+		if( !nullable ) {
+			result.addValidator( new NotNullValidator() );
+		}
+		
+		return result;
+	}
+	
+	public FormValue<String> createRadioValue( String name,
+			List<Option> options, boolean nullable ) {
+		
+		FormValue<String> result = new FormValueImpl<String>();
+		
+		HtmlRadioElement element = new HtmlRadioElement( name, options );
+		element.setDecorator( decorator );
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
+		result.setHtmlInput( element );
+		
+		// Converter
+		StringConverter converter = new StringConverter();
+		result.setConverter( converter );
+				// value must be one defined.
+		Set<String> keys = new HashSet<String>();
+		for( Option option : options ) {
+			keys.add( option.getValue() );
+		}
+		result.addValidator( new InCollectionValidator<String>( keys ) );
+
+		if( !nullable ) {
+			result.addValidator( new NotNullValidator() );
+		}
+		return result;
+		
+	}
+	
 	/*
 	 * Select
 	 */
@@ -420,13 +477,14 @@ public class FormValueFactory {
 
 		FormValue<String> result = new FormValueImpl<String>();
 
-		HtmlSelectElement element = new HtmlSelectElement( name, null, options );
+		// Element
+		HtmlSelectElement element = new HtmlSelectElement( name, options );
 		element.setDecorator( decorator );
-		if( getStandardClass() != null ) addClassToElement( element, getStandardClass() );
-
-		StringConverter converter = new StringConverter();
-
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		result.setHtmlInput( element );
+
+		// Converter
+		StringConverter converter = new StringConverter();
 		result.setConverter( converter );
 
 		// value must be one defined.
@@ -480,22 +538,6 @@ public class FormValueFactory {
 			result.addValidator( new NotNullValidator() );
 
 		return result;
-	}
-
-	private void addClassToElement( HtmlElement element, String text ) {
-
-		if( text == null )
-			return;
-
-		String val = element.getAttribute( HtmlElement.ATTRIBUTE_CLASS );
-		if( val == null ) {
-
-			val = text;
-		} else {
-			val += " " + text;
-		}
-
-		element.setAttribute( HtmlElement.ATTRIBUTE_CLASS, val );
 	}
 
 	private class AjaxValidate {

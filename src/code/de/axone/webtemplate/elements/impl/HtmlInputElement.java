@@ -17,7 +17,7 @@ public class HtmlInputElement extends AbstractHtmlInputElement {
 			ATTRIBUTE_NAME, ATTRIBUTE_VALUE );
 
 	public enum InputType {
-		TEXT, PASSWORD, HIDDEN
+		TEXT, PASSWORD, HIDDEN, RADIO
 	};
 
 	public HtmlInputElement(InputType type, String name) {

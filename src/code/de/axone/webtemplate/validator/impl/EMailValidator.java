@@ -81,7 +81,7 @@ public class EMailValidator extends AbstractValidator<String> {
 	public static final Pattern VALID_PATTERN = Pattern.compile( patternString );
 
 	@Override
-	protected String check( String value ) {
+	public String validate( String value ) {
 		
 		if( value == null || value.length() == 0 ) return null;
 

@@ -16,7 +16,7 @@ public class CountryValidator extends AbstractValidator<String> {
 	public CountryValidator(){}
 
 	@Override
-	protected String check( String value ) {
+	public String validate( String value ) {
 		
 		if( value == null || value.length() == 0 ) return null;
 		

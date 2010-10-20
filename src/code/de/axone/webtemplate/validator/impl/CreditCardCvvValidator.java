@@ -5,10 +5,11 @@ import java.util.regex.Pattern;
 
 
 /**
- * Implements credit card number validation by the
- * stupid LUN algorithm.
+ * Implements credit card validatation number validation
  * 
- * Try number is valid: 7111 1111 1111 1114
+ * All integers with 3-4 numbers are valid
+ * 
+ * Could be extended so that the number-count matches the credit-card requirements
  * 
  * @author flo
  */
@@ -19,13 +20,6 @@ public class CreditCardCvvValidator extends PatternValidator {
 	private static final Pattern CVV = Pattern.compile( "\\d{3,4}" );
 	
 	public CreditCardCvvValidator(){
-		super( CVV );
+		super( CVV, NOT_A_CVV_NUMBER );
 	}
-
-	@Override
-	public String check( String value ) {
-		
-		return super.check( value ) == null ? null : NOT_A_CVV_NUMBER;
-	}
-
 }

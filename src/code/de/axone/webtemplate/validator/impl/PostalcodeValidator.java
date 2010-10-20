@@ -23,7 +23,7 @@ public class PostalcodeValidator extends AbstractValidator<String> {
 	}
 	
 	@Override
-	public String check( String check ){
+	public String validate( String check ){
 		
 		if( check == null ) return null;
 		

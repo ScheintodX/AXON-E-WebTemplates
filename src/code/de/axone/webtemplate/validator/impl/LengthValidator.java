@@ -19,7 +19,7 @@ public class LengthValidator extends AbstractValidator<String> {
 	}
 
 	@Override
-	protected String check( String value ) {
+	public String validate( String value ) {
 		
 		if( value == null ) return null;
 			

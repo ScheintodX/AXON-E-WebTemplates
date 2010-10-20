@@ -40,14 +40,6 @@ public class HtmlElement implements Renderer {
 		}
 	}
 
-	public void addAttribute( String name ){
-		this.attributes.put( name, null );
-	}
-
-	public void addAttribute( String name, String value ){
-		this.attributes.put( name, value );
-	}
-
 	@Override
 	public void render( Object object, HttpServletRequest request,
 			HttpServletResponse response, Translator translator ) throws Exception {
@@ -110,9 +102,16 @@ public class HtmlElement implements Renderer {
 	public void setTagName( String tagName ){
 		this.tagName = tagName;
 	}
-
 	public String getTagName(){
 		return tagName;
+	}
+
+	public void addAttribute( String name ){
+		this.attributes.put( name, null );
+	}
+
+	public void addAttribute( String name, String value ){
+		this.attributes.put( name, value );
 	}
 
 	public void setAttribute( String key, String value ) {
@@ -136,6 +135,28 @@ public class HtmlElement implements Renderer {
 		} else {
 			throw new IllegalArgumentException( key + " is not supported" );
 		}
+	}
+	
+	public void setIdAttribute( String id ){
+		setAttribute( ATTRIBUTE_ID, id );
+	}
+	public String getIdAttribute(){
+		return getAttribute( ATTRIBUTE_ID );
+	}
+	
+	public void setClassAttribute( String clazz ){
+		setAttribute( ATTRIBUTE_CLASS, clazz );
+	}
+	public String getClassAttribute(){
+		return getAttribute( ATTRIBUTE_CLASS );
+	}
+	public void addClassAttribute( String clazz ){
+		if( clazz == null ) return;
+		String oldClass = getClassAttribute();
+		if( oldClass == null ) oldClass = "";
+		if( oldClass.length() != 0 ) oldClass += " ";
+		oldClass += clazz;
+		setClassAttribute( oldClass );
 	}
 
 	public void setContent( Object content ){

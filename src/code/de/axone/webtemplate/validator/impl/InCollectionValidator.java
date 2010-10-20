@@ -21,7 +21,7 @@ public class InCollectionValidator<T> extends AbstractValidator<T> {
 	}
 
 	@Override
-	protected String check( T value ) {
+	public String validate( T value ) {
 		
 		if( value == null ) return null;
 		

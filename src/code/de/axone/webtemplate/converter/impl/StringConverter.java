@@ -3,6 +3,13 @@ package de.axone.webtemplate.converter.impl;
 import de.axone.webtemplate.converter.AbstractConverter;
 import de.axone.webtemplate.converter.ConverterException;
 
+/**
+ * Convert String to String
+ * 
+ * This doesn't do much
+ * 
+ * @author flo
+ */
 public class StringConverter extends AbstractConverter<String> {
 
 	@Override
@@ -16,7 +23,7 @@ public class StringConverter extends AbstractConverter<String> {
 	}
 
 	@Override
-	public String check( String value ){
+	public String validate( String value ){
 		return null; // Doing nothing always works
 	}
 

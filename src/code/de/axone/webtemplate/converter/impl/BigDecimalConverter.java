@@ -55,5 +55,4 @@ public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 		
 		return numberFormat.format( number.doubleValue() );
 	}
-
 }

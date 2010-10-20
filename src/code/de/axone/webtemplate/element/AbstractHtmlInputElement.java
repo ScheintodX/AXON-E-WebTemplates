@@ -10,7 +10,7 @@ import de.axone.webtemplate.form.Translator;
 
 public abstract class AbstractHtmlInputElement extends HtmlElement implements HtmlInput {
 	
-	protected boolean isValid = true;
+	protected boolean valid = true;
 	protected List<String> messages;
 	private Decorator decorator;
 	
@@ -53,11 +53,11 @@ public abstract class AbstractHtmlInputElement extends HtmlElement implements Ht
 
 	@Override
 	public void setValid( boolean isValid ){
-		this.isValid = isValid;
+		this.valid = isValid;
 	}
 	@Override
 	public boolean isValid(){
-		return isValid;
+		return valid;
 	}
 	
 	@Override

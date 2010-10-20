@@ -10,15 +10,6 @@ public class OnlyIntegerValidator extends PatternValidator {
 	private static Pattern includingWhitespacePattern = Pattern.compile( "[0-9 ]*" );
 
 	public OnlyIntegerValidator( boolean includeWhitespace ){
-		super( includeWhitespace ? includingWhitespacePattern : withoutWhitespacePattern );
-	}
-	
-	@Override
-	protected String check( String value ) {
-		
-		if( super.check( value ) != null )
-			return NO_INTEGER;
-		
-		return null;
+		super( includeWhitespace ? includingWhitespacePattern : withoutWhitespacePattern, NO_INTEGER );
 	}
 }

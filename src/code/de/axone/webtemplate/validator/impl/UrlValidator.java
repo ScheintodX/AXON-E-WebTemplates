@@ -17,7 +17,7 @@ public class UrlValidator extends AbstractValidator<String> {
 	public UrlValidator(){}
 
 	@Override
-	protected String check( String url ) {
+	public String validate( String url ) {
 		
 		if( url == null || url.length() == 0 ) return null;
 		

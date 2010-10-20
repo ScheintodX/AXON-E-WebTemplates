@@ -23,8 +23,6 @@ public interface WebForm {
 
 	public HtmlInput getHtmlInput( String name ) throws WebTemplateException;
 
-	public Set<String> getValueNames();
-
 	public boolean isValid();
 	public List<String> validate();
 

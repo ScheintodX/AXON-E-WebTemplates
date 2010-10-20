@@ -21,7 +21,7 @@ public class MinMaxValidator extends AbstractValidator<Number> {
 	}
 
 	@Override
-	protected String check( Number value ) {
+	public String validate( Number value ) {
 		
 		if( value == null ) return null;
 			

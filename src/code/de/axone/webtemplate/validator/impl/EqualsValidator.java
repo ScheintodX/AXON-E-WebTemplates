@@ -14,7 +14,7 @@ public class EqualsValidator extends AbstractValidator<String> {
 	}
 
 	@Override
-	protected String check( String value ) {
+	public String validate( String value ) {
 		
 		if( value == null && other.getPlainValue() == null ) return null;
 		

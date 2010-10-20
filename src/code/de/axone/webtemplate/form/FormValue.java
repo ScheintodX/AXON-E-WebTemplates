@@ -17,10 +17,8 @@ public interface FormValue<T> {
 	public HtmlInput getHtmlInput();
 	
 	public void setConverter( Converter<T> converter );
-	public T getValue()
-	throws ConverterException;
-	public void setValue( T value )
-	throws ConverterException;
+	public T getValue() throws ConverterException;
+	public void setValue( T value ) throws ConverterException;
 	
 	public String getPlainValue();
 	

@@ -7,29 +7,32 @@ import de.axone.webtemplate.validator.AbstractValidator;
 
 public class PatternValidator extends AbstractValidator<String> {
 	
-	private Pattern pattern;
+	private final Pattern pattern;
 	
 	private static final String FAIL = "VALIDATOR_PATTERN_FAIL";
 	
-	public PatternValidator( String regex ){
+	private final String errorMessage;
+	
+	public PatternValidator( String regex, String errorMessage ){
 		
-		this( Pattern.compile( regex ) );
+		this( Pattern.compile( regex ), errorMessage );
 	}
 	
-	public PatternValidator( Pattern pattern ){
+	public PatternValidator( Pattern pattern, String errorMessage ){
 		
 		this.pattern = pattern;
+		this.errorMessage = errorMessage != null ? errorMessage : FAIL;
 	}
 
 	@Override
-	protected String check( String value ) {
+	public String validate( String value ) {
 		
 		if( value == null || value.length() == 0 ) return null;
 		
 		Matcher matcher = pattern.matcher( value );
 		
 		if( ! matcher.matches() )
-			return FAIL;
+			return errorMessage;
 		
 		return null;
 	}
