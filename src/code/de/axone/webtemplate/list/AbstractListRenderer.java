@@ -102,7 +102,7 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 		pager.setSelectedPage( currentPage );
 	}
 	
-	public void initSortSelectorc( SortSelector sortSelector ){
+	public void initSortSelector( SortSelector sortSelector ){
 		
 		sortSelector.setNameBase( name );
 		sortSelector.setSelectedSort( sort );
