@@ -32,11 +32,11 @@ public class HtmlElement implements Renderer {
 
 		setTagName( tagName );
 
-		addAttribute( ATTRIBUTE_ID );
-		addAttribute( ATTRIBUTE_CLASS );
+		addAttribute( ATTRIBUTE_ID, ATTRIBUTE_ID );
+		addAttribute( ATTRIBUTE_CLASS, ATTRIBUTE_CLASS );
 
 		if( addAttributes != null ) for( String attributeName : addAttributes ){
-			addAttribute( attributeName );
+			addAttribute( attributeName, attributeName );
 		}
 	}
 
@@ -128,9 +128,10 @@ public class HtmlElement implements Renderer {
 	}
 
 	public String getAttribute( String key ) {
-
+		for( String str : attributes.keySet() ) System.err.println( str ); 
+		System.err.println( "---"+key.toString() );
 		if( attributes.containsKey( key ) ){
-
+			System.err.println( "---  .. "+attributes.get( key ) );
 			return attributes.get( key );
 		} else {
 			throw new IllegalArgumentException( key + " is not supported" );
