@@ -58,11 +58,10 @@ public class HtmlCheckboxElement extends AbstractHtmlInputElement {
 
 	@Override
 	public void setValue( String value ) {
-		System.err.println( "val "+value );
+	
 		if( value == null ) {
 			setChecked( false );
 		} else {
-			System.err.println( "gc "+getCheckedValue() );
 			setChecked( value.equals( getCheckedValue() ) );
 		}
 	}

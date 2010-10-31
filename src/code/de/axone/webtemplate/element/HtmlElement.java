@@ -128,10 +128,8 @@ public class HtmlElement implements Renderer {
 	}
 
 	public String getAttribute( String key ) {
-		for( String str : attributes.keySet() ) System.err.println( str ); 
-		System.err.println( "---"+key.toString() );
+
 		if( attributes.containsKey( key ) ){
-			System.err.println( "---  .. "+attributes.get( key ) );
 			return attributes.get( key );
 		} else {
 			throw new IllegalArgumentException( key + " is not supported" );
