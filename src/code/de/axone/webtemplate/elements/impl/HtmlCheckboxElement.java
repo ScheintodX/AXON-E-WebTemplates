@@ -53,7 +53,7 @@ public class HtmlCheckboxElement extends AbstractHtmlInputElement {
 	// --- Value ---
 	@Override
 	public String getValue() {
-		return getChecked() ? "1" : "0";
+		return getChecked() ? "true" : "false";
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class HtmlCheckboxElement extends AbstractHtmlInputElement {
 		if( value == null ) {
 			setChecked( false );
 		} else {
-			setChecked( value.equals( getCheckedValue() ) );
+			setChecked( true );
 		}
 	}
 

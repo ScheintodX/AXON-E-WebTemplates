@@ -12,7 +12,7 @@ public class BooleanCheckboxConverter extends AbstractConverter<Boolean> {
 		if( value == null )
 			return Boolean.FALSE;
 		
-		if( value.trim().length() == 0 )
+		if( value.trim().equalsIgnoreCase( "false" ) )
 			return Boolean.FALSE;
 		
 		return Boolean.TRUE;

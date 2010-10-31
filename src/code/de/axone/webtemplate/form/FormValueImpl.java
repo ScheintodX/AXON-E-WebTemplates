@@ -73,7 +73,6 @@ public class FormValueImpl<T> implements FormValue<T> {
 	@Override
 	public T getValue() 
 		throws ConverterException {
-		
 		return converter.convertFromString( htmlInput.getValue() );
 	}
 	

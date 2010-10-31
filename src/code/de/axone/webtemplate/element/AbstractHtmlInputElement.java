@@ -22,9 +22,12 @@ public abstract class AbstractHtmlInputElement extends HtmlElement implements Ht
 	public void initialize( HttpServletRequest request ) {
 		
 		String value = request.getParameter( getName() );
-		
-		if( value != null )
+
+		if( value != null ){
 			setValue( value );
+		}else{
+			setValue( null );
+		}
 		
 	}
 	
