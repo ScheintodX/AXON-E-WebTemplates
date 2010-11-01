@@ -139,6 +139,8 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 
 				if( value != null && value.equals(selected) ) {
 					optionElement.setSelected(true);
+				}else{
+					optionElement.setSelected(false);
 				}
 
 				optionElement.render(object, request, response, translator);
