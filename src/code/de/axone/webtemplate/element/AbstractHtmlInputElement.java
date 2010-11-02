@@ -25,8 +25,6 @@ public abstract class AbstractHtmlInputElement extends HtmlElement implements Ht
 
 		if( value != null ){
 			setValue( value );
-		}else{
-			setValue( null );
 		}
 		
 	}

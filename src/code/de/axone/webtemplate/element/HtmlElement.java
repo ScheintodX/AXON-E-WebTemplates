@@ -32,11 +32,11 @@ public class HtmlElement implements Renderer {
 
 		setTagName( tagName );
 
-		addAttribute( ATTRIBUTE_ID, ATTRIBUTE_ID );
-		addAttribute( ATTRIBUTE_CLASS, ATTRIBUTE_CLASS );
+		addAttribute( ATTRIBUTE_ID );
+		addAttribute( ATTRIBUTE_CLASS );
 
 		if( addAttributes != null ) for( String attributeName : addAttributes ){
-			addAttribute( attributeName, attributeName );
+			addAttribute( attributeName );
 		}
 	}
 
