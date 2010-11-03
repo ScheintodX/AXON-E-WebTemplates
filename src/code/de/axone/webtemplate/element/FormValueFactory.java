@@ -355,7 +355,7 @@ public class FormValueFactory {
 
 		if( min != null || max != null ) {
 			result.addValidator( new MinMaxValidator( min, max ) );
-			ajaxValidate.add( "digitltd[" + min + "," + max + "]" );
+			ajaxValidate.add( "digit[" + min + "," + max + "]" );
 		}
 
 		if( !nullable ) {
