@@ -544,6 +544,7 @@ public class FormValueFactory {
 			result.addValidator( new NotNullValidator() );
 			ajaxValidate.add( "required" );
 		}
+		element.addClassAttribute( ajaxValidate.text() );
 
 		return result;
 	}
