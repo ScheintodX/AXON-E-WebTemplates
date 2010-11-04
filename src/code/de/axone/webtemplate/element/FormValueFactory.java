@@ -521,6 +521,11 @@ public class FormValueFactory {
 	 */
 	public FormValue<String> createTextareaTextValue( String name, int length,
 			boolean nullable ) {
+		return createTextareaTextValue( name, length, nullable, new AjaxValidate() );
+	}
+	
+	public FormValue<String> createTextareaTextValue( String name, int length,
+			boolean nullable, AjaxValidate ajaxValidate ) {
 
 		FormValueImpl<String> result = new FormValueImpl<String>();
 
@@ -531,11 +536,14 @@ public class FormValueFactory {
 		result.setHtmlInput( element );
 		result.setConverter( converter );
 
-		if( length >= 0 )
+		if( length >= 0 ){
 			result.addValidator( new LengthValidator( length ) );
-
-		if( !nullable )
+			ajaxValidate.add( "length[0," + length + "]" );
+		}
+		if( !nullable ) {
 			result.addValidator( new NotNullValidator() );
+			ajaxValidate.add( "required" );
+		}
 
 		return result;
 	}

@@ -54,12 +54,14 @@ public class HtmlTextAreaElement extends AbstractHtmlInputElement {
 	}
 	@Override
 	public void setValue( String value ) {
-		setContent( value );
+		super.setContent( value );
 	}
 
+	/*
 	// --- Content ---
 	@Override
 	public void setContent( Object object ){
 		throw new IllegalArgumentException( "setContent is not supported. Use setValue instead." );
 	}
+	*/
 }
