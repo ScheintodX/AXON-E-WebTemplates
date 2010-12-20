@@ -11,6 +11,11 @@ import de.axone.web.encoding.AttributeEncoder;
 import de.axone.webtemplate.Renderer;
 import de.axone.webtemplate.form.Translator;
 
+/**
+ * Base class for all Html Elements
+ * 
+ * @author flo
+ */
 public class HtmlElement implements Renderer {
 
 	public static final String ATTRIBUTE_CLASS = "class";
@@ -21,22 +26,38 @@ public class HtmlElement implements Renderer {
 
 	private Object content;
 
+	/**
+	 * Create a html tag/element with the given tag name
+	 * 
+	 * e.g. HtmlElement( "div" ) crates one div
+	 * 
+	 * @param tagName
+	 */
 	public HtmlElement( String tagName ){
 
 		this( tagName, null );
 	}
 
+	/**
+	 * Create a html element with the given tag name and 
+	 * additional attribute declarations
+	 * 
+	 * <em>Attributes are not initialized but only declared.</em>
+	 * 
+	 * @param tagName
+	 * @param addAttributes
+	 */
 	public HtmlElement( String tagName, List<String> addAttributes ){
 
 		this.attributes = new LinkedHashMap<String,String>();
 
 		setTagName( tagName );
 
-		addAttribute( ATTRIBUTE_ID, ATTRIBUTE_ID );
-		addAttribute( ATTRIBUTE_CLASS, ATTRIBUTE_CLASS );
+		addAttribute( ATTRIBUTE_ID );
+		addAttribute( ATTRIBUTE_CLASS);
 
 		if( addAttributes != null ) for( String attributeName : addAttributes ){
-			addAttribute( attributeName, attributeName );
+			addAttribute( attributeName );
 		}
 	}
 
