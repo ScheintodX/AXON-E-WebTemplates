@@ -6,8 +6,11 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.cache.BackendCacheNoCache;
+import de.axone.data.Pair;
 import de.axone.logging.Log;
 import de.axone.logging.Logging;
+import de.axone.tools.FileWatcher;
 import de.axone.webtemplate.DataHolder.DataHolderItem;
 import de.axone.webtemplate.DataHolder.DataHolderItemType;
 import de.axone.webtemplate.form.Translator;
@@ -19,10 +22,17 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 	private DataHolder holder;
 
 	public AbstractFileWebTemplate() {}
-
+	
 	protected AbstractFileWebTemplate( File file ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+		
+		this( new FileDataHolderFactory( 
+				new BackendCacheNoCache<File, Pair<FileWatcher, DataHolder>>()
+		).holderFor( file ) );
+	}
 
-		setHolder(  FileDataHolderFactory.holderFor( file ) );
+	protected AbstractFileWebTemplate( DataHolder holder ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+
+		setHolder( holder );
 	}
 
 	public void setHolder( DataHolder holder ) throws KeyException, IOException{

@@ -3,7 +3,7 @@ package de.axone.webtemplate;
 import java.io.IOException;
 import java.net.URL;
 
-import de.axone.data.LRUCache;
+import de.axone.cache.BackendCache;
 import de.axone.data.Pair;
 import de.axone.logging.Log;
 import de.axone.logging.Logging;
@@ -18,10 +18,14 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 
 	private static Log log = Logging.getLog( HttpDataHolderFactory.class );
 
-	static LRUCache<URL, Pair<HttpWatcher, DataHolder>> storage = new LRUCache<URL, Pair<HttpWatcher,DataHolder>>( 10000 );
+	final BackendCache.Direct<URL, Pair<HttpWatcher, DataHolder>> storage;
 	static int reloadCount=0;
+	
+	public HttpDataHolderFactory( BackendCache.Direct<URL, Pair<HttpWatcher, DataHolder>> storage ){
+		this.storage =  storage;
+	}
 
-	synchronized public static DataHolder holderFor( URL url )
+	synchronized public DataHolder holderFor( URL url )
 			throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
 		log.debug( url );

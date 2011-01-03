@@ -9,7 +9,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
-import de.axone.data.LRUCache;
+import de.axone.cache.BackendCache;
 import de.axone.data.Pair;
 import de.axone.logging.Log;
 import de.axone.logging.Logging;
@@ -17,14 +17,18 @@ import de.axone.tools.FileWatcher;
 import de.axone.tools.Slurper;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
-public abstract class FileDataHolderFactory extends AbstractDataHolderFactory {
+public class FileDataHolderFactory extends AbstractDataHolderFactory {
 
 	private static Log log = Logging.getLog( FileDataHolderFactory.class );
 
-	static LRUCache<File, Pair<FileWatcher, DataHolder>> storage = new LRUCache<File, Pair<FileWatcher,DataHolder>>( 10000 );
+	final BackendCache.Direct<File, Pair<FileWatcher, DataHolder>> storage;
 	static int reloadCount=0;
+	
+	public FileDataHolderFactory( BackendCache.Direct<File, Pair<FileWatcher, DataHolder>> storage ){
+		this.storage = storage;
+	}
 
-	synchronized public static DataHolder holderFor( File file )
+	synchronized public DataHolder holderFor( File file )
 			throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
 		FileWatcher watcher;

@@ -4,8 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import de.axone.cache.BackendCache;
+import de.axone.cache.BackendCache.Direct;
+import de.axone.data.Pair;
 import de.axone.logging.Log;
 import de.axone.logging.Logging;
+import de.axone.tools.FileWatcher;
+import de.axone.tools.HttpWatcher;
 
 /**
  * This class is the factory for the webtemplates.
@@ -25,9 +30,24 @@ import de.axone.logging.Logging;
  */
 public class WebTemplateFactory {
 	
+	private final Log log = Logging.getLog( WebTemplateFactory.class );
 	
-	private static final Log log = Logging.getLog( WebTemplateFactory.class );
+	private final FileDataHolderFactory fileDataHolderFactory;
+	private final HttpDataHolderFactory httpDataHolderFactory;
 	
+	@SuppressWarnings( "unchecked" )
+	public WebTemplateFactory( 
+			BackendCache.Direct<?,?> fileCache, 
+			BackendCache.Direct<?,?> httpCache
+	){
+		
+		fileDataHolderFactory = new FileDataHolderFactory(
+				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache );
+		
+		httpDataHolderFactory = new HttpDataHolderFactory(
+				(Direct<URL, Pair<HttpWatcher, DataHolder>>) httpCache );
+		
+	}
 
 	/**
 	 * Create a WebTemplate for a given class name.
@@ -125,7 +145,7 @@ public class WebTemplateFactory {
 		// Get Holder
 		DataHolder holder;
 		try {
-    		holder = FileDataHolderFactory.holderFor( file );
+    		holder = fileDataHolderFactory.holderFor( file );
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In file: " + file.getPath(), e );
 		}
@@ -161,7 +181,7 @@ public class WebTemplateFactory {
 		// Get Holder
 		DataHolder holder;
 		try {
-    		holder = HttpDataHolderFactory.holderFor( url );
+    		holder = httpDataHolderFactory.holderFor( url );
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In url: " + url, e );
 		}
