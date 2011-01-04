@@ -3,7 +3,7 @@ package de.axone.webtemplate;
 import java.io.IOException;
 import java.net.URL;
 
-import de.axone.cache.BackendCache;
+import de.axone.cache.Cache;
 import de.axone.data.Pair;
 import de.axone.logging.Log;
 import de.axone.logging.Logging;
@@ -18,10 +18,10 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 
 	private static Log log = Logging.getLog( HttpDataHolderFactory.class );
 
-	final BackendCache.Direct<URL, Pair<HttpWatcher, DataHolder>> storage;
+	final Cache.Direct<URL, Pair<HttpWatcher, DataHolder>> storage;
 	static int reloadCount=0;
 	
-	public HttpDataHolderFactory( BackendCache.Direct<URL, Pair<HttpWatcher, DataHolder>> storage ){
+	public HttpDataHolderFactory( Cache.Direct<URL, Pair<HttpWatcher, DataHolder>> storage ){
 		this.storage =  storage;
 	}
 

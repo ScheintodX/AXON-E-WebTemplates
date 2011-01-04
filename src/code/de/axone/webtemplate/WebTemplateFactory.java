@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import de.axone.cache.BackendCache;
-import de.axone.cache.BackendCache.Direct;
+import de.axone.cache.Cache;
+import de.axone.cache.Cache.Direct;
 import de.axone.data.Pair;
 import de.axone.logging.Log;
 import de.axone.logging.Logging;
@@ -37,8 +37,8 @@ public class WebTemplateFactory {
 	
 	@SuppressWarnings( "unchecked" )
 	public WebTemplateFactory( 
-			BackendCache.Direct<?,?> fileCache, 
-			BackendCache.Direct<?,?> httpCache
+			Cache.Direct<?,?> fileCache, 
+			Cache.Direct<?,?> httpCache
 	){
 		
 		fileDataHolderFactory = new FileDataHolderFactory(

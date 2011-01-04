@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.axone.cache.BackendCacheNoCache;
+import de.axone.cache.CacheNoCache;
 import de.axone.data.Pair;
 import de.axone.logging.Log;
 import de.axone.logging.Logging;
@@ -26,7 +26,7 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 	protected AbstractFileWebTemplate( File file ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
 		
 		this( new FileDataHolderFactory( 
-				new BackendCacheNoCache<File, Pair<FileWatcher, DataHolder>>()
+				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>()
 		).holderFor( file ) );
 	}
 

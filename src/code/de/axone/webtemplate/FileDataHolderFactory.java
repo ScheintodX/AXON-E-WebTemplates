@@ -9,7 +9,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
-import de.axone.cache.BackendCache;
+import de.axone.cache.Cache;
 import de.axone.data.Pair;
 import de.axone.logging.Log;
 import de.axone.logging.Logging;
@@ -21,10 +21,10 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 
 	private static Log log = Logging.getLog( FileDataHolderFactory.class );
 
-	final BackendCache.Direct<File, Pair<FileWatcher, DataHolder>> storage;
+	final Cache.Direct<File, Pair<FileWatcher, DataHolder>> storage;
 	static int reloadCount=0;
 	
-	public FileDataHolderFactory( BackendCache.Direct<File, Pair<FileWatcher, DataHolder>> storage ){
+	public FileDataHolderFactory( Cache.Direct<File, Pair<FileWatcher, DataHolder>> storage ){
 		this.storage = storage;
 	}
 
