@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import de.axone.cache.Cache;
+import de.axone.cache.CacheNoCache;
 import de.axone.cache.Cache.Direct;
 import de.axone.data.Pair;
 import de.axone.logging.Log;
@@ -34,6 +35,11 @@ public class WebTemplateFactory {
 	
 	private final FileDataHolderFactory fileDataHolderFactory;
 	private final HttpDataHolderFactory httpDataHolderFactory;
+	
+	@SuppressWarnings( "unchecked" )
+	public WebTemplateFactory(){
+		this( new CacheNoCache(), new CacheNoCache() );
+	}
 	
 	@SuppressWarnings( "unchecked" )
 	public WebTemplateFactory( 
