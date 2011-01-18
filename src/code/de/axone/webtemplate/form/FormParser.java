@@ -7,8 +7,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.axone.logging.Log;
-import de.axone.logging.Logging;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.axone.webtemplate.DataHolder;
 import de.axone.webtemplate.KeyException;
 import de.axone.webtemplate.WebTemplateException;
@@ -17,8 +18,8 @@ import de.axone.webtemplate.form.Form.On;
 
 public class FormParser<T> {
 	
-	private static final Log log = 
-			Logging.getLog( FormParser.class );
+	public static final Logger log =
+			LoggerFactory.getLogger( FormParser.class );
 	
 	private static final HashSet<Method> COMMON_METHODS 
 			= new HashSet<Method>( Arrays.asList( Object.class.getMethods() ) );

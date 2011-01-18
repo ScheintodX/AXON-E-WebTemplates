@@ -3,10 +3,11 @@ package de.axone.webtemplate;
 import java.io.IOException;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.axone.cache.Cache;
 import de.axone.data.Pair;
-import de.axone.logging.Log;
-import de.axone.logging.Logging;
 import de.axone.tools.HttpWatcher;
 import de.axone.tools.HttpUtil.HttpUtilResponse;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
@@ -16,7 +17,8 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	private static final String BEGIN_TEMPLATE = "__BEGIN_TEMPLATE__";
 	private static final String END_TEMPLATE = "__END_TEMPLATE__";
 
-	private static Log log = Logging.getLog( HttpDataHolderFactory.class );
+	public static final Logger log =
+			LoggerFactory.getLogger( HttpDataHolderFactory.class );
 
 	final Cache.Direct<URL, Pair<HttpWatcher, DataHolder>> storage;
 	static int reloadCount=0;
@@ -28,7 +30,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	synchronized public DataHolder holderFor( URL url )
 			throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-		log.debug( url );
+		log.debug( url.toString() );
 		
 		HttpWatcher watcher;
 		DataHolder result=null;

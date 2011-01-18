@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/hibernate-validator.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.3.jar" sourcepath="/home/flo/java/commons/commons-beanutils-1.8.3/commons-beanutils-1.8.3-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Tools"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

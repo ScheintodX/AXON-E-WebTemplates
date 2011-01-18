@@ -30,7 +30,7 @@ import de.axone.webtemplate.form.Translator;
  * @author flo
  *
  */
-public class FunctionIf implements Function {
+public class IfFunction implements Function {
 	
 	public static final String ATTRIBUTE_CONDITION = "condition";
 
@@ -41,13 +41,18 @@ public class FunctionIf implements Function {
 		
 		if( "if".equals( name ) ){
 			
-			String conditionName = attributes.getAsStringRequired( ATTRIBUTE_CONDITION );
+			boolean not=true;
+			String conditionName = attributes.getAsStringRequired( ATTRIBUTE_CONDITION ).trim();
+			if( conditionName.length() > 0 && conditionName.charAt( 0 ) == '!' ){
+				not=false;
+				conditionName = conditionName.substring( 1 ).trim();
+			}
 			String condition = holder.getParameter( conditionName );
 			
 			if( EasyParser.isYes( condition ) ){
-				holder.setRender( true );
+				holder.setRender( not );
 			} else {
-				holder.setRender( false );
+				holder.setRender( !not );
 			}
 		} else if( "endif".equals( name ) ){
 			holder.setRender( true );

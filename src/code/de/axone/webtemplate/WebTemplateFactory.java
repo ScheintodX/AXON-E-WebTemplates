@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.axone.cache.Cache;
 import de.axone.cache.CacheNoCache;
 import de.axone.cache.Cache.Direct;
 import de.axone.data.Pair;
-import de.axone.logging.Log;
-import de.axone.logging.Logging;
 import de.axone.tools.FileWatcher;
 import de.axone.tools.HttpWatcher;
 
@@ -31,7 +32,8 @@ import de.axone.tools.HttpWatcher;
  */
 public class WebTemplateFactory {
 	
-	private final Log log = Logging.getLog( WebTemplateFactory.class );
+	public static final Logger log =
+			LoggerFactory.getLogger( WebTemplateFactory.class );
 	
 	private final FileDataHolderFactory fileDataHolderFactory;
 	private final HttpDataHolderFactory httpDataHolderFactory;

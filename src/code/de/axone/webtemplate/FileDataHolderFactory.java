@@ -9,17 +9,19 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.axone.cache.Cache;
 import de.axone.data.Pair;
-import de.axone.logging.Log;
-import de.axone.logging.Logging;
 import de.axone.tools.FileWatcher;
 import de.axone.tools.Slurper;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 public class FileDataHolderFactory extends AbstractDataHolderFactory {
 
-	private static Log log = Logging.getLog( FileDataHolderFactory.class );
+	public static final Logger log =
+			LoggerFactory.getLogger( FileDataHolderFactory.class );
 
 	final Cache.Direct<File, Pair<FileWatcher, DataHolder>> storage;
 	static int reloadCount=0;
