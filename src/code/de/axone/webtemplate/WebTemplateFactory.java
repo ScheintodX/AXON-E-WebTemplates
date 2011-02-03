@@ -49,6 +49,9 @@ public class WebTemplateFactory {
 			Cache.Direct<?,?> httpCache
 	){
 		
+		assert fileCache != null;
+		assert httpCache != null;
+		
 		fileDataHolderFactory = new FileDataHolderFactory(
 				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache );
 		
@@ -73,6 +76,8 @@ public class WebTemplateFactory {
 	 * @throws KeyException
 	 */
 	public WebTemplate templateFor( String className ) throws WebTemplateException {
+		
+		if( className == null ) throw new IllegalArgumentException( "'className' is null" );
 
 		try {
 			return instantiate( className );
@@ -101,6 +106,8 @@ public class WebTemplateFactory {
 	}
 
 	public WebTemplate templateFor( File file, String className ) throws WebTemplateException {
+		
+		if( file == null ) throw new IllegalArgumentException( "'file' is null" );
 
 		try {
 			WebTemplate result = instantiate( file, className );
@@ -123,6 +130,8 @@ public class WebTemplateFactory {
 	
 	public WebTemplate templateFor( URL url, String className ) throws WebTemplateException {
 
+		if( url == null ) throw new IllegalArgumentException( "'url' is null" );
+		
 		try {
 			WebTemplate result = instantiate( url, className );
 			return result;
