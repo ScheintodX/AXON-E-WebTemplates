@@ -3,6 +3,7 @@
 	<name>WebTemplates</name>
 	<comment></comment>
 	<projects>
+		<project>Tools</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

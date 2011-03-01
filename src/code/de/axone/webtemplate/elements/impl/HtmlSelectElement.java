@@ -152,39 +152,6 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 
 	/*  ************** Option *************** */
 
-	public static interface Option {
-		public String getValue();
-
-		public String getText();
-	}
-
-	public static class OptionImpl implements Option {
-
-		private String value;
-		private String text;
-
-		public OptionImpl( String value, String text ) {
-			this.value = value;
-			this.text = text;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-		public void setValue( String value ) {
-			this.value = value;
-		}
-
-		public String getText() {
-			return text;
-		}
-
-		public void setText( String text ) {
-			this.text = text;
-		}
-	}
-
 	public static class OptionComparator implements Comparator<Option> {
 
 		@Override

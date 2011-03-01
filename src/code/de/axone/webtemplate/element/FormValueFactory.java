@@ -25,9 +25,9 @@ import de.axone.webtemplate.elements.impl.HtmlInputElement;
 import de.axone.webtemplate.elements.impl.HtmlRadioElement;
 import de.axone.webtemplate.elements.impl.HtmlSelectElement;
 import de.axone.webtemplate.elements.impl.HtmlTextAreaElement;
-import de.axone.webtemplate.elements.impl.HtmlSelectElement.Option;
+import de.axone.webtemplate.elements.impl.Option;
+import de.axone.webtemplate.elements.impl.OptionImpl;
 import de.axone.webtemplate.elements.impl.HtmlSelectElement.OptionComparator;
-import de.axone.webtemplate.elements.impl.HtmlSelectElement.OptionImpl;
 import de.axone.webtemplate.form.FormValue;
 import de.axone.webtemplate.form.FormValueImpl;
 import de.axone.webtemplate.validator.impl.CountryValidator;
@@ -274,6 +274,14 @@ public class FormValueFactory {
 		result.setHtmlInput( element );
 		result.setConverter( converter );
 		
+		ajaxValidate.add( "%check_date" );
+		if( !nullable ) {
+			result.addValidator( new NotNullValidator() );
+			ajaxValidate.add( "required" );
+		}
+		
+		element.addClassAttribute( ajaxValidate.text() );
+		
 		return result;
 	}
 	
@@ -311,7 +319,7 @@ public class FormValueFactory {
 		result.setHtmlInput( element );
 		result.setConverter( converter );
 		
-		ajaxValidate.add( "number" );
+		ajaxValidate.add( "%check_price_de" );
 		
 		if( min != null || max != null ) {
 			result.addValidator( new MinMaxValidator( min, max ) );
@@ -322,6 +330,8 @@ public class FormValueFactory {
 			result.addValidator( new NotNullValidator() );
 			ajaxValidate.add( "required" );
 		}
+		
+		element.addClassAttribute( ajaxValidate.text() );
 		
 		return result;
 	}

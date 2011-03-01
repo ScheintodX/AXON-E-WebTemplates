@@ -6,23 +6,35 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.axone.logging.Log;
-import de.axone.logging.Logging;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.axone.cache.CacheNoCache;
+import de.axone.data.Pair;
+import de.axone.tools.FileWatcher;
 import de.axone.webtemplate.DataHolder.DataHolderItem;
 import de.axone.webtemplate.DataHolder.DataHolderItemType;
 import de.axone.webtemplate.form.Translator;
 
 public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
-	static Log log = Logging.getLog( AbstractFileWebTemplate.class );
+	public static final Logger log =
+			LoggerFactory.getLogger( AbstractFileWebTemplate.class );
 
 	private DataHolder holder;
 
 	public AbstractFileWebTemplate() {}
-
+	
 	protected AbstractFileWebTemplate( File file ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+		
+		this( new FileDataHolderFactory( 
+				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>()
+		).holderFor( file ) );
+	}
 
-		setHolder(  FileDataHolderFactory.holderFor( file ) );
+	protected AbstractFileWebTemplate( DataHolder holder ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+
+		setHolder( holder );
 	}
 
 	public void setHolder( DataHolder holder ) throws KeyException, IOException{

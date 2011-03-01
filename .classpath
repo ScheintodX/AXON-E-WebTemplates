@@ -2,11 +2,20 @@
 <classpath>
 	<classpathentry kind="src" path="src/code"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/testng.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-validator.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.3.jar" sourcepath="/home/flo/java/commons/commons-beanutils-1.8.3/commons-beanutils-1.8.3-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Tools"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0">
+		<attributes>
+			<attribute name="owner.project.facets" value="jst.utility"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_18">
+		<attributes>
+			<attribute name="owner.project.facets" value="jst.java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

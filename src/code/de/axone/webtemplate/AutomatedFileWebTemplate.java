@@ -1,6 +1,5 @@
 package de.axone.webtemplate;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +16,8 @@ public class AutomatedFileWebTemplate extends AbstractFileWebTemplate {
 		super();
 	}
 	
-	public AutomatedFileWebTemplate( File file ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
-		super( file );
+	public AutomatedFileWebTemplate( DataHolder holder ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+		super( holder );
 	}
 	
 	@Override

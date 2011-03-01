@@ -4,8 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import de.axone.logging.Log;
-import de.axone.logging.Logging;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.axone.cache.Cache;
+import de.axone.cache.CacheNoCache;
+import de.axone.cache.Cache.Direct;
+import de.axone.data.Pair;
+import de.axone.tools.FileWatcher;
+import de.axone.tools.HttpWatcher;
 
 /**
  * This class is the factory for the webtemplates.
@@ -25,9 +32,33 @@ import de.axone.logging.Logging;
  */
 public class WebTemplateFactory {
 	
+	public static final Logger log =
+			LoggerFactory.getLogger( WebTemplateFactory.class );
 	
-	private static final Log log = Logging.getLog( WebTemplateFactory.class );
+	private final FileDataHolderFactory fileDataHolderFactory;
+	private final HttpDataHolderFactory httpDataHolderFactory;
 	
+	@SuppressWarnings( "unchecked" )
+	public WebTemplateFactory(){
+		this( new CacheNoCache(), new CacheNoCache() );
+	}
+	
+	@SuppressWarnings( "unchecked" )
+	public WebTemplateFactory( 
+			Cache.Direct<?,?> fileCache, 
+			Cache.Direct<?,?> httpCache
+	){
+		
+		assert fileCache != null;
+		assert httpCache != null;
+		
+		fileDataHolderFactory = new FileDataHolderFactory(
+				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache );
+		
+		httpDataHolderFactory = new HttpDataHolderFactory(
+				(Direct<URL, Pair<HttpWatcher, DataHolder>>) httpCache );
+		
+	}
 
 	/**
 	 * Create a WebTemplate for a given class name.
@@ -45,6 +76,8 @@ public class WebTemplateFactory {
 	 * @throws KeyException
 	 */
 	public WebTemplate templateFor( String className ) throws WebTemplateException {
+		
+		if( className == null ) throw new IllegalArgumentException( "'className' is null" );
 
 		try {
 			return instantiate( className );
@@ -73,6 +106,8 @@ public class WebTemplateFactory {
 	}
 
 	public WebTemplate templateFor( File file, String className ) throws WebTemplateException {
+		
+		if( file == null ) throw new IllegalArgumentException( "'file' is null" );
 
 		try {
 			WebTemplate result = instantiate( file, className );
@@ -95,6 +130,8 @@ public class WebTemplateFactory {
 	
 	public WebTemplate templateFor( URL url, String className ) throws WebTemplateException {
 
+		if( url == null ) throw new IllegalArgumentException( "'url' is null" );
+		
 		try {
 			WebTemplate result = instantiate( url, className );
 			return result;
@@ -125,7 +162,7 @@ public class WebTemplateFactory {
 		// Get Holder
 		DataHolder holder;
 		try {
-    		holder = FileDataHolderFactory.holderFor( file );
+    		holder = fileDataHolderFactory.holderFor( file );
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In file: " + file.getPath(), e );
 		}
@@ -161,7 +198,7 @@ public class WebTemplateFactory {
 		// Get Holder
 		DataHolder holder;
 		try {
-    		holder = HttpDataHolderFactory.holderFor( url );
+    		holder = httpDataHolderFactory.holderFor( url );
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In url: " + url, e );
 		}

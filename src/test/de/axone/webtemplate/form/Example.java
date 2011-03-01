@@ -14,7 +14,6 @@ import de.axone.web.TestHttpServletRequest;
 import de.axone.web.TestHttpServletResponse;
 import de.axone.webtemplate.AbstractFileWebTemplate;
 import de.axone.webtemplate.DataHolder;
-import de.axone.webtemplate.FileDataHolderFactory;
 import de.axone.webtemplate.WebTemplate;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.converter.ConverterException;
@@ -151,8 +150,9 @@ public class Example {
 				HttpServletResponse response, Translator translator ) throws IOException,
 				WebTemplateException, Exception {
 			
-			DataHolder h = FileDataHolderFactory.holderFor( new File( "test" ) );
 			WebForm form = (WebForm) object;
+			
+			DataHolder h = getHolder();
 
 			h.setValue( "input_username", form.getHtmlInput( USERNAME ) );
 			h.setValue( "input_email", form.getHtmlInput( EMAIL ) );

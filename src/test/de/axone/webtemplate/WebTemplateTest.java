@@ -1,11 +1,12 @@
 package de.axone.webtemplate;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.io.File;
 
 import org.testng.annotations.Test;
 
+import de.axone.cache.CacheHashMap;
 import de.axone.web.TestHttpServletRequest;
 import de.axone.web.TestHttpServletResponse;
 
@@ -15,7 +16,9 @@ public class WebTemplateTest {
 	public void testAutomatedTemplate() throws Exception {
 		
 		File file = new File( "src/test/de/axone/webtemplate/TestTemplate.txt" );
-		AutomatedFileWebTemplate template = new AutomatedFileWebTemplate( file );
+		@SuppressWarnings( "unchecked" )
+		DataHolder holder = new FileDataHolderFactory( new CacheHashMap() ).holderFor( file );
+		AutomatedFileWebTemplate template = new AutomatedFileWebTemplate( holder );
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		request.setParameter( "name", "Hugo" );
 		request.setParameter( "no", "123" );

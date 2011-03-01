@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import de.axone.webtemplate.Renderer;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.element.AbstractHtmlInputElement;
-import de.axone.webtemplate.elements.impl.HtmlSelectElement.Option;
 import de.axone.webtemplate.form.Translator;
 
 public class HtmlRadioElement extends AbstractHtmlInputElement {

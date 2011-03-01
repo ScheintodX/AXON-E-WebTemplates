@@ -24,7 +24,7 @@ public class HtmlSelectElementTest {
 	@Test( groups="webtemplate.htmlselectelement" )
 	public void testHtmlSelectElement() throws Exception {
 		
-		List<HtmlSelectElement.Option> options = makeOptionsList(
+		List<Option> options = makeOptionsList(
 				
 				Arrays.asList( new String[]{ "key1", "key2", "key3" } ),
 				Arrays.asList( new String[]{ "val1", "val2", "val3" } )
@@ -71,16 +71,16 @@ public class HtmlSelectElementTest {
 	}
 	*/
 	
-	private List<HtmlSelectElement.Option> makeOptionsList( List<String> keys, List<String> values ){
+	private List<Option> makeOptionsList( List<String> keys, List<String> values ){
 		
-		LinkedList<HtmlSelectElement.Option> result = new LinkedList<HtmlSelectElement.Option>();
+		LinkedList<Option> result = new LinkedList<Option>();
 		
 		for( int i = 0; i < keys.size(); i++ ){
 			
 			String key = keys.get( i );
 			String value = values.get( i );
 			
-			HtmlSelectElement.OptionImpl option = new HtmlSelectElement.OptionImpl( key, value );
+			OptionImpl option = new OptionImpl( key, value );
 			
 			result.add( option );
 		}
