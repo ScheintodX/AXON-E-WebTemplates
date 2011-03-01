@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.axone.cache.CacheNoCache;
 import de.axone.data.Pair;
 import de.axone.tools.FileWatcher;
 import de.axone.webtemplate.DataHolder.DataHolderItem;
@@ -18,8 +17,7 @@ import de.axone.webtemplate.form.Translator;
 
 public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
-	public static final Logger log =
-			LoggerFactory.getLogger( AbstractFileWebTemplate.class );
+	public static final Logger log = LoggerFactory.getLogger( AbstractFileWebTemplate.class );
 
 	private DataHolder holder;
 
