@@ -76,7 +76,7 @@ public class HtmlTextAreaElement extends AbstractHtmlInputElement {
 	
 	public void setRows( int rows ){
 		if( rows <= 0 ) throw new IllegalArgumentException( "rows <= 0" );
-		setAttribute( ATTRIBUTE_COLS, ""+rows );
+		setAttribute( ATTRIBUTE_ROWS, ""+rows );
 	}
 	
 	public void setWrap( WrapType type ){
