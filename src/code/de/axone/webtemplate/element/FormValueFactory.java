@@ -550,18 +550,18 @@ public class FormValueFactory {
 	 */
 	public FormValue<String> createTextareaTextValue( String name,
 			int length, int cols, int rows, boolean nullable ) {
-		return createTextareaTextValue( name, length, nullable, new AjaxValidate() );
+		return createTextareaTextValue( name, length, 60, 5, nullable, new AjaxValidate() );
 	}
 	
 	public FormValue<String> createTextareaTextValue( String name, int length,
-			boolean nullable, AjaxValidate ajaxValidate ) {
+			int cols, int rows, boolean nullable, AjaxValidate ajaxValidate ) {
 
 		FormValueImpl<String> result = new FormValueImpl<String>();
 
 		HtmlTextAreaElement element = new HtmlTextAreaElement( name );
 		element.setDecorator( decorator );
-		element.setRows( rows );
 		element.setCols( cols );
+		element.setRows( rows );
 
 		result.setHtmlInput( element );
 		

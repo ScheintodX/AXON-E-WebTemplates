@@ -62,7 +62,6 @@ public class HtmlTextAreaElement extends AbstractHtmlInputElement {
 		super.setContent( value );
 	}
 
-	/*
 	// --- Content ---
 	@Override
 	public void setContent( Object object ){
@@ -83,5 +82,4 @@ public class HtmlTextAreaElement extends AbstractHtmlInputElement {
 	public void setWrap( WrapType type ){
 		setAttribute( ATTRIBUTE_WRAP, type.name() );
 	}
-	*/
 }
