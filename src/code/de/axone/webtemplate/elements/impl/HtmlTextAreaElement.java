@@ -4,14 +4,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.axone.webtemplate.element.AbstractHtmlInputElement;
-import de.axone.webtemplate.element.FormValueFactory;
-import de.axone.webtemplate.form.FormValue;
 
 public class HtmlTextAreaElement extends AbstractHtmlInputElement {
 	
 	private static String TAGNAME = "textarea";
 
 	private static String ATTRIBUTE_NAME = "name";
+	
+	public static final String ATTRIBUTE_COLS = "cols";
+	public static final String ATTRIBUTE_ROWS = "rows";
+	public static final String ATTRIBUTE_WRAP = "rows";
 	
 	private static List<String> ATTRIBUTES = Arrays.asList( ATTRIBUTE_NAME );
 
@@ -26,14 +28,16 @@ public class HtmlTextAreaElement extends AbstractHtmlInputElement {
 
 		setName( name );
 		setValue( value );
+		
+		addAttribute( ATTRIBUTE_COLS );
+		addAttribute( ATTRIBUTE_ROWS );
+		addAttribute( ATTRIBUTE_WRAP );
 	}
 	
-	/**
-	 * @deprecated This method is too static
-	 */
-	public static FormValue<String> createTextValue( String name, int length, boolean nullable ){
-		
-		return (new FormValueFactory()).createTextareaTextValue( name, length, nullable );
+	@Override
+	public boolean hasContent(){
+		// TextArea always has content
+		return true;
 	}
 	
 	// --- Name ---
@@ -54,6 +58,7 @@ public class HtmlTextAreaElement extends AbstractHtmlInputElement {
 	}
 	@Override
 	public void setValue( String value ) {
+		// Has to be super because setContent is blocked here
 		super.setContent( value );
 	}
 
@@ -61,7 +66,22 @@ public class HtmlTextAreaElement extends AbstractHtmlInputElement {
 	// --- Content ---
 	@Override
 	public void setContent( Object object ){
-		throw new IllegalArgumentException( "setContent is not supported. Use setValue instead." );
+		throw new IllegalArgumentException( "setContent cannot be used in TextArea element because the content is the value." );
+	}
+	
+	// --- Additional Attributes ---
+	public void setCols( int cols ){
+		if( cols <= 0 ) throw new IllegalArgumentException( "cols <= 0" );
+		setAttribute( ATTRIBUTE_COLS, ""+cols );
+	}
+	
+	public void setRows( int rows ){
+		if( rows <= 0 ) throw new IllegalArgumentException( "rows <= 0" );
+		setAttribute( ATTRIBUTE_COLS, ""+rows );
+	}
+	
+	public void setWrap( WrapType type ){
+		setAttribute( ATTRIBUTE_WRAP, type.name() );
 	}
 	*/
 }

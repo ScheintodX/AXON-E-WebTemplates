@@ -20,6 +20,10 @@ public class HtmlElement implements Renderer {
 
 	public static final String ATTRIBUTE_CLASS = "class";
 	public static final String ATTRIBUTE_ID = "id";
+	
+	public enum WrapType {
+		soft, hard, virtual, physical, off;
+	};
 
 	protected String tagName;
 	protected LinkedHashMap<String,String> attributes;
@@ -106,17 +110,20 @@ public class HtmlElement implements Renderer {
 	protected void renderContent( Object content, Object object, HttpServletRequest request,
 			HttpServletResponse response, Translator translator ) throws Exception {
 
-		PrintWriter out = response.getWriter();
+		if( content != null ){
+			
+			PrintWriter out = response.getWriter();
 
-		if( content instanceof String ){
-
-			out.write( (String)content );
-
-		} else if( content instanceof Renderer ){
-
-			((Renderer) content).render( object, request, response, translator );
-		} else {
-			out.write( content.toString() );
+			if( content instanceof String ){
+	
+				out.write( (String)content );
+	
+			} else if( content instanceof Renderer ){
+	
+				((Renderer) content).render( object, request, response, translator );
+			} else {
+				out.write( content.toString() );
+			}
 		}
 	}
 
@@ -186,4 +193,5 @@ public class HtmlElement implements Renderer {
 	public Object getContent(){
 		return content;
 	}
+	
 }

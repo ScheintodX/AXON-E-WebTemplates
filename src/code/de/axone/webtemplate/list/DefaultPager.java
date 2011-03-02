@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.tools.Text;
 import de.axone.web.HttpLinkBuilder;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.Translator;
@@ -46,6 +47,15 @@ public class DefaultPager implements Pager {
 	boolean showBoundaries = true;
 	boolean showArrowheads = true;
 	boolean showSelectedArrowheads = true;
+	
+	public String toString(){
+		return Text.poster( '~', 
+			"nameBase: " + nameBase + "\n"
+			+ "numPages: " + numPages + "\n"
+			+ "selectedPage: " + selectedPage + "\n"
+			+ "renderIfOnlyOnePage: " + renderIfOnlyOnePage + "\n"
+		) ;
+	}
 
 	/* Templates */
 	private String leftContainer = "<div class=\"pager\">";
