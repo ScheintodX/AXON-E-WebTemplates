@@ -41,7 +41,6 @@ public abstract class AbstractHtmlInputElement extends HtmlElement implements Ht
 		}
 	}
 	
-	
 	@Override
 	public void renderElement( Object object, HttpServletRequest request,
 			HttpServletResponse response, Translator translator )

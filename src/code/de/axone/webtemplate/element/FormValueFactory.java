@@ -308,11 +308,22 @@ public class FormValueFactory {
 
 	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
 			HtmlInputElement.InputType type, Locale locale, String name,
-			BigDecimal min, BigDecimal max, boolean nullable,
+			BigDecimal min, BigDecimal max, boolean nullable, 
+			AjaxValidate ajaxValidate ){
+		
+		return createInputBigDecimalPriceValue( type, locale, name,
+				min, max, nullable, false, ajaxValidate );
+		
+	}
+	
+	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
+			HtmlInputElement.InputType type, Locale locale, String name,
+			BigDecimal min, BigDecimal max, boolean nullable, boolean readonly,
 			AjaxValidate ajaxValidate ){
 		
 		FormValueImpl<BigDecimal> result = new FormValueImpl<BigDecimal>();
 		HtmlInputElement element = new HtmlInputElement( type, name );
+		element.setReadonly( readonly );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		BigDecimalConverter converter = new BigDecimalConverter( BigDecimalConverter.EUR_DE_FORMAT );
@@ -347,6 +358,14 @@ public class FormValueFactory {
 			
 		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.TEXT,
 				defaultLocale, name, null, null, nullable, new AjaxValidate() );
+				
+	}
+
+	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
+			String name, boolean nullable, boolean readonly ) {
+			
+		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.TEXT,
+				defaultLocale, name, null, null, nullable, readonly, new AjaxValidate() );
 				
 	}
 
@@ -529,16 +548,19 @@ public class FormValueFactory {
 	/*
 	 * TextArea
 	 */
-	public FormValue<String> createTextareaTextValue( String name, int length,
-			boolean nullable ) {
+	public FormValue<String> createTextareaTextValue( String name,
+			int length, int cols, int rows, boolean nullable ) {
 
 		FormValueImpl<String> result = new FormValueImpl<String>();
 
 		HtmlTextAreaElement element = new HtmlTextAreaElement( name );
 		element.setDecorator( decorator );
-		StringConverter converter = new StringConverter();
+		element.setRows( rows );
+		element.setCols( cols );
 
 		result.setHtmlInput( element );
+		
+		StringConverter converter = new StringConverter();
 		result.setConverter( converter );
 
 		if( length >= 0 )
