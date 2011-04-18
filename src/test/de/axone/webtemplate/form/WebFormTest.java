@@ -4,6 +4,7 @@ import static org.testng.Assert.*;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.testng.annotations.Test;
 
@@ -89,13 +90,11 @@ public class WebFormTest {
 
 	}
 
-	private static class TestTextProvider implements Translator {
+	private static class TestTextProvider extends AbstractTranslator {
 
 		@Override
 		public String translate( String key ) {
 
-			if( key.equals( "VALIDATOR_IS_EMPTY" ) )
-				return "valisempty";
 
 			return null;
 		}
@@ -103,6 +102,24 @@ public class WebFormTest {
 		@Override
 		public String translate( String text, String ... arguments ) {
 			return translate( text );
+		}
+		
+		@Override
+		public String translate( String text, Map<String,String> arguments ) {
+			return translate( text );
+		}
+
+		@Override
+		public boolean has( String text ) {
+			return "VALIDATOR_IS_EMPTY".equals( text );
+		}
+
+		@Override
+		protected String getPlainTranslation( String text ) {
+			
+			if( "VALIDATOR_IS_EMPTY".equals( text ) ) return "valisempty";
+			
+			return null;
 		}
 	}
 

@@ -1,6 +1,7 @@
 package de.axone.webtemplate.list;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import de.axone.webtemplate.Renderer;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.Translator;
+import de.axone.webtemplate.list.Listable.Position;
 
 public abstract class AbstractListRenderer<T> implements Renderer {
 
@@ -36,8 +38,9 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 	public AbstractListRenderer(String name, int currentPage, int itemsPerPage,
 			String sort, ListProvider<T> listProvider, Renderer itemTemplate ) {
 
-		assert( listProvider != null );
-		assert( itemTemplate != null );
+		assert name != null;
+		assert listProvider != null;
+		assert itemTemplate != null;
 		
 		this.name = name;
 		this.currentPage = currentPage;
@@ -113,12 +116,31 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 			HttpServletResponse response, Translator translator )
 			throws IOException, WebTemplateException, Exception {
 
-		Iterable<T> it = getList();
+		Iterable<T> list = getList();
 
-		for( T t : it ) {
+		int i=0;
+		for( Iterator<T> it = list.iterator(); it.hasNext(); ){
+			
+			T t = it.next();
+			
+			if( itemTemplate instanceof Listable ){
+				Listable listableItemTemplate = (Listable) itemTemplate;
+				listableItemTemplate.setIndexInList( currentPage * itemsPerPage + i );
+				Position pos;
+				if( i == 0 ) pos = Position.TOP;
+				else if( it.hasNext() ) pos = Position.MIDDLE;
+				else pos = Position.BOTTOM;
+				listableItemTemplate.setPositionInList( pos );
+				listableItemTemplate.setHighlight( isHighlight( t ) );
+			}
 
 			itemTemplate.render( t, request, response, translator );
+			i++;
 		}
+	}
+	
+	protected boolean isHighlight( T t ){
+		return false;
 	}
 
 	protected Iterable<T> getList() {

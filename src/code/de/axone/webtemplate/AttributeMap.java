@@ -4,6 +4,17 @@ import java.util.HashMap;
 
 import de.axone.webtemplate.function.MissingAttributeException;
 
+/**
+ * Map of attributes for functions
+ * Attributes are either int or String. They have to be accessd
+ * in the correct way.
+ * 
+ * Todo: Das hier auf ein einfacheres System (Vermutlich mit dem StringAccessor/SA)
+ * umstellen.
+ * 
+ * @author flo
+ */
+
 public class AttributeMap extends HashMap<String,Object>{
 
 	public String getAsString( String key ){

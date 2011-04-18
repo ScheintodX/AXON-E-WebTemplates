@@ -11,7 +11,7 @@ import de.axone.web.Tag;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.Translator;
 
-public class DefaultSortSelector implements SortSelector {
+public class TableHeaderSortSelector implements SortSelector {
 	
 	private String[] sortMethods;
 	
@@ -45,36 +45,47 @@ public class DefaultSortSelector implements SortSelector {
 		
 		PrintWriter out = response.getWriter();
 		
-		StringBuilder options = new StringBuilder();
-		
-		for( String method : sortMethods ){
-			LinkedList<String> args = new LinkedList<String>();
-			args.add( "value" );
-			args.add( method );
-			if( method.equals( sort ) ){
-				args.add( "selected" );
-				args.add( "selected" );
-			}
-			Tag.simpleBB( 
-				options, "option",
-				translator != null ? translator.translate( method ) : method,
-				args.toArray( new String[ args.size() ] )
-			);
-		}
-		
-		String select = Tag.simple( 
-				"select", options.toString(), false,
-				"name", nameBase + "-sort",
-				"class",
-				"submit_on_change"
-		);
-		out.write( select );
+		StringBuilder result = new StringBuilder();
 		
 		String q = request.getParameter( "q" );
-		if( q != null ){
-			out.write( Tag.hiddenInput( "q", q ) );
+			
+		for( String method : sortMethods ){
+			
+			LinkedList<String> attributes = new LinkedList<String>();
+			
+			attributes.add( nameBase + "-sort" );
+			attributes.add( method );
+			
+			if( q != null ){
+				attributes.add( "q" );
+				attributes.add( q );
+			}
+			
+			if( keepPageOnSort ){
+				String pageName = nameBase + "-page";
+				String page = request.getParameter( pageName );
+				if( page != null ){
+					attributes.add( pageName );
+					attributes.add( page );
+				}
+			}
+			
+			String text = translator != null ? translator.translate( method ) : method;
+			
+			boolean selected = method.equals( sort );
+			
+			if( selected ) text = "[" + text + "]";
+			
+			Tag.linkBB( 
+					result, 
+					"", 
+					text,
+					selected ? "selected" : null,
+					attributes.toArray( new String[ attributes.size() ] ) )
+			;
 		}
 		
+		/*
 		if( keepPageOnSort ){
 			String pageName = nameBase + "-page";
 			String page = request.getParameter( pageName );
@@ -82,7 +93,9 @@ public class DefaultSortSelector implements SortSelector {
 				out.write( Tag.hiddenInput( pageName, page ) );
 			}
 		}
+		*/
 		
+		out.write( result.toString() );
 	}
 
 }

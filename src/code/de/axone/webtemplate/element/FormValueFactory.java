@@ -74,12 +74,15 @@ public class FormValueFactory {
 			Integer min, Integer max ) throws ConverterException {
 
 		FormValueImpl<Integer> result = new FormValueImpl<Integer>();
+		
 		HtmlCheckboxElement element = new HtmlCheckboxElement( name );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
-		IntegerConverter converter = new IntegerConverter( locale );
 		result.setHtmlInput( element );
+		
+		IntegerConverter converter = new IntegerConverter( locale );
 		result.setConverter( converter );
+		
 		if( min != null || max != null ) {
 			result.addValidator( new MinMaxValidator( min, max ) );
 		}
@@ -103,11 +106,13 @@ public class FormValueFactory {
 			) throws ConverterException {
 
 		FormValueImpl<Boolean> result = new FormValueImpl<Boolean>();
+		
 		HtmlCheckboxElement element = new HtmlCheckboxElement( name );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
-		BooleanCheckboxConverter converter = new BooleanCheckboxConverter();
 		result.setHtmlInput( element );
+		
+		BooleanCheckboxConverter converter = new BooleanCheckboxConverter();
 		result.setConverter( converter );
 
 		return result;
@@ -210,6 +215,7 @@ public class FormValueFactory {
 
 		AjaxValidate ajaxValidate = new AjaxValidate();
 		ajaxValidate.add( "email" );
+		
 		FormValue<String> result = createInputTextValue( name, length, nullable, ajaxValidate );
 		result.addValidator( new EMailValidator() );
 		return result;
@@ -227,6 +233,7 @@ public class FormValueFactory {
 
 		AjaxValidate ajaxValidate = new AjaxValidate();
 		ajaxValidate.add( "url" );
+		
 		FormValue<String> result = createInputTextValue( name, length, nullable, ajaxValidate );
 		result.addValidator( new UrlValidator() );
 		return result;
@@ -236,7 +243,6 @@ public class FormValueFactory {
 			boolean nullable ) {
 
 		AjaxValidate ajaxValidate = new AjaxValidate();
-
 		ajaxValidate.add( "phone" );
 
 		FormValue<String> result = createInputTextValue( name, length,
@@ -267,14 +273,17 @@ public class FormValueFactory {
 			AjaxValidate ajaxValidate ){
 		
 		FormValueImpl<Date> result = new FormValueImpl<Date>();
+		
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
-		DateConverter converter = DateConverter.ForLocale.get( locale );
 		result.setHtmlInput( element );
+		
+		DateConverter converter = DateConverter.ForLocale.get( locale );
 		result.setConverter( converter );
 		
 		ajaxValidate.add( "%check_date" );
+		
 		if( !nullable ) {
 			result.addValidator( new NotNullValidator() );
 			ajaxValidate.add( "required" );
@@ -322,12 +331,14 @@ public class FormValueFactory {
 			AjaxValidate ajaxValidate ){
 		
 		FormValueImpl<BigDecimal> result = new FormValueImpl<BigDecimal>();
+		
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setReadonly( readonly );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
-		BigDecimalConverter converter = new BigDecimalConverter( BigDecimalConverter.EUR_DE_FORMAT );
 		result.setHtmlInput( element );
+		
+		BigDecimalConverter converter = new BigDecimalConverter( BigDecimalConverter.EUR_DE_FORMAT );
 		result.setConverter( converter );
 		
 		ajaxValidate.add( "%check_price_de" );
@@ -381,6 +392,8 @@ public class FormValueFactory {
 		IntegerConverter converter = new IntegerConverter( locale );
 		result.setHtmlInput( element );
 		result.setConverter( converter );
+		
+		ajaxValidate.add( "%check_number_de" );
 
 		if( min != null || max != null ) {
 			result.addValidator( new MinMaxValidator( min, max ) );
@@ -413,8 +426,8 @@ public class FormValueFactory {
 
 	public FormValue<Integer> createInputIntegerValue( String name,
 			Locale locale, boolean nullable ) {
-		return createInputIntegerValue( name, locale, Integer.MIN_VALUE,
-				Integer.MAX_VALUE, nullable );
+		return createInputIntegerValue( name, locale, null,
+				null, nullable );
 	}
 	public FormValue<Integer> createInputIntegerValue( String name, boolean nullable ){
 		

@@ -335,13 +335,18 @@ public class FormParser<T> {
 		
 		for( FormField field : parsed ){
 			
-			//String value = form.getHtmlInput( field.formName ).getValue();
-			Object value = form.getFormValue( field.formName ).getValue();
-			
-			if( field.getter != null ){
-				putInPojoByMethod( field.setter, value );
+			String formName = field.formName;
+			FormValue<?> formValue = form.getFormValue( formName );
+			if( formValue != null ){
+				Object value = formValue.getValue();
+				
+				if( field.getter != null ){
+					putInPojoByMethod( field.setter, value );
+				} else {
+					putInPojoByField( field.field, value );
+				}
 			} else {
-				putInPojoByField( field.field, value );
+				log.warn( "Don't find formValue: " + formName );
 			}
 		}
 	}
@@ -359,10 +364,11 @@ public class FormParser<T> {
 			
 			FormValue<?> fVal = form.getFormValue( field.formName );
 			
-			if( fVal == null )
-				throw new WebTemplateException( "Cannot find: " + field.formName );
-			
-			forceInto( fVal, value ); //fVal.setValue( value );
+			if( fVal == null ){
+				log.warn( "Cannot find: " + field.formName );
+			} else {
+				forceInto( fVal, value ); //fVal.setValue( value );
+			}
 		}
 	}
 	
