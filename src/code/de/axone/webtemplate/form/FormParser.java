@@ -372,7 +372,7 @@ public class FormParser<T> {
 		}
 	}
 	
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings( { "unchecked", "rawtypes" } )
 	private void forceInto( FormValue val, Object x ) throws ConverterException{
 		
 		// This is stupid. But needed.

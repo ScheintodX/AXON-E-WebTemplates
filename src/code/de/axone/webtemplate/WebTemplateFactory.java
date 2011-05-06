@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.axone.cache.Cache;
-import de.axone.cache.CacheNoCache;
 import de.axone.cache.Cache.Direct;
+import de.axone.cache.CacheNoCache;
 import de.axone.data.Pair;
 import de.axone.tools.FileWatcher;
 import de.axone.tools.HttpWatcher;
@@ -38,7 +38,7 @@ public class WebTemplateFactory {
 	private final FileDataHolderFactory fileDataHolderFactory;
 	private final HttpDataHolderFactory httpDataHolderFactory;
 	
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings( "rawtypes" )
 	public WebTemplateFactory(){
 		this( new CacheNoCache(), new CacheNoCache() );
 	}

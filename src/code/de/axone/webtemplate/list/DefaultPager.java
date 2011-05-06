@@ -3,6 +3,7 @@ package de.axone.webtemplate.list;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,12 +42,14 @@ public class DefaultPager implements Pager {
 	private static final int offset = 5;
 
 	/* Configuration */
-	boolean renderIfOnlyOnePage = false;
-	boolean noHost = true;
-	boolean noPage = false;
-	boolean showBoundaries = true;
-	boolean showArrowheads = true;
-	boolean showSelectedArrowheads = true;
+	protected boolean renderIfOnlyOnePage = false;
+	protected boolean noHost = true;
+	protected boolean noPage = false;
+	protected boolean showBoundaries = true;
+	protected boolean showArrowheads = true;
+	protected boolean showSelectedArrowheads = true;
+	
+	protected List<String> parametersWhitelist = null;
 	
 	public String toString(){
 		return Text.poster( '~', 
@@ -58,16 +61,16 @@ public class DefaultPager implements Pager {
 	}
 
 	/* Templates */
-	private String leftContainer = "<div class=\"pager\">";
-	private String rightContainer = "</div>";
-	private Template leftTemplate = new Template( "<a href=\"__link__\">&lt;&lt;</a>" );
-	private Template selectedLeftTemplate = new Template( "<a class=\"active\">&lt;&lt;</a>" );
-	private Template rightTemplate = new Template( "<a href=\"__link__\">&gt;&gt;</a>" );
-	private Template selectedRightTemplate = new Template( "<a class=\"active\">&gt;&gt;</a>" );
-	private Template innerTemplate = new Template( "<a href=\"__link__\">__no__</a>" );
-	private Template selectedTemplate = new Template( "<a class=\"active\">[__no__]</a>" );
-	private Template skippedTemplate = new Template( "&hellip;" );
-	private Template spaceTemplate = new Template( "&nbsp;" );
+	protected String leftContainer = "<div class=\"pager\">";
+	protected String rightContainer = "</div>";
+	protected Template leftTemplate = new Template( "<a href=\"__link__\">&lt;&lt;</a>" );
+	protected Template selectedLeftTemplate = new Template( "<a class=\"active\">&lt;&lt;</a>" );
+	protected Template rightTemplate = new Template( "<a href=\"__link__\">&gt;&gt;</a>" );
+	protected Template selectedRightTemplate = new Template( "<a class=\"active\">&gt;&gt;</a>" );
+	protected Template innerTemplate = new Template( "<a href=\"__link__\">__no__</a>" );
+	protected Template selectedTemplate = new Template( "<a class=\"active\">[__no__]</a>" );
+	protected Template skippedTemplate = new Template( "&hellip;" );
+	protected Template spaceTemplate = new Template( "&nbsp;" );
 
 	public DefaultPager(){}
 
@@ -119,6 +122,10 @@ public class DefaultPager implements Pager {
 
 	public void setShowSelectedArrowheads( boolean showSelectedArrowheads ) {
 		this.showSelectedArrowheads = showSelectedArrowheads;
+	}
+	
+	public void setParametersWhitelist( List<String> parametersWhitelist ) {
+		this.parametersWhitelist = parametersWhitelist;
 	}
 
 	public void setLeftContainer( String leftContainer ) {
@@ -267,10 +274,10 @@ public class DefaultPager implements Pager {
 
 		parameters.put( nameBase + "-page", ""+page );
 
-		return HttpLinkBuilder.makeLink( request, noHost, noPage, parameters );
+		return HttpLinkBuilder.makeLink( request, noHost, noPage, parametersWhitelist, parameters );
 	}
 
-	private class Template {
+	protected class Template {
 
 		String str;
 		boolean hasLink;

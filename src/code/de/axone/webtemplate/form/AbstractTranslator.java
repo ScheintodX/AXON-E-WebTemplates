@@ -2,6 +2,7 @@ package de.axone.webtemplate.form;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import de.axone.tools.S;
 
@@ -33,7 +34,7 @@ public abstract class AbstractTranslator implements Translator {
 
 			params.put( ""+(i-1), parts[ i ].trim() );
 		}
-
+		
 		return translate( realText, params );
 	}
 
@@ -41,7 +42,7 @@ public abstract class AbstractTranslator implements Translator {
 	public String translate( String text, String ... arguments ) {
 
 		HashMap<String,String> args = new HashMap<String,String>();
-		for( int i=0; i < arguments.length; i++ ){
+		if( arguments != null ) for( int i=0; i < arguments.length; i++ ){
 			args.put( ""+i, arguments[i] );
 		}
 		
@@ -62,7 +63,10 @@ public abstract class AbstractTranslator implements Translator {
 		// Replace parameters
 		if( arguments != null ) {
 			for( String pKey : arguments.keySet() ) {
-				text = text.replaceAll( "###" + pKey + "###", arguments .get( pKey ) );
+				String replaceMe = "###" + pKey + "###";
+				String replacement = arguments.get( pKey );
+				result = result.replaceAll( replaceMe,
+						Matcher.quoteReplacement( replacement ) );
 			}
 		}
 		
