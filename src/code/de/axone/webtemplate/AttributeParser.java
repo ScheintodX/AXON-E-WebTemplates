@@ -51,9 +51,11 @@ public abstract class AttributeParser {
 	
 	static final String testtag = "tag att1 att2=123 att3=\"abc\" att4='abc' att5='a\"b c' att6 = 'abc'";
 	
-	public static void main( String [] args ){
+	public static void main( String [] args ) throws Exception {
 		
 		E.rr( attributePattern );
+		E.rr( parse( testtag ) );
+		E.rr( parse( "" ) );
 	}
 	
 	public static AttributeMap parse( String value ) throws ParserException {
@@ -68,33 +70,12 @@ public abstract class AttributeParser {
 			
 			int c=0;
 			while( attMatcher.find() ){
-				//E.rr( attMatcher.groupCount() );
-				//E.rr( attMatcher.group() );
-				//E.rr( "0:" + attMatcher.group(0) );
-				//E.rr( "1:" + attMatcher.group(1) );
-				//E.rr( "2:" + attMatcher.group(2) );
-				//E.rr( "3:" + attMatcher.group(3) );
-				//E.rr( "4:" + attMatcher.group(4) );
-				//E.rr( "5:" + attMatcher.group(5) );
-				//E.rr();
 				
 				String attName = attMatcher.group(1);
 				if( c == 0 ){
 					map.put( TAG_NAME, attName );
 				} else {
-					/*
-					String attValue = attMatcher.group(2);
-					if( attValue != null ){
-    					if( attValue.charAt( 0 ) == '\'' || attValue.charAt( 0 ) == '"' ){
-    						attValue = attValue.substring( 1, attValue.length()-1 );
-        					map.put( attName, attValue );
-    					} else {
-    						map.put( attName, Integer.parseInt( attValue ) );
-    					}
-					} else {
-    						map.put( attName, null );
-					}
-					*/
+
 					if( attMatcher.group( 3 ) != null ){
     					map.put( attName, Integer.parseInt( attMatcher.group(3) ) );
 					} else if( attMatcher.group( 4 ) != null ){

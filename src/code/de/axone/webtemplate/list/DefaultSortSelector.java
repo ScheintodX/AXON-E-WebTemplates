@@ -34,6 +34,11 @@ public class DefaultSortSelector implements SortSelector {
 		this.sort = sort;
 	}
 	
+	@Override
+	public String getSelectedSort(){
+		return sort;
+	}
+	
 	public void setKeepPageOnSort( boolean keepPageOnSort ){
 		this.keepPageOnSort = keepPageOnSort;
 	}

@@ -34,6 +34,11 @@ public class TableHeaderSortSelector implements SortSelector {
 		this.sort = sort;
 	}
 	
+	@Override
+	public String getSelectedSort( ) {
+		return this.sort;
+	}
+	
 	public void setKeepPageOnSort( boolean keepPageOnSort ){
 		this.keepPageOnSort = keepPageOnSort;
 	}
