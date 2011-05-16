@@ -26,7 +26,11 @@ public class OptionList extends LinkedList<Option> {
 			OptionImpl option = new OptionImpl( ""+ordinal, name );
 			add( option );
 		}
-		
+	}
+	public OptionList( Option ... options ){
+		for( Option o : options ) {
+			add( o );
+		}
 	}
 	
 }
