@@ -12,7 +12,6 @@ import java.util.Set;
 
 import de.axone.webtemplate.Decorator;
 import de.axone.webtemplate.DefaultDecorator;
-import de.axone.webtemplate.converter.ConverterException;
 import de.axone.webtemplate.converter.impl.BigDecimalConverter;
 import de.axone.webtemplate.converter.impl.BooleanCheckboxConverter;
 import de.axone.webtemplate.converter.impl.BooleanConverter;
@@ -24,10 +23,10 @@ import de.axone.webtemplate.elements.impl.HtmlCheckboxElement;
 import de.axone.webtemplate.elements.impl.HtmlInputElement;
 import de.axone.webtemplate.elements.impl.HtmlRadioElement;
 import de.axone.webtemplate.elements.impl.HtmlSelectElement;
+import de.axone.webtemplate.elements.impl.HtmlSelectElement.OptionComparator;
 import de.axone.webtemplate.elements.impl.HtmlTextAreaElement;
 import de.axone.webtemplate.elements.impl.Option;
 import de.axone.webtemplate.elements.impl.OptionImpl;
-import de.axone.webtemplate.elements.impl.HtmlSelectElement.OptionComparator;
 import de.axone.webtemplate.form.FormValue;
 import de.axone.webtemplate.form.FormValueImpl;
 import de.axone.webtemplate.validator.impl.CountryValidator;
@@ -40,8 +39,8 @@ import de.axone.webtemplate.validator.impl.MinMaxValidator;
 import de.axone.webtemplate.validator.impl.NotNullValidator;
 import de.axone.webtemplate.validator.impl.PhoneValidator;
 import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic;
-import de.axone.webtemplate.validator.impl.UrlValidator;
 import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic.CountryProvider;
+import de.axone.webtemplate.validator.impl.UrlValidator;
 
 public class FormValueFactory {
 
@@ -71,7 +70,7 @@ public class FormValueFactory {
 	 */
 	public FormValue<Integer> createCheckboxIntegerValue(
 			HtmlCheckboxElement.InputType type, Locale locale, String name,
-			Integer min, Integer max ) throws ConverterException {
+			Integer min, Integer max ) {
 
 		FormValueImpl<Integer> result = new FormValueImpl<Integer>();
 		
@@ -90,20 +89,20 @@ public class FormValueFactory {
 	}
 
 	public FormValue<Integer> createCheckboxIntegerValue( String name,
-			Locale locale, Integer min, Integer max ) throws ConverterException {
+			Locale locale, Integer min, Integer max ) {
 		return createCheckboxIntegerValue(
 				HtmlCheckboxElement.InputType.CHECKBOX, locale, name, min, max );
 	}
 
 	public FormValue<Integer> createCheckboxIntegerValue( String name,
-			Locale locale ) throws ConverterException {
+			Locale locale ) {
 		return createCheckboxIntegerValue( name, locale, Integer.MIN_VALUE,
 				Integer.MAX_VALUE );
 	}
 
 	public FormValue<Boolean> createCheckboxBooleanValue( 
 			HtmlCheckboxElement.InputType type, String name
-			) throws ConverterException {
+			) {
 
 		FormValueImpl<Boolean> result = new FormValueImpl<Boolean>();
 		
@@ -117,8 +116,7 @@ public class FormValueFactory {
 
 		return result;
 	}
-	public FormValue<Boolean> createCheckboxBooleanValue( String name )
-			throws ConverterException {
+	public FormValue<Boolean> createCheckboxBooleanValue( String name ) {
 		
 		return createCheckboxBooleanValue( HtmlCheckboxElement.InputType.CHECKBOX, name );
 	}
@@ -190,7 +188,7 @@ public class FormValueFactory {
 		FormValue<String> result = createInputTextValue( name, 12, nullable );
 		result.addValidator( new PostalcodeValidator_Dynamic(
 				new CountryProvider(){
-					public String getCode(){
+					@Override public String getCode(){
 						return countryCode;
 					}
 				}
@@ -202,7 +200,7 @@ public class FormValueFactory {
 		FormValue<String> result = createInputTextValue( name, 12, nullable );
 		result.addValidator( new PostalcodeValidator_Dynamic(
 				new CountryProvider(){
-					public String getCode(){
+					@Override public String getCode(){
 						return countryProvider.getPlainValue();
 					}
 				}

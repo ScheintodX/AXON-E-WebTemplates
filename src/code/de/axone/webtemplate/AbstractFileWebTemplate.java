@@ -24,19 +24,19 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
 	public AbstractFileWebTemplate() {}
 	
-	protected AbstractFileWebTemplate( File file ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+	protected AbstractFileWebTemplate( File file ) throws IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
 		
 		this( new FileDataHolderFactory( 
 				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>()
 		).holderFor( file ) );
 	}
 
-	protected AbstractFileWebTemplate( DataHolder holder ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+	protected AbstractFileWebTemplate( DataHolder holder ) {
 
 		setHolder( holder );
 	}
 
-	public void setHolder( DataHolder holder ) throws KeyException, IOException{
+	public void setHolder( DataHolder holder ) {
 
 		this.holder = holder;
 	}

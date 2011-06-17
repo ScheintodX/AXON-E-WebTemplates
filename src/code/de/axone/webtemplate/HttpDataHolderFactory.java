@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import de.axone.cache.Cache;
 import de.axone.data.Pair;
-import de.axone.tools.HttpWatcher;
 import de.axone.tools.HttpUtil.HttpUtilResponse;
+import de.axone.tools.HttpWatcher;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 public class HttpDataHolderFactory extends AbstractDataHolderFactory {
@@ -28,7 +28,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	}
 
 	synchronized public DataHolder holderFor( URL url )
-			throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			throws IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
 		log.debug( url.toString() );
 		
@@ -47,15 +47,12 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		} else {
 			watcher = storage.get( url ).getLeft();
 			
-			if( ( r=watcher.hasChanged() ) == null ) {
+			r=watcher.hasChanged();
+			if( r != null ) {
 				
 				result = storage.get( url ).getRight();
-				
 			} else {
-				
-				if( r != null ){
-					result = instantiate( url, r );
-				}
+				result = instantiate( url, r );
 				storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
 			}
 		}
@@ -68,7 +65,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	}
 	
 	static DataHolder instantiate( URL url, HttpUtilResponse response ) throws IOException,
-			KeyException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 

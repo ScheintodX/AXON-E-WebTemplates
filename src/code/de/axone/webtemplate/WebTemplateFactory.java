@@ -90,13 +90,11 @@ public class WebTemplateFactory {
 			throw new WebTemplateException( "Cannot instantiate: " + className, e );
 		} catch( IllegalAccessException e ) {
 			throw new WebTemplateException( "Cannot access: " + className, e );
-		} catch( IOException e ) {
-			throw new WebTemplateException( "Error reading: " + className, e );
 		}
 	}
 
 	public WebTemplate templateFor( File file ) throws WebTemplateException {
-
+		
 		return templateFor( file, null );
 	}
 	
@@ -235,7 +233,7 @@ public class WebTemplateFactory {
 
 	private WebTemplate instantiate( String className )
 			throws ClassNotFoundException, InstantiationException,
-			IllegalAccessException, ClassCastException, IOException {
+			IllegalAccessException, ClassCastException {
 
 		Class<?> clazz = Class.forName( className );
 

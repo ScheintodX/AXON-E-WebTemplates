@@ -22,7 +22,8 @@ public class UrlValidator extends AbstractValidator<String> {
 		if( url == null || url.length() == 0 ) return null;
 		
 		try{
-			new URL( url );
+			@SuppressWarnings( "unused" )
+			URL u = new URL( url );
 		}catch( MalformedURLException e ){
 			return NO_URL+"["+e.getMessage()+"]";
 		}

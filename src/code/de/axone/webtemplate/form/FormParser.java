@@ -279,7 +279,7 @@ public class FormParser<T> {
 		public String formName() { return formName; }
 		public String pojoName() { return pojoName; }
 		
-		public String toString(){
+		@Override public String toString(){
 			return "G: " + getter.getName() + ", S: " + setter.getName() + ", F: " + field + 
 					", Form: " + formName + ", Pojo: " + pojoName;
 		}
@@ -396,7 +396,7 @@ public class FormParser<T> {
 		
 	}
 	
-	public static void putInHolder( DataHolder holder, String prefix, WebForm form ) throws KeyException, WebTemplateException {
+	public static void putInHolder( DataHolder holder, String prefix, WebForm form ) {
 		
 		for( String name : form.getFormValueNames() ){
 			

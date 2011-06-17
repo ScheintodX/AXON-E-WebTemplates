@@ -11,7 +11,7 @@ import de.axone.webtemplate.processor.WebTemplateProcessor;
 public class AbstractDataHolderFactory {
 
 	protected static DataHolder instantiate( String data ) throws IOException,
-			KeyException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 				
 		DataHolder holder = new DataHolder();
 	

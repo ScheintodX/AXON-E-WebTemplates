@@ -31,7 +31,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 	}
 
 	synchronized public DataHolder holderFor( File file )
-			throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			throws IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
 		FileWatcher watcher;
 		DataHolder result;
@@ -56,7 +56,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 	}
 	
 	static DataHolder instantiate( File file ) throws IOException,
-			KeyException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 

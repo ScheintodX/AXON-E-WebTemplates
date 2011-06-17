@@ -70,7 +70,7 @@ public class DataHolder implements Cloneable {
 
 	static int functionCount = 1;
 	void addValue( String key, String value, DataHolderItemType type, boolean translate )
-			throws KeyException, ParserException {
+			throws ParserException {
 
 		AttributeMap attributes = null;
 		DataHolderEncodingType encoding = null;
@@ -117,21 +117,21 @@ public class DataHolder implements Cloneable {
 		_setValue( key, value );
 	}
 	*/
-	public void setValue( String key, Object value ) throws KeyException {
+	public void setValue( String key, Object value ) {
 		_setValue( key, value );
 	}
-	private void _setValue( String key, Object value ) throws KeyException {
+	private void _setValue( String key, Object value ) {
 
 		if( values.containsKey( key ) ) {
 			values.get( key ).setValue( value );
 		}
 	}
 
-	public void setValues( String basename, Map<String, String> values ) throws KeyException {
+	public void setValues( String basename, Map<String, String> values ) {
 		_setValues( basename, values );
 	}
 
-	private void _setValues( String basename, Map<String, ? extends Object> values ) throws KeyException {
+	private void _setValues( String basename, Map<String, ? extends Object> values ) {
 
 		for( String key : values.keySet() ) {
 
@@ -146,7 +146,7 @@ public class DataHolder implements Cloneable {
 		}
 	}
 
-	public void setFunction( String key, Function function ) throws KeyException {
+	public void setFunction( String key, Function function ) {
 		functions.put( key, function );
 	}
 
@@ -338,8 +338,8 @@ public class DataHolder implements Cloneable {
 
 				if(
 					encoding.begin != null
-					&& probe.charAt( 0 ) == (char)encoding.begin
-					&& probe.charAt( probe.length()-1 ) == (char)encoding.end
+					&& probe.charAt( 0 ) == encoding.begin
+					&& probe.charAt( probe.length()-1 ) == encoding.end
 				){
 					return encoding;
 				}

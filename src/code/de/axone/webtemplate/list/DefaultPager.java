@@ -51,6 +51,7 @@ public class DefaultPager implements Pager {
 	
 	protected List<String> parametersWhitelist = null;
 	
+	@Override
 	public String toString(){
 		return Text.poster( '~', 
 			"nameBase: " + nameBase + "\n"

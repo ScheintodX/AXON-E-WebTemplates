@@ -39,7 +39,6 @@ public class PostalCodeValidatorTest {
 		
 		PostalcodeValidator validatorAt 
 				= PostalcodeValidatorFactory.validatorFor( "at" );
-		assertTrue( validatorAt instanceof PostalcodeValidator );
 		
 		PostalcodeValidator validatorUs 
 				= PostalcodeValidatorFactory.validatorFor( "us" );

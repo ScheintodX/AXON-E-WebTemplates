@@ -12,11 +12,11 @@ import de.axone.webtemplate.form.Translator;
 
 public class AutomatedFileWebTemplate extends AbstractFileWebTemplate {
 	
-	public AutomatedFileWebTemplate() throws KeyException, IOException{
+	public AutomatedFileWebTemplate() {
 		super();
 	}
 	
-	public AutomatedFileWebTemplate( DataHolder holder ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+	public AutomatedFileWebTemplate( DataHolder holder ) {
 		super( holder );
 	}
 	

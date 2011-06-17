@@ -212,7 +212,7 @@ public class FormParserTest {
 		parser.putInForm( form );
 		
 		assertEquals( Boolean.parseBoolean( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ) ), pojo.myPublicBooleanField );
-		assertEquals( ((String) form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
+		assertEquals( (form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
 		assertEquals( Short.parseShort( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_FIELD ) ), pojo.myPublicShortField );
 		assertEquals( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_FIELD ) ), pojo.myPublicIntegerField );
 		assertEquals( Long.parseLong( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_FIELD ) ), pojo.myPublicLongField );
@@ -220,16 +220,16 @@ public class FormParserTest {
 		assertEquals( Double.parseDouble( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_FIELD ) ), pojo.myPublicDoubleField );
 		
 		assertEquals( Boolean.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_OBJECT_FIELD ) ), pojo.myPublicBooleanObjectField );
-		assertEquals( (Character)((String) form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_OBJECT_FIELD )).charAt(0), pojo.myPublicCharObjectField );
+		assertEquals( (Character)(form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_OBJECT_FIELD )).charAt(0), pojo.myPublicCharObjectField );
 		assertEquals( Short.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ), pojo.myPublicShortObjectField );
 		assertEquals( Integer.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ), pojo.myPublicIntegerObjectField );
 		assertEquals( Long.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ), pojo.myPublicLongObjectField );
 		assertEquals( Float.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ), pojo.myPublicFloatObjectField );
 		assertEquals( Double.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ), pojo.myPublicDoubleObjectField );
 		
-		assertEquals( (String) form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
+		assertEquals( form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
 		//assertEquals( new Date( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) )), pojo.myPublicDateField );
-		assertEquals( new BigDecimal( (String) form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
+		assertEquals( new BigDecimal( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
 		
 		// - Set new values value -----------
 		form.getHtmlInput( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ).setValue( "false" );
@@ -255,7 +255,7 @@ public class FormParserTest {
 		parser.putInPojo( form );
 		
 		assertEquals( Boolean.parseBoolean( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ) ), pojo.myPublicBooleanField );
-		assertEquals( ((String) form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
+		assertEquals( (form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
 		assertEquals( Short.parseShort( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_FIELD ) ), pojo.myPublicShortField );
 		assertEquals( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_FIELD ) ), pojo.myPublicIntegerField );
 		assertEquals( Long.parseLong( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_FIELD ) ), pojo.myPublicLongField );
@@ -263,16 +263,16 @@ public class FormParserTest {
 		assertEquals( Double.parseDouble( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_FIELD ) ), pojo.myPublicDoubleField );
 		
 		assertEquals( Boolean.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_OBJECT_FIELD ) ), pojo.myPublicBooleanObjectField );
-		assertEquals( (Character)((String) form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_OBJECT_FIELD )).charAt(0), pojo.myPublicCharObjectField );
+		assertEquals( (Character)(form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_OBJECT_FIELD )).charAt(0), pojo.myPublicCharObjectField );
 		assertEquals( Short.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ), pojo.myPublicShortObjectField );
 		assertEquals( Integer.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ), pojo.myPublicIntegerObjectField );
 		assertEquals( Long.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ), pojo.myPublicLongObjectField );
 		assertEquals( Float.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ), pojo.myPublicFloatObjectField );
 		assertEquals( Double.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ), pojo.myPublicDoubleObjectField );
 		
-		assertEquals( (String) form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
+		assertEquals( form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
 		//assertEquals( new Date( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) )), pojo.myPublicDateField );
-		assertEquals( new BigDecimal( (String) form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
+		assertEquals( new BigDecimal( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
 	}
 	
 	@Form
