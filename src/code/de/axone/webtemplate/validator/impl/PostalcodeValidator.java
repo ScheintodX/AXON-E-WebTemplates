@@ -10,14 +10,22 @@ public class PostalcodeValidator extends AbstractValidator<String> {
 	private static final String NO_VALID_POSTAL_CODE
 			="VALIDATOR_NO_VALID_POSTAL_CODE";
 	
-	Pattern pattern;
+	final Pattern pattern;
+	final boolean ignoreWhitespace;
 
 	public PostalcodeValidator( String pattern ){
+		this( pattern, false );
+	}
 		
-		if( pattern == null ) return;
+	public PostalcodeValidator( String pattern, boolean ignoreWhitespace ){
+		
+		this.ignoreWhitespace = ignoreWhitespace;
 		
 		pattern = pattern.replaceAll( "a", "[a-zA-Z]" );
 		pattern = pattern.replaceAll( "n", "[0-9]" );
+		if( ignoreWhitespace ){
+			pattern = pattern.replaceAll( " ", "\\\\s?" );
+		}
 		
 		this.pattern = Pattern.compile( pattern );
 	}

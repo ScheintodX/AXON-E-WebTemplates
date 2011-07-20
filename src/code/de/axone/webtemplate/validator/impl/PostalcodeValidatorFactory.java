@@ -2,6 +2,7 @@ package de.axone.webtemplate.validator.impl;
 
 
 
+
 public class PostalcodeValidatorFactory {
 	
 	private static PostalcodePatternProvider provider
