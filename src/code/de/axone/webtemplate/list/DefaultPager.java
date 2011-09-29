@@ -38,10 +38,8 @@ public class DefaultPager implements Pager {
 	private int numPages;
 	private int selectedPage;
 
-	/* Calculated values */
-	private static final int offset = 5;
-
 	/* Configuration */
+	private int offset = 5;
 	protected boolean renderIfOnlyOnePage = false;
 	protected boolean noHost = true;
 	protected boolean noPage = false;
@@ -100,6 +98,10 @@ public class DefaultPager implements Pager {
 	public void setNameBase( String nameBase ) {
 
 		this.nameBase = nameBase;
+	}
+	
+	public void setOffset( int offset ){
+		this.offset = offset;
 	}
 
 	public void setRenderIfOnlyOnePage( boolean renderIfOnlyOnePage ) {
@@ -194,9 +196,10 @@ public class DefaultPager implements Pager {
 		if( end > lastPage ){
 			start = start + ( lastPage - end );
 			end = lastPage;
-		}
-		if( start < 0 ){
-			start = 0;
+			
+			if( start < 0 ){
+				start = 0;
+			}
 		}
 
 		// Container: left
