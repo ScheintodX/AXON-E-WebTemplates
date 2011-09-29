@@ -21,6 +21,13 @@ public class PostalcodeValidator extends AbstractValidator<String> {
 		
 		this.ignoreWhitespace = ignoreWhitespace;
 		
+		// Allow for empty validators which will accept everything
+		// in order to check empty zip fields
+		if( pattern == null ){
+			this.pattern = null;
+			return;
+		}
+		
 		pattern = pattern.replaceAll( "a", "[a-zA-Z]" );
 		pattern = pattern.replaceAll( "n", "[0-9]" );
 		if( ignoreWhitespace ){
@@ -34,6 +41,7 @@ public class PostalcodeValidator extends AbstractValidator<String> {
 	public String validate( String check ){
 		
 		if( check == null ) return null;
+		if( pattern == null ) return null;
 		
 		Matcher matcher = pattern.matcher( check.toUpperCase() );
 		if( ! matcher.matches() ) return NO_VALID_POSTAL_CODE;

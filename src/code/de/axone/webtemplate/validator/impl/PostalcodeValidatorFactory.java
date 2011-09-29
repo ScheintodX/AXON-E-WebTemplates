@@ -1,8 +1,11 @@
 package de.axone.webtemplate.validator.impl;
 
 
-
-
+/**
+ * Get matching postal code validator for given country
+ * 
+ * @author flo
+ */
 public class PostalcodeValidatorFactory {
 	
 	private static PostalcodePatternProvider provider

@@ -112,7 +112,7 @@ public class WebFormImpl implements WebForm {
 
 				for( String text : r ) {
 
-					text = translator.translate( text );
+					//text = translator.translate( text );
 
 					messages.addLast( text );
 				}
