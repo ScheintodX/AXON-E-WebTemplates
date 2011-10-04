@@ -3,7 +3,6 @@ package de.axone.webtemplate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.axone.tools.E;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 /**
@@ -53,9 +52,13 @@ public abstract class AttributeParser {
 	
 	public static void main( String [] args ) throws Exception {
 		
+		(new AttributeParserTest()).testRegexes();
+		(new AttributeParserTest()).testParser();
+		/*
 		E.rr( attributePattern );
 		E.rr( parse( testtag ) );
 		E.rr( parse( "" ) );
+		*/
 	}
 	
 	public static AttributeMap parse( String value ) throws ParserException {
@@ -73,15 +76,15 @@ public abstract class AttributeParser {
 				
 				String attName = attMatcher.group(1);
 				if( c == 0 ){
-					map.put( TAG_NAME, attName );
+					map.put( TAG_NAME, new Attribute( attName, false ) );
 				} else {
 
 					if( attMatcher.group( 3 ) != null ){
-    					map.put( attName, Integer.parseInt( attMatcher.group(3) ) );
+    					map.put( attName, new Attribute( attMatcher.group(3), true ) );
 					} else if( attMatcher.group( 4 ) != null ){
-    					map.put( attName, attMatcher.group(4) );
+    					map.put( attName, new Attribute( attMatcher.group(4), false ) );
 					} else if( attMatcher.group( 5 ) != null ){
-    					map.put( attName, attMatcher.group(5) );
+    					map.put( attName, new Attribute( attMatcher.group(5), false ) );
 					} else {
 						map.put( attName, null );
 					}

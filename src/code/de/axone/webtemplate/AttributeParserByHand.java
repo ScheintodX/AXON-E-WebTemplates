@@ -13,6 +13,8 @@ import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
  * some strange errors and should be rewritten in terms of code clearity
  * before use.
  * 
+ * TODO: Check. evtl. mit JavaCC nochmal probieren?
+ * 
  * @author flo
  */
 public abstract class AttributeParserByHand {
@@ -39,7 +41,7 @@ public abstract class AttributeParserByHand {
 			name.append( ch );
 		}
 		
-		result.put( AttributeParser.TAG_NAME, name.toString() );
+		result.put( AttributeParser.TAG_NAME, new Attribute( name.toString(), false ) );
 		
 		// Attribute Name=Value pairs
 		StringBuilder attrName=null, attrValue=null;
@@ -103,9 +105,9 @@ public abstract class AttributeParserByHand {
     			} else {
         			String attrValueStr = attrValue.toString();
     				if( foundDel ){
-    					result.put( attrNameStr, attrValueStr );
+    					result.put( attrNameStr, new Attribute( attrValueStr, false ) );
     				} else {
-    					result.put( attrNameStr, Integer.parseInt( attrValueStr ) );
+    					result.put( attrNameStr, new Attribute( attrValueStr, true ) );
     				}
     				attrValue=null;
     			}

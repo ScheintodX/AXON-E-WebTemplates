@@ -1,9 +1,6 @@
 package de.axone.webtemplate;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -66,14 +63,14 @@ public class AttributeParserTest {
     @Test( groups="webtemplate.attributeparser" )
 	public void testParser() throws Exception {
     	
-		Map<String,Object> attributes;
+		Map<String,Attribute> attributes;
 		
     	// Simple
 		attributes = AttributeParser.parse( " tag " );
 		assertEquals( attributes.size(), 1 );
 		assertTrue( attributes.containsKey( "TAG" ) );
-		assertTrue( attributes.get( "TAG" ) instanceof String );
-		assertEquals( attributes.get( "TAG" ), "tag" );
+		assertNull( attributes.get( "TAG" ).asInteger() );
+		assertEquals( attributes.get( "TAG" ).asString(), "tag" );
 		
 		
 		// Complex
@@ -88,22 +85,22 @@ public class AttributeParserTest {
 		assertTrue( attributes.containsKey( "attr4" ) );
 		assertTrue( attributes.containsKey( "attr5" ) );
 		
-		assertTrue( attributes.get( "TAG" ) instanceof String );
-		assertEquals( attributes.get( "TAG" ), "tag" );
+		assertNull( attributes.get( "TAG" ).asInteger() );
+		assertEquals( attributes.get( "TAG" ).asString(), "tag" );
 		
 		assertNull( attributes.get( "attr1" ) );
 		
-		assertTrue( attributes.get( "attr2" ) instanceof Integer );
-		assertEquals( attributes.get( "attr2" ), 123 );
+		assertEquals( attributes.get( "attr2" ).asString(), "123" );
+		assertEquals( attributes.get( "attr2" ).asInteger(), new Integer( 123 ) );
 		
-		assertTrue( attributes.get( "attr3" ) instanceof String );
-		assertEquals( attributes.get( "attr3" ), " value " );
+		assertNull( attributes.get( "attr3" ).asInteger() );
+		assertEquals( attributes.get( "attr3" ).asString(), " value " );
 		
-		assertTrue( attributes.get( "attr4" ) instanceof String );
-		assertEquals( attributes.get( "attr4" ), "'blah'123" );
+		assertNull( attributes.get( "attr4" ).asInteger() );
+		assertEquals( attributes.get( "attr4" ).asString(), "'blah'123" );
 		
-		assertTrue( attributes.get( "attr5" ) instanceof String );
-		assertEquals( attributes.get( "attr5" ), "\"blub\"123" );
+		assertNull( attributes.get( "attr5" ).asInteger() );
+		assertEquals( attributes.get( "attr5" ).asString(), "\"blub\"123" );
 		
 	}
     

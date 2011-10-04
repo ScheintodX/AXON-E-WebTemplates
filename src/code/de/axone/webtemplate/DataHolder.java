@@ -3,6 +3,7 @@ package de.axone.webtemplate;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.tools.Text;
 import de.axone.web.encoding.AmpEncoder;
 import de.axone.web.encoding.AttributeEncoder;
 import de.axone.web.encoding.Encoder;
@@ -86,7 +88,7 @@ public class DataHolder implements Cloneable {
 		DataHolderKey dhKey;
 
 		if( attributes != null && attributes.size() > 1 ){
-			key = (String)attributes.get( AttributeParser.TAG_NAME );
+			key = attributes.get( AttributeParser.TAG_NAME ).asString();
 			dhKey = new DataHolderKey( key, attributes );
 		} else {
 			dhKey = new DataHolderKey( key, null );
@@ -100,23 +102,6 @@ public class DataHolder implements Cloneable {
 		}
 	}
 
-	/*
-	public void setValue( String key, Collection<? extends Renderer> renderers ) throws KeyException {
-		_setValue( key, renderers );
-	}
-	public void setValue( String key, Number value ) throws KeyException {
-		_setValue( key, value );
-	}
-	public void setValue( String key, HtmlInput input ) throws KeyException {
-		_setValue( key, input );
-	}
-	public void setValue( String key, Renderer renderer ) throws KeyException {
-		_setValue( key, renderer );
-	}
-	public void setValue( String key, String value ) throws KeyException {
-		_setValue( key, value );
-	}
-	*/
 	public void setValue( String key, Object value ) {
 		_setValue( key, value );
 	}
@@ -241,7 +226,6 @@ public class DataHolder implements Cloneable {
 				function = functions.get( functionName );
 			}
 			if( key.getAttributes() != null ){
-				//E.rr( key.getAttributes() );
     			function = functions.get( functionName );
 			}
 			if( function != null ){
@@ -290,19 +274,37 @@ public class DataHolder implements Cloneable {
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
+		Formatter formatter = new Formatter( builder );
 
-		builder.append( "CONTENT:\n" );
+		builder.append( "KEYS:\n" );
+		builder.append( Text.line( 79 ) + "\n" );
 		for( DataHolderKey key : keys ) {
 
-			DataHolderItem item = values.get( key.getName() );
-
-			builder.append( item.toString() ).append( '\n' );
+			formatter.format( "%s\n", key );
 		}
 
-		builder.append( "PARAMETERS:\n" );
+		builder.append( "\nPARAMETERS:\n" );
+		builder.append( Text.line( 79 ) + "\n" );
 		for( String key : parameters.keySet() ) {
-			builder.append( key ).append( ": " ).append( parameters.get( key ) )
-					.append( '\n' );
+			
+			String name = parameters.get( key );
+			formatter.format( "%s: %s\n", key, name );
+		}
+		
+		builder.append( "\nVALUES:\n" );
+		builder.append( Text.line( 79 ) + "\n" );
+		for( String key : values.keySet() ){
+			
+			DataHolderItem item = values.get( key );
+			formatter.format( "%s: %s\n", key, item );
+		}
+		
+		builder.append( "\nFUNCTIONS:\n" );
+		builder.append( Text.line( 79 ) + "\n" );
+		for( String key : functions.keySet() ){
+			
+			Function function = functions.get( key );
+			formatter.format( "%s: %s\n", key, function );
 		}
 
 		return builder.toString();
@@ -437,6 +439,7 @@ public class DataHolder implements Cloneable {
 	}
 
 	public static class DataHolderKey {
+
 		String name;
 		AttributeMap attributes;
 
@@ -465,6 +468,10 @@ public class DataHolder implements Cloneable {
 			return attributes;
 		}
 
+		@Override
+		public String toString() {
+			return "DataHolderKey [name=" + name + ", attributes=" + attributes + "]";
+		}
 	}
 
 }

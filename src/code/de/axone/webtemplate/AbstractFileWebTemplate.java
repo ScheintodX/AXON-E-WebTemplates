@@ -20,8 +20,6 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
 	public static final Logger log = LoggerFactory.getLogger( AbstractFileWebTemplate.class );
 
-	private DataHolder holder;
-
 	public AbstractFileWebTemplate() {}
 	
 	protected AbstractFileWebTemplate( File file ) throws IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
@@ -30,27 +28,9 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>()
 		).holderFor( file ) );
 	}
-
-	protected AbstractFileWebTemplate( DataHolder holder ) {
-
-		setHolder( holder );
-	}
-
-	public void setHolder( DataHolder holder ) {
-
-		this.holder = holder;
-	}
-
-	public DataHolder getHolder() {
-		return holder;
-	}
-
-	@Override
-	public void reset() {
-
-		super.reset();
-
-		holder.clear();
+	
+	public AbstractFileWebTemplate( DataHolder holder ) {
+		super( holder );
 	}
 
 	/**
