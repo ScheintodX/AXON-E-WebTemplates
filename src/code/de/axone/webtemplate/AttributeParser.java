@@ -50,17 +50,6 @@ public abstract class AttributeParser {
 	
 	static final String testtag = "tag att1 att2=123 att3=\"abc\" att4='abc' att5='a\"b c' att6 = 'abc'";
 	
-	public static void main( String [] args ) throws Exception {
-		
-		(new AttributeParserTest()).testRegexes();
-		(new AttributeParserTest()).testParser();
-		/*
-		E.rr( attributePattern );
-		E.rr( parse( testtag ) );
-		E.rr( parse( "" ) );
-		*/
-	}
-	
 	public static AttributeMap parse( String value ) throws ParserException {
 		
 		Matcher matcher = tagPattern.matcher( value );

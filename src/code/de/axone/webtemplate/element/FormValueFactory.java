@@ -358,14 +358,14 @@ public class FormValueFactory {
 	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
 			String name, Locale locale, boolean nullable ) {
 			
-		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.TEXT,
+		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.NUMBER,
 				locale, name, null, null, nullable, new AjaxValidate() );
 				
 	}
 	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
 			String name, boolean nullable ) {
 			
-		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.TEXT,
+		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.NUMBER,
 				defaultLocale, name, null, null, nullable, new AjaxValidate() );
 				
 	}
@@ -373,7 +373,7 @@ public class FormValueFactory {
 	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
 			String name, boolean nullable, boolean readonly ) {
 			
-		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.TEXT,
+		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.NUMBER,
 				defaultLocale, name, null, null, nullable, readonly, new AjaxValidate() );
 				
 	}
