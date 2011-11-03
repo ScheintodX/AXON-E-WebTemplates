@@ -31,6 +31,13 @@ public interface WebForm {
 
 	public void setShowInvalid( boolean showInvalid );
 
+	/**
+	 * Sets a translation provider and activates translating
+	 * 
+	 * Set to NULL if you don't want translation to happen here
+	 * 
+	 * @param textProvider
+	 */
 	public void setTranslationProvider( Translator textProvider );
 
 }

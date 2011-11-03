@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Locale;
 
 import de.axone.webtemplate.converter.AbstractConverter;
@@ -13,10 +14,19 @@ import de.axone.webtemplate.converter.ConverterException;
 public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 	
 	public static final NumberFormat EUR_DE_FORMAT = NumberFormat.getNumberInstance( Locale.GERMANY );
-	static{
-		EUR_DE_FORMAT.setMaximumFractionDigits( 2 );
-		EUR_DE_FORMAT.setMinimumFractionDigits( 2 );
-		EUR_DE_FORMAT.setRoundingMode( RoundingMode.HALF_UP );
+	public static final NumberFormat USD_US_FORMAT = NumberFormat.getNumberInstance( Locale.US );
+	static {
+		for( NumberFormat f : new NumberFormat[]{ EUR_DE_FORMAT, USD_US_FORMAT } ){
+			f.setMaximumFractionDigits( 2 );
+			f.setMinimumFractionDigits( 2 );
+			f.setRoundingMode( RoundingMode.HALF_UP );
+		}
+	}
+	
+	public static final HashMap<Locale, BigDecimalConverter> ForLocale = new HashMap<Locale,BigDecimalConverter>();
+	static {
+		ForLocale.put( Locale.GERMANY, new BigDecimalConverter( EUR_DE_FORMAT ) );
+		ForLocale.put( Locale.US, new BigDecimalConverter( USD_US_FORMAT ) );
 	}
 	
 	private NumberFormat numberFormat;
@@ -25,7 +35,7 @@ public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 		
 		this.numberFormat = numberFormat;
 	}
-
+	
 	@Override
 	public BigDecimal convertFromString( String value )
 		throws ConverterException {

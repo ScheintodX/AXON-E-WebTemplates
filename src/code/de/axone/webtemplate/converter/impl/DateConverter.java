@@ -15,7 +15,7 @@ public class DateConverter extends AbstractConverter<Date> {
 	// TODO: Das verbessern / erweitern / verschieben
 	public static final HashMap<Locale, DateConverter> ForLocale = new HashMap<Locale,DateConverter>();
 	static{
-		ForLocale.put( Locale.US, new DateConverter( new SimpleDateFormat( "mm/dd/yyyy" ) ) );
+		ForLocale.put( Locale.US, new DateConverter( new SimpleDateFormat( "MM/dd/yyyy" ) ) );
 		ForLocale.put( Locale.GERMANY, new DateConverter( new SimpleDateFormat( "dd.MM.yyyy" ) ) );
 	}
 	

@@ -1,8 +1,8 @@
 <!DOCTYPE suite SYSTEM "http://beust.com/testng/testng-1.0.dtd" >
 
-<suite name="EMogul" verbose="2" parallel="false">
+<suite name="EMogul" verbose="2">
 		
-	<test name="Tools">
+	<test name="WebTemplates">
 		<groups>
 			<run>
 				<include name="webtemplate.*"/>

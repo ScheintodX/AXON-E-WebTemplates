@@ -80,6 +80,13 @@ public class FormValueImpl<T> implements FormValue<T> {
 	public void setValue( T value )
 		throws ConverterException {
 		
+		/*
+		E.rr( value.getClass() );
+		E.rr( converter.getClass() );
+		E.rr( htmlInput.getClass() );
+		E.rr( converter.getClass() );
+		*/
+		
 		htmlInput.setValue( converter.convertToString( value ) );
 	}
 	

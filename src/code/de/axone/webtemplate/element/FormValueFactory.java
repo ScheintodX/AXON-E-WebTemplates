@@ -12,6 +12,7 @@ import java.util.Set;
 
 import de.axone.webtemplate.Decorator;
 import de.axone.webtemplate.DefaultDecorator;
+import de.axone.webtemplate.converter.Converter;
 import de.axone.webtemplate.converter.impl.BigDecimalConverter;
 import de.axone.webtemplate.converter.impl.BooleanCheckboxConverter;
 import de.axone.webtemplate.converter.impl.BooleanConverter;
@@ -64,7 +65,7 @@ public class FormValueFactory {
 	public Locale getLocale(){
 		return defaultLocale;
 	}
-
+	
 	/*
 	 * Checkbox
 	 */
@@ -121,6 +122,25 @@ public class FormValueFactory {
 		return createCheckboxBooleanValue( HtmlCheckboxElement.InputType.CHECKBOX, name );
 	}
 	
+	public <T> FormValue<T> createInputTextValue(
+			Converter<T> converter,
+			HtmlInputElement.InputType type,
+			String name, int length,
+			boolean nullable ){
+				FormValueImpl<T> result = new FormValueImpl<T>();
+
+		// HtmlInputElement
+		HtmlInputElement element = new HtmlInputElement( type, name );
+		element.setDecorator( decorator );
+		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
+		result.setHtmlInput( element );
+		
+		// Converter
+		result.setConverter( converter );
+		
+		return result;
+	}
+
 	/*
 	 * Input
 	 */
@@ -336,7 +356,7 @@ public class FormValueFactory {
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		result.setHtmlInput( element );
 		
-		BigDecimalConverter converter = new BigDecimalConverter( BigDecimalConverter.EUR_DE_FORMAT );
+		BigDecimalConverter converter = BigDecimalConverter.ForLocale.get( locale );
 		result.setConverter( converter );
 		
 		ajaxValidate.add( "%check_price_de" );
