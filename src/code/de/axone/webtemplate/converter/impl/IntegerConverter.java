@@ -2,6 +2,7 @@ package de.axone.webtemplate.converter.impl;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Locale;
 
 import de.axone.webtemplate.converter.AbstractConverter;
@@ -10,6 +11,19 @@ import de.axone.webtemplate.converter.ConverterException;
 public class IntegerConverter extends AbstractConverter<Integer> {
 	
 	private NumberFormat numberFormat;
+	
+	private static final HashMap<Locale,IntegerConverter> FOR_LOCALE =
+		new HashMap<Locale,IntegerConverter>();
+	
+	public static synchronized IntegerConverter forLocale( Locale locale ){
+		
+		IntegerConverter result = FOR_LOCALE.get( locale );
+		if( result == null ){
+			result = new IntegerConverter( locale );
+			FOR_LOCALE.put( locale, result );
+		}
+		return result;
+	}
 	
 	public IntegerConverter( Locale locale ){
 		

@@ -10,7 +10,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.axone.tools.E;
 import de.axone.webtemplate.DataHolder;
 import de.axone.webtemplate.KeyException;
 import de.axone.webtemplate.WebTemplateException;
@@ -377,8 +376,6 @@ public class FormParser<T> {
 	private void forceInto( FormValue val, Object x ) throws ConverterException{
 		
 		// This is stupid. But needed.
-		E.rr( x.getClass() );
-		E.rr( val.getClass() );
 		try {
 			val.setValue( x );
 		} catch( ClassCastException e ){

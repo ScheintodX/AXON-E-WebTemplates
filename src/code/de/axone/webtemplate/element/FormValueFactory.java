@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import de.axone.tools.E;
 import de.axone.webtemplate.Decorator;
 import de.axone.webtemplate.DefaultDecorator;
 import de.axone.webtemplate.converter.Converter;
@@ -46,7 +47,7 @@ import de.axone.webtemplate.validator.impl.UrlValidator;
 public class FormValueFactory {
 
 	private Decorator decorator = new DefaultDecorator();
-	private Locale defaultLocale = Locale.US;
+	private Locale defaultLocale = Locale.GERMANY;
 
 	public Decorator getDecorator() {
 		return decorator;
@@ -60,6 +61,7 @@ public class FormValueFactory {
 	}
 	
 	public void setLocale( Locale locale ){
+		E.rr( locale );
 		this.defaultLocale = locale;
 	}
 	public Locale getLocale(){
@@ -80,7 +82,7 @@ public class FormValueFactory {
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		result.setHtmlInput( element );
 		
-		IntegerConverter converter = new IntegerConverter( locale );
+		IntegerConverter converter = IntegerConverter.forLocale( locale );
 		result.setConverter( converter );
 		
 		if( min != null || max != null ) {
@@ -348,6 +350,11 @@ public class FormValueFactory {
 			BigDecimal min, BigDecimal max, boolean nullable, boolean readonly,
 			AjaxValidate ajaxValidate ){
 		
+		/*
+		if( type == HtmlInputElement.InputType.NUMBER )
+			type = HtmlInputElement.InputType.TEXT;
+			*/
+		
 		FormValueImpl<BigDecimal> result = new FormValueImpl<BigDecimal>();
 		
 		HtmlInputElement element = new HtmlInputElement( type, name );
@@ -356,7 +363,7 @@ public class FormValueFactory {
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		result.setHtmlInput( element );
 		
-		BigDecimalConverter converter = BigDecimalConverter.ForLocale.get( locale );
+		BigDecimalConverter converter = BigDecimalConverter.forLocale( locale );
 		result.setConverter( converter );
 		
 		ajaxValidate.add( "%check_price_de" );
@@ -407,7 +414,7 @@ public class FormValueFactory {
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
-		IntegerConverter converter = new IntegerConverter( locale );
+		IntegerConverter converter = IntegerConverter.forLocale( locale );
 		result.setHtmlInput( element );
 		result.setConverter( converter );
 		

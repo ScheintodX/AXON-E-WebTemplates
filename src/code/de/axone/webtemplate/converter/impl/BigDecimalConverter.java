@@ -13,23 +13,31 @@ import de.axone.webtemplate.converter.ConverterException;
 
 public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 	
-	public static final NumberFormat EUR_DE_FORMAT = NumberFormat.getNumberInstance( Locale.GERMANY );
-	public static final NumberFormat USD_US_FORMAT = NumberFormat.getNumberInstance( Locale.US );
+	private static final HashMap<Locale, BigDecimalConverter> FOR_LOCALE = new HashMap<Locale,BigDecimalConverter>();
 	static {
-		for( NumberFormat f : new NumberFormat[]{ EUR_DE_FORMAT, USD_US_FORMAT } ){
-			f.setMaximumFractionDigits( 2 );
-			f.setMinimumFractionDigits( 2 );
-			f.setRoundingMode( RoundingMode.HALF_UP );
-		}
 	}
 	
-	public static final HashMap<Locale, BigDecimalConverter> ForLocale = new HashMap<Locale,BigDecimalConverter>();
-	static {
-		ForLocale.put( Locale.GERMANY, new BigDecimalConverter( EUR_DE_FORMAT ) );
-		ForLocale.put( Locale.US, new BigDecimalConverter( USD_US_FORMAT ) );
+	public static synchronized BigDecimalConverter forLocale( Locale locale ){
+		
+		BigDecimalConverter result = FOR_LOCALE.get( locale );
+		if( result == null ){
+			result = new BigDecimalConverter( locale );
+			FOR_LOCALE.put( locale, result );
+		}
+		return result;
 	}
 	
 	private NumberFormat numberFormat;
+	
+	public BigDecimalConverter( Locale locale ){
+		
+		NumberFormat f = NumberFormat.getNumberInstance( locale );
+		f.setMaximumFractionDigits( 2 );
+		f.setMinimumFractionDigits( 2 );
+		f.setRoundingMode( RoundingMode.HALF_UP );
+		
+		this.numberFormat = f;
+	}
 	
 	public BigDecimalConverter( NumberFormat numberFormat ){
 		

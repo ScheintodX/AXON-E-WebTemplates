@@ -1,10 +1,6 @@
 package de.axone.webtemplate.converter.impl;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.util.Locale;
 
@@ -15,14 +11,22 @@ import de.axone.webtemplate.converter.ConverterException;
 @Test( groups="webtemplate.integerconverter")
 public class IntegerConverterTest {
 
-	public void testConverter() throws Exception {
+	public void testConverterDE() throws Exception {
+		testConverter( IntegerConverter.forLocale( Locale.GERMAN ), "1.234", 1234 );
+		testConverter( IntegerConverter.forLocale( Locale.GERMANY ), "1.234", 1234 );
+	}
+	public void testConverterUS() throws Exception {
+		testConverter( IntegerConverter.forLocale( Locale.ENGLISH ), "1,234", 1234 );
+		testConverter( IntegerConverter.forLocale( Locale.US ), "1,234", 1234 );
+		testConverter( IntegerConverter.forLocale( Locale.UK ), "1,234", 1234 );
+	}
+	private void testConverter( IntegerConverter converter, String asNumber, Integer number ) throws Exception {
 		
-		IntegerConverter converter = new IntegerConverter( Locale.GERMAN );
-		
-		String coolString = "1.234";
+		String coolString = asNumber;
 		assertTrue( converter.isValid( coolString ) );
 		assertNull( converter.validate( coolString ) );
-		assertEquals( converter.convertFromString( coolString ), new Integer( 1234 ) );
+		assertEquals( converter.convertFromString( coolString ), number );
+		assertEquals( converter.convertToString( number ), coolString );
 		
 		String emptyString = "";
 		assertTrue( converter.isValid( emptyString ) );
