@@ -17,12 +17,14 @@ public abstract class AbstractTranslator implements Translator {
 	 * @param text
 	 * @return
 	 */
-	protected abstract String getPlainTranslation( String text );
+	protected abstract String getPlainTranslation( TranslationKey text );
 
 	@Override
-	public String translate( String text ) {
+	public String translate( TranslationKey key ) {
 
-		if( text == null ) return S.EMPTY;
+		if( key == null ) return S.EMPTY;
+		
+		String text = key.name();
 
 		String [] parts = text.split( ":" );
 		HashMap<String,String> params = new HashMap<String,String>();
@@ -35,11 +37,11 @@ public abstract class AbstractTranslator implements Translator {
 			params.put( ""+(i-1), parts[ i ].trim() );
 		}
 		
-		return translate( realText, params );
+		return translate( TKey.dynamic( realText ), params );
 	}
 
 	@Override
-	public String translate( String text, String ... arguments ) {
+	public String translate( TranslationKey text, String ... arguments ) {
 
 		HashMap<String,String> args = new HashMap<String,String>();
 		if( arguments != null ) for( int i=0; i < arguments.length; i++ ){
@@ -51,7 +53,7 @@ public abstract class AbstractTranslator implements Translator {
 	}
 	
 	@Override
-	public String translate( String text, Map<String,String> arguments ) {
+	public String translate( TranslationKey text, Map<String,String> arguments ) {
 		
 		// Let the backend translate
 		String result = getPlainTranslation( text );

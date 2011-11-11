@@ -95,12 +95,12 @@ public class WebFormTest {
 	private static class TestTextProvider extends AbstractTranslator {
 
 		@Override
-		public boolean has( String text ) {
+		public boolean has( TranslationKey text ) {
 			return VALIDATOR_IS_EMPTY.equals( text );
 		}
 
 		@Override
-		protected String getPlainTranslation( String text ) {
+		protected String getPlainTranslation( TranslationKey text ) {
 			String result = null;
 			
 			if( VALIDATOR_IS_EMPTY.equals( text ) ) result = "valisempty";

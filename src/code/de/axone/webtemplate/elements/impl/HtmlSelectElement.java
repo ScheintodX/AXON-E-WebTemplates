@@ -12,6 +12,7 @@ import de.axone.webtemplate.Renderer;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.element.AbstractHtmlInputElement;
 import de.axone.webtemplate.element.HtmlElement;
+import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
 
 public class HtmlSelectElement extends AbstractHtmlInputElement {
@@ -128,11 +129,11 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 				// the first part of the comparison is for speed
 				if( value != null && value.length() > 6  && value.charAt(0) == '@'
 						&& value.startsWith( "@@@" ) && value.endsWith( "@@@" ) ){
-					value = translator.translate( value.substring( 3, value.length()-3 ) );
+					value = translator.translate( TKey.dynamic( value.substring( 3, value.length()-3 ) ) );
 				}
 				if( text != null && text.length() > 6  && text.charAt(0) == '@'
 						&& text.startsWith( "@@@" ) && text.endsWith( "@@@" ) ){
-					text = translator.translate( text.substring( 3, text.length()-3 ) );
+					text = translator.translate( TKey.dynamic( text.substring( 3, text.length()-3 ) ) );
 				}
 
 				HtmlOptionElement optionElement = new HtmlOptionElement( value, text );

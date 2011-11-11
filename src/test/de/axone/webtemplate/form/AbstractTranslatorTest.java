@@ -17,14 +17,14 @@ public class AbstractTranslatorTest {
 		
 		MyTranslator t = new MyTranslator();
 		
-		assertEquals( t.translate( "a" ), "A" );
-		assertEquals( t.translate( "a", (HashMap<String,String>)null ), "A" );
-		assertEquals( t.translate( "a", (String[])null ), "A" );
+		assertEquals( t.translate( TKey.dynamic( "a" ) ), "A" );
+		assertEquals( t.translate( TKey.dynamic( "a" ), (HashMap<String,String>)null ), "A" );
+		assertEquals( t.translate( TKey.dynamic( "a" ), (String[])null ), "A" );
 		
-		assertEquals( t.translate( "b:x:y" ), "B x/y" );
-		assertEquals( t.translate( "b",
+		assertEquals( t.translate( TKey.dynamic( "b:x:y" ) ), "B x/y" );
+		assertEquals( t.translate( TKey.dynamic( "b" ),
 				Mapper.hashMap( "0", "x", "1", "y" ) ), "B x/y" );
-		assertEquals( t.translate( "b",
+		assertEquals( t.translate( TKey.dynamic( "b" ),
 				new String[]{ "x", "y" } ), "B x/y" );
 		
 	}
@@ -37,7 +37,7 @@ public class AbstractTranslatorTest {
 			
 			String password = PasswordBuilder.makePasswd( 8 );
 			
-			assertEquals( t.translate( "p", password ), "P"+password+"P", "Missmatch " + i );
+			assertEquals( t.translate( TKey.dynamic( "p" ), password ), "P"+password+"P", "Missmatch " + i );
 		}
 	}
 	
@@ -47,12 +47,12 @@ public class AbstractTranslatorTest {
 			Mapper.hashMap( "a", "A", "b", "B ###0###/###1###", "p", "P###0###P" );
 
 		@Override
-		protected String getPlainTranslation( String text ) {
+		protected String getPlainTranslation( TranslationKey text ) {
 			return translations.get( text );
 		}
 
 		@Override
-		public boolean has( String text ) {
+		public boolean has( TranslationKey text ) {
 			return getPlainTranslation( text ) != null;
 		}
 		

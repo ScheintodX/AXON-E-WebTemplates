@@ -10,7 +10,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import de.axone.tools.E;
 import de.axone.webtemplate.Decorator;
 import de.axone.webtemplate.DefaultDecorator;
 import de.axone.webtemplate.converter.Converter;
@@ -61,7 +60,6 @@ public class FormValueFactory {
 	}
 	
 	public void setLocale( Locale locale ){
-		E.rr( locale );
 		this.defaultLocale = locale;
 	}
 	public Locale getLocale(){
@@ -350,14 +348,17 @@ public class FormValueFactory {
 			BigDecimal min, BigDecimal max, boolean nullable, boolean readonly,
 			AjaxValidate ajaxValidate ){
 		
-		/*
+		// Disable Type=NUMBER for chrome compatibility
 		if( type == HtmlInputElement.InputType.NUMBER )
 			type = HtmlInputElement.InputType.TEXT;
-			*/
 		
 		FormValueImpl<BigDecimal> result = new FormValueImpl<BigDecimal>();
 		
 		HtmlInputElement element = new HtmlInputElement( type, name );
+		/*
+		if( type == HtmlInputElement.InputType.NUMBER )
+			element.addAttribute( "step", "any" ); // Make floating point possible for Chrome
+		*/
 		element.setReadonly( readonly );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );

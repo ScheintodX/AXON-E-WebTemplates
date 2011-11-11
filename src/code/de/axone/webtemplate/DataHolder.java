@@ -20,6 +20,7 @@ import de.axone.web.encoding.Encoder;
 import de.axone.web.encoding.HtmlEncoder;
 import de.axone.web.encoding.UrlEncoder;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
+import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.function.Function;
 
@@ -241,7 +242,7 @@ public class DataHolder implements Cloneable {
 					String stringValue = (String) value;
 					if( item.isTranslate() && translator != null ){
 
-    					out.write( translator.translate( stringValue ) );
+    					out.write( translator.translate( TKey.dynamic( stringValue ) ) );
 					} else {
     					out.write( stringValue );
 					}
