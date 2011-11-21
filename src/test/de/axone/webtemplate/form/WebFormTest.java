@@ -96,14 +96,14 @@ public class WebFormTest {
 
 		@Override
 		public boolean has( TranslationKey text ) {
-			return VALIDATOR_IS_EMPTY.equals( text );
+			return VALIDATOR_IS_EMPTY.equals( text.name() );
 		}
 
 		@Override
 		protected String getPlainTranslation( TranslationKey text ) {
 			String result = null;
 			
-			if( VALIDATOR_IS_EMPTY.equals( text ) ) result = "valisempty";
+			if( VALIDATOR_IS_EMPTY.equals( text.name() ) ) result = "valisempty";
 			
 			E.rr( text + "-> " + result );
 			
