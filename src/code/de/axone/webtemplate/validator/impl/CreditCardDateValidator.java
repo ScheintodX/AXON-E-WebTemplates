@@ -3,7 +3,6 @@ package de.axone.webtemplate.validator.impl;
 import java.util.Date;
 
 import de.axone.webtemplate.validator.AbstractValidator;
-import de.axone.webtemplate.validator.Validator;
 
 public class CreditCardDateValidator extends AbstractValidator<Date> {
 
@@ -21,6 +20,7 @@ public class CreditCardDateValidator extends AbstractValidator<Date> {
 		return null;
 	}
 
+	/*
 	private YearValidator yearValidator = new YearValidator();
 	private MonthValidator monthValidator = new MonthValidator( yearValidator );
 	public Validator<Integer> getYearValidator(){
@@ -63,5 +63,6 @@ public class CreditCardDateValidator extends AbstractValidator<Date> {
 		}
 
 	}
+	*/
 
 }

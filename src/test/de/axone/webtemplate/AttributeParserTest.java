@@ -91,7 +91,7 @@ public class AttributeParserTest {
 		assertNull( attributes.get( "attr1" ) );
 		
 		assertEquals( attributes.get( "attr2" ).asString(), "123" );
-		assertEquals( attributes.get( "attr2" ).asInteger(), new Integer( 123 ) );
+		assertEquals( attributes.get( "attr2" ).asInteger(), (Integer) 123 );
 		
 		assertNull( attributes.get( "attr3" ).asInteger() );
 		assertEquals( attributes.get( "attr3" ).asString(), " value " );

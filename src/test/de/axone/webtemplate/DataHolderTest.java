@@ -62,7 +62,7 @@ public class DataHolderTest {
 		holder.render( null, new TestHttpServletRequest(), respo, null );
 	}
 	
-	private class TestFunction implements Function {
+	private static class TestFunction implements Function {
 
 		@Override
 		public void render( String name,

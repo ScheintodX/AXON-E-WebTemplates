@@ -29,11 +29,14 @@ import de.axone.webtemplate.function.Function;
  * This class is optimized for speed. Every instance is cloned
  * so that it's variables can be replaced without disturbing other
  * threads who concurently access this Holder.
+ * 
+ * This class is final so that clone must not call super.clone() and
+ * make stuff complicated
  *
  * @author flo
  * TODO: Die Sache mit dem HolderKey umbauen so dass die Attribute im DataHoderItem landen.
  */
-public class DataHolder implements Cloneable {
+public final class DataHolder implements Cloneable {
 
 	public static final String NOVAL = "";
 

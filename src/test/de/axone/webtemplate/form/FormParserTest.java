@@ -28,7 +28,7 @@ import de.axone.webtemplate.form.FormParser.FormField;
 @Test( groups="webtemplate.webform" )
 public class FormParserTest {
 	
-	private static final DateFormat df = new SimpleDateFormat("MM/dd/yy");
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yy");
 	
 	// ==== PARSER FIELD NAMES ====================
 
@@ -217,6 +217,7 @@ public class FormParserTest {
 		parser.putInForm( form );
 		
 		NumberFormat nf = NumberFormat.getNumberInstance( Locale.GERMANY );
+		DateFormat df = (DateFormat) DATE_FORMAT.clone();
 		
 		assertEquals( Boolean.parseBoolean( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ) ), pojo.myPublicBooleanField );
 		assertEquals( (form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
@@ -235,7 +236,7 @@ public class FormParserTest {
 		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ).doubleValue(), (double)pojo.myPublicDoubleObjectField );
 		
 		assertEquals( form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
-		assertEquals( df.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) ), pojo.myPublicDateField );
+		assertEquals( DATE_FORMAT.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) ), pojo.myPublicDateField );
 		E.rr( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) );
 		assertEquals( new BigDecimal( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
 		
@@ -309,6 +310,7 @@ public class FormParserTest {
 		
 		public TestClassFieldTypes() throws Exception{
 			// Throws exceptions so we need constructor
+			DateFormat df = (DateFormat) DATE_FORMAT.clone();
 			myPublicDateField = df.parse( "03/05/75" );
 		}
 		

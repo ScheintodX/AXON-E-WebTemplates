@@ -281,7 +281,7 @@ public class DefaultPager implements Pager {
 		return HttpLinkBuilder.makeLink( request, noHost, noPage, parametersWhitelist, parameters );
 	}
 
-	protected class Template {
+	protected static class Template {
 
 		String str;
 		boolean hasLink;

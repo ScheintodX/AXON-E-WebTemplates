@@ -48,7 +48,7 @@ public class AbstractTranslatorTest {
 
 		@Override
 		protected String getPlainTranslation( TranslationKey text ) {
-			return translations.get( text );
+			return translations.get( text.name() );
 		}
 
 		@Override

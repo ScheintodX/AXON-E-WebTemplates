@@ -30,6 +30,7 @@ public class DateConverter extends AbstractConverter<Date> {
 	public Date convertFromString( String value )
 		throws ConverterException {
 		
+		
 		if( value == null )
 			return null;
 		
@@ -37,7 +38,9 @@ public class DateConverter extends AbstractConverter<Date> {
 			return null;
 		
 		try {
-			return dateFormat.parse( value );
+			// DateFormat is not threadsafe
+			DateFormat df = (DateFormat) dateFormat.clone();
+			return df.parse( value );
 			
 		} catch( ParseException e ) {
 			throw new ConverterException( e );
@@ -50,7 +53,9 @@ public class DateConverter extends AbstractConverter<Date> {
 		
 		if( date == null ) return null;
 		
-		return dateFormat.format( date );
+		DateFormat df = (DateFormat) dateFormat.clone();
+		
+		return df.format( date );
 	}
 
 }

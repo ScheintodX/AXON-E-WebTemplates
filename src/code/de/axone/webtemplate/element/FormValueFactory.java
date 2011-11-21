@@ -620,7 +620,7 @@ public class FormValueFactory {
 		return result;
 	}
 
-	private class AjaxValidate {
+	private static class AjaxValidate {
 
 		LinkedList<String> values = new LinkedList<String>();
 

@@ -1,13 +1,13 @@
 package de.axone.webtemplate.validator.impl;
 
-import org.testng.annotations.Test;
-
 import static org.testng.Assert.*;
+
+import org.testng.annotations.Test;
 
 @Test( groups="webtemplate.lengthvalidator" )
 public class LengthValidatorTest {
 
-	public void TestValidator() throws Exception {
+	public void testValidator() throws Exception {
 		
 		LengthValidator validator = new LengthValidator( 5 );
 		

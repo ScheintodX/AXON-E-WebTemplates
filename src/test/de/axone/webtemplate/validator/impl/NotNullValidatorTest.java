@@ -1,13 +1,13 @@
 package de.axone.webtemplate.validator.impl;
 
-import org.testng.annotations.Test;
-
 import static org.testng.Assert.*;
+
+import org.testng.annotations.Test;
 
 @Test( groups="webtemplate.notnullvalidator" )
 public class NotNullValidatorTest {
 
-	public void TestValidator() throws Exception {
+	public void testValidator() throws Exception {
 		
 		NotNullValidator validator = new NotNullValidator();
 		
