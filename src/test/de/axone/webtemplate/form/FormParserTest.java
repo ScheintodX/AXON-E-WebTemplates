@@ -4,6 +4,7 @@ import static org.testng.Assert.*;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,7 +13,6 @@ import java.util.Locale;
 
 import org.testng.annotations.Test;
 
-import de.axone.tools.E;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.converter.impl.CharacterConverter;
 import de.axone.webtemplate.converter.impl.DoubleConverter;
@@ -28,7 +28,7 @@ import de.axone.webtemplate.form.FormParser.FormField;
 @Test( groups="webtemplate.webform" )
 public class FormParserTest {
 	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yy");
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 	
 	// ==== PARSER FIELD NAMES ====================
 
@@ -217,6 +217,9 @@ public class FormParserTest {
 		parser.putInForm( form );
 		
 		NumberFormat nf = NumberFormat.getNumberInstance( Locale.GERMANY );
+		assertTrue( nf instanceof DecimalFormat );
+		DecimalFormat f = (DecimalFormat) nf;
+		f.setParseBigDecimal( true );
 		DateFormat df = (DateFormat) DATE_FORMAT.clone();
 		
 		assertEquals( Boolean.parseBoolean( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ) ), pojo.myPublicBooleanField );
@@ -236,9 +239,8 @@ public class FormParserTest {
 		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ).doubleValue(), (double)pojo.myPublicDoubleObjectField );
 		
 		assertEquals( form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
-		assertEquals( DATE_FORMAT.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) ), pojo.myPublicDateField );
-		E.rr( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) );
-		assertEquals( new BigDecimal( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
+		assertEquals( df.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) ), pojo.myPublicDateField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
 		
 		// - Set new values value -----------
 		form.getHtmlInput( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ).setValue( "false" );
@@ -265,23 +267,24 @@ public class FormParserTest {
 		
 		assertEquals( Boolean.parseBoolean( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ) ), pojo.myPublicBooleanField );
 		assertEquals( (form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
-		assertEquals( Short.parseShort( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_FIELD ) ), pojo.myPublicShortField );
-		assertEquals( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_FIELD ) ), pojo.myPublicIntegerField );
-		assertEquals( Long.parseLong( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_FIELD ) ), pojo.myPublicLongField );
-		assertEquals( Float.parseFloat( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_FIELD ) ), pojo.myPublicFloatField );
-		assertEquals( Double.parseDouble( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_FIELD ) ), pojo.myPublicDoubleField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_FIELD ) ).shortValue(), pojo.myPublicShortField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_FIELD ) ).intValue(), pojo.myPublicIntegerField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_FIELD ) ).longValue(), pojo.myPublicLongField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_FIELD ) ).floatValue(), pojo.myPublicFloatField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_FIELD ) ).doubleValue(), pojo.myPublicDoubleField );
 		
 		assertEquals( Boolean.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_OBJECT_FIELD ) ), pojo.myPublicBooleanObjectField );
 		assertEquals( (Character)(form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_OBJECT_FIELD )).charAt(0), pojo.myPublicCharObjectField );
-		assertEquals( Short.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ), pojo.myPublicShortObjectField );
-		assertEquals( Integer.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ), pojo.myPublicIntegerObjectField );
-		assertEquals( Long.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ), pojo.myPublicLongObjectField );
-		assertEquals( Float.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ), pojo.myPublicFloatObjectField );
-		assertEquals( Double.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ), pojo.myPublicDoubleObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ).shortValue(), (short)pojo.myPublicShortObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ).intValue(), (int)pojo.myPublicIntegerObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ).longValue(), (long)pojo.myPublicLongObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ).floatValue(), (float)pojo.myPublicFloatObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ).doubleValue(), (double)pojo.myPublicDoubleObjectField );
 		
 		assertEquals( form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
-		//assertEquals( new Date( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) )), pojo.myPublicDateField );
-		assertEquals( new BigDecimal( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
+		assertEquals( df.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) ), pojo.myPublicDateField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
+		
 	}
 	
 	@Form
@@ -311,7 +314,7 @@ public class FormParserTest {
 		public TestClassFieldTypes() throws Exception{
 			// Throws exceptions so we need constructor
 			DateFormat df = (DateFormat) DATE_FORMAT.clone();
-			myPublicDateField = df.parse( "03/05/75" );
+			myPublicDateField = df.parse( "05.03.1975" );
 		}
 		
 		@Form

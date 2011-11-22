@@ -7,7 +7,6 @@ import java.util.Locale;
 
 import org.testng.annotations.Test;
 
-import de.axone.tools.E;
 import de.axone.web.TestHttpServletRequest;
 import de.axone.webtemplate.converter.Converter;
 import de.axone.webtemplate.converter.impl.IntegerConverter;
@@ -104,8 +103,6 @@ public class WebFormTest {
 			String result = null;
 			
 			if( VALIDATOR_IS_EMPTY.equals( text.name() ) ) result = "valisempty";
-			
-			E.rr( text + "-> " + result );
 			
 			return result;
 		}

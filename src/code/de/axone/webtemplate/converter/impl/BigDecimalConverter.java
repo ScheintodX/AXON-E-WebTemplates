@@ -2,6 +2,7 @@ package de.axone.webtemplate.converter.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -27,19 +28,23 @@ public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 		return result;
 	}
 	
-	private NumberFormat numberFormat;
+	private DecimalFormat numberFormat;
 	
 	public BigDecimalConverter( Locale locale ){
 		
 		NumberFormat f = NumberFormat.getNumberInstance( locale );
-		f.setMaximumFractionDigits( 2 );
-		f.setMinimumFractionDigits( 2 );
-		f.setRoundingMode( RoundingMode.HALF_UP );
+		if( !( f instanceof DecimalFormat ) )
+			throw new NumberFormatException( "NumberFormat is of wrong Format" );
+		DecimalFormat df = (DecimalFormat)f;
+		df.setParseBigDecimal( true );
+		df.setMaximumFractionDigits( 2 );
+		df.setMinimumFractionDigits( 2 );
+		df.setRoundingMode( RoundingMode.HALF_UP );
 		
-		this.numberFormat = f;
+		this.numberFormat = df;
 	}
 	
-	public BigDecimalConverter( NumberFormat numberFormat ){
+	public BigDecimalConverter( DecimalFormat numberFormat ){
 		
 		this.numberFormat = numberFormat;
 	}
@@ -57,8 +62,9 @@ public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 			return null;
 		
 		try {
-			Number number = numberFormat.parse( value );
-			return new BigDecimal( number.doubleValue() );
+			DecimalFormat nf = (DecimalFormat) numberFormat.clone();
+			BigDecimal number = (BigDecimal) nf.parse( value );
+			return number;
 			
 		} catch( ParseException e ) {
 			throw new ConverterException( e );
@@ -71,6 +77,7 @@ public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 		
 		if( number == null ) return null;
 		
-		return numberFormat.format( number.doubleValue() );
+		DecimalFormat nf = (DecimalFormat) numberFormat.clone();
+		return nf.format( number );
 	}
 }
