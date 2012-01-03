@@ -63,7 +63,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		String data = slurp( file );
 		
 		DataHolder holder = instantiate( data );
-		holder.setParameter( "file", file.getPath() );
+		holder.setParameter( DataHolder.PARAM_FILE, file.getPath() );
 		
 		log.trace( "DataHolder for " + file + " created" );
 

@@ -37,6 +37,8 @@ import de.axone.webtemplate.function.Function;
  * TODO: Die Sache mit dem HolderKey umbauen so dass die Attribute im DataHoderItem landen.
  */
 public final class DataHolder implements Cloneable {
+	
+	public static final String PARAM_FILE = "file";
 
 	public static final String NOVAL = "";
 

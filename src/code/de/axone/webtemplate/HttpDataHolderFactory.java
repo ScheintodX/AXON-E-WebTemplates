@@ -35,7 +35,9 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		HttpWatcher watcher;
 		DataHolder result=null;
 		HttpUtilResponse r;
-		if( !storage.containsKey( url ) ) {
+		
+		Pair<HttpWatcher, DataHolder> cached = storage.get( url );
+		if( cached == null ) {
 			
 			watcher = new HttpWatcher( url );
 			r=watcher.hasChanged();
@@ -45,12 +47,12 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 			storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
 			
 		} else {
-			watcher = storage.get( url ).getLeft();
+			
+			watcher = cached.getLeft();
 			
 			r=watcher.hasChanged();
-			if( r != null ) {
-				
-				result = storage.get( url ).getRight();
+			if( r == null ) {
+				result = cached.getRight();
 			} else {
 				result = instantiate( url, r );
 				storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
