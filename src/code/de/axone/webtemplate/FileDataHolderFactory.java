@@ -8,6 +8,7 @@ import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.MalformedInputException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,9 +90,13 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			if( cIn != null ) cIn.close();
 		}
 		
-		CharBuffer cBuf = decoder.decode( buf );
+		try {
+			CharBuffer cBuf = decoder.decode( buf );
+			return cBuf.toString();
+		} catch( MalformedInputException e ){
+			throw new IOException( "Perhaps not UFT-8?", e );
+		}
 		
-		return cBuf.toString();
 	}
 
 }
