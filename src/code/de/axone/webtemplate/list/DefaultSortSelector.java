@@ -74,6 +74,7 @@ public class DefaultSortSelector implements SortSelector {
 				"class",
 				"submit_on_change"
 		);
+		
 		out.write( select );
 		
 		String q = request.getParameter( "q" );

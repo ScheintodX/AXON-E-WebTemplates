@@ -2,6 +2,7 @@ package de.axone.webtemplate.list;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class DefaultPager implements Pager {
 	private String nameBase;
 	private int numPages;
 	private int selectedPage;
+	private boolean numeratePageZero = true;
 
 	/* Configuration */
 	private int offset = 5;
@@ -98,6 +100,10 @@ public class DefaultPager implements Pager {
 	public void setNameBase( String nameBase ) {
 
 		this.nameBase = nameBase;
+	}
+	
+	public void setNumeratePageZero( boolean numeratePageZero ){
+		this.numeratePageZero = numeratePageZero;
 	}
 	
 	public void setOffset( int offset ){
@@ -275,10 +281,14 @@ public class DefaultPager implements Pager {
 	protected String makePageLink( HttpServletRequest request, int page ){
 
 		HashMap<String, String> parameters = new HashMap<String,String>();
+		List<String> removeParameters = null;
+		
+		String pageParameter = nameBase + "-page";
 
-		parameters.put( nameBase + "-page", ""+page );
+		if( page > 0 || numeratePageZero ) parameters.put( pageParameter, ""+page );
+		else removeParameters = Arrays.asList( pageParameter );
 
-		return HttpLinkBuilder.makeLink( request, noHost, noPage, parametersWhitelist, parameters );
+		return HttpLinkBuilder.makeLink( request, noHost, noPage, parametersWhitelist, parameters, removeParameters );
 	}
 
 	protected static class Template {
