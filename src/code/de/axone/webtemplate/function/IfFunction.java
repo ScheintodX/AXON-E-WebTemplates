@@ -33,6 +33,10 @@ import de.axone.webtemplate.form.Translator;
 public class IfFunction implements Function {
 	
 	public static final String ATTRIBUTE_CONDITION = "condition";
+	
+	private IfFunction(){}
+	private static IfFunction instance = new IfFunction();
+	public static IfFunction instance(){ return instance; }
 
 	@Override
 	public void render( String name,

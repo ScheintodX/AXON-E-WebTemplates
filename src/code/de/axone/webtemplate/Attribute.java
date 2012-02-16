@@ -1,5 +1,7 @@
 package de.axone.webtemplate;
 
+import de.axone.tools.S;
+
 /**
  * Represents one Attribute.
  * 
@@ -37,6 +39,14 @@ public class Attribute {
 		} else {
 			return null;
 		}
+	}
+	
+	@Override
+	public String toString(){
+		if( value == null ) return S._NULL_;
+		Integer v = asInteger();
+		if( v != null ) return v.toString();
+		else return '"' + asString() + '"';
 	}
 	
 	private void makeInt(){

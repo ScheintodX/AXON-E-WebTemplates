@@ -18,6 +18,7 @@ import de.axone.web.encoding.AmpEncoder;
 import de.axone.web.encoding.AttributeEncoder;
 import de.axone.web.encoding.Encoder;
 import de.axone.web.encoding.HtmlEncoder;
+import de.axone.web.encoding.TextEncoder;
 import de.axone.web.encoding.UrlEncoder;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.form.TKey;
@@ -325,7 +326,8 @@ public final class DataHolder implements Cloneable {
 
 		none('(',')', null ),
 		attribute('#','#', AttributeEncoder.instance() ),
-		amp('[',']', AmpEncoder.instance() ),
+		amp('&','&', AmpEncoder.instance() ),
+		text('[',']', TextEncoder.instance() ),
 		url('@', '@', UrlEncoder.instance() ),
 		html('{','}', HtmlEncoder.instance() ),
 		defaultEncoding( null, null, AttributeEncoder.instance() );
@@ -359,7 +361,7 @@ public final class DataHolder implements Cloneable {
 		}
 	};
 
-	static class DataHolderItem implements Cloneable {
+	public static class DataHolderItem implements Cloneable {
 
 		private String name;
 		private Object value;
