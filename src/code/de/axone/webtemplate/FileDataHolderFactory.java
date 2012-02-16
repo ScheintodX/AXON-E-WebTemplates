@@ -65,6 +65,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		
 		DataHolder holder = instantiate( data );
 		holder.setParameter( DataHolder.PARAM_FILE, file.getPath() );
+		holder.setParameter( DataHolder.PARAM_TIMESTAMP, "" + file.lastModified()/1000 ); // 1s
 		
 		log.trace( "DataHolder for " + file + " created" );
 
