@@ -22,10 +22,11 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
 	public AbstractFileWebTemplate() {}
 	
-	protected AbstractFileWebTemplate( File file ) throws IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+	protected AbstractFileWebTemplate( File file ) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException{
 		
 		this( new FileDataHolderFactory( 
-				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>()
+				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>(),
+				null
 		).holderFor( file ) );
 	}
 	

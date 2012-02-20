@@ -126,13 +126,13 @@ public abstract class JerrySlicer extends Slicer {
     }
     
     @Override
-	public void load() throws IOException{
+	public void load( String master ) throws IOException{
     	
-    	File master = getMasterTemplate();
-		doc = Jerry.jerry( FileUtil.readString( master ) );
+    	File masterFile = new File( getMasterBase(), master );
+		doc = Jerry.jerry( FileUtil.readString( masterFile ) );
 		
 		if( verbose )
-			log.println( "    Read: " + master );
+			log.println( "    Read: " + masterFile );
     }
     	   
     public void save( File file ) throws IOException{

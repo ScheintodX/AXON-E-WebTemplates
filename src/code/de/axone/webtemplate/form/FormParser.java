@@ -280,8 +280,15 @@ public class FormParser<T> {
 		public String pojoName() { return pojoName; }
 		
 		@Override public String toString(){
-			return "G: " + getter.getName() + ", S: " + setter.getName() + ", F: " + field + 
-					", Form: " + formName + ", Pojo: " + pojoName;
+			StringBuilder result = new StringBuilder();
+			if( getter != null ) result.append( "G: " ).append( getter.getName() );
+			if( setter != null ) result.append( ", S: " ).append( setter.getName() );
+			result
+				.append( ", F: " ).append( field )
+				.append( ", Form: " ).append( formName )
+				.append( ", Pojo: " ).append( pojoName )
+			;
+			return result.toString();
 		}
 	}
 	
@@ -365,7 +372,7 @@ public class FormParser<T> {
 			FormValue<?> fVal = form.getFormValue( field.formName );
 			
 			if( fVal == null ){
-				log.warn( "Cannot find: " + field.formName );
+				log.debug( "Cannot find: {}", field.formName );
 			} else {
 				forceInto( fVal, value ); //fVal.setValue( value );
 			}

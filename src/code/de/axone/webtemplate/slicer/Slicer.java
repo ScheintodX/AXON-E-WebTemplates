@@ -3,82 +3,112 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
+
+import de.axone.tools.Mapper;
+import de.axone.webtemplate.WebTemplateException;
 
 
 public abstract class Slicer {
+	
+	private File masterBase;
+	private File outputBase;
 
-	public abstract File getOutputPath();
-	public abstract File getMasterTemplate();
-	public abstract List<String> getTemplateNames();
-	public abstract String getTemplateClass( String name );
-	public abstract void makeTemplate( String name ) throws Exception;
-	public abstract void prepare() throws Exception;
-	public abstract String out();
-	public abstract void init();
-	public abstract void load() throws IOException;
-	
-	public File getTemplatePath( String name ){
-		return new File( getOutputPath(), name );
-	}
-	
 	protected boolean verbose = false;
 	protected PrintWriter log = new PrintWriter( System.out, true );
+	
+	public abstract List<String> getTemplateNames( String master );
+	
+	public abstract String getTemplateClass( String master, String name );
+	public abstract void makeTemplate( String master, String name ) throws WebTemplateException;
+	public abstract void prepare( String master ) throws WebTemplateException;
+	protected abstract String out();
+	public abstract void init();
+	public abstract void load( String master ) throws IOException;
+	
+	public abstract File getTemplateFile( String name );
+	public abstract String getTemplateName( File file );
+	
+	public void setMasterBase( File masterBase ){
+		this.masterBase = masterBase;
+	}
+	public void setTemplateBase( File outputBase ){
+		this.outputBase = outputBase;
+	}
+	
+	public File getMasterBase() {
+		return masterBase;
+	}
+	public File getOutputBase(){
+		return outputBase;
+	}
 	
 	public void setVerbose( boolean verbose ){
 		this.verbose = verbose;
 	}
 
-	public void parse() throws Exception {
+	public void parse( String master, String ... names ) throws WebTemplateException{
+		parse( master, Mapper.hashSet( names ) );
+	}
+	public void parse( String master, Collection<String> names ) throws WebTemplateException{
 		
-		for( String name : getTemplateNames() ){
+		for( String name : getTemplateNames( master ) ){
+			
+			//E.rr( name );
+			if( names != null && !names.contains( name ) ) continue;
 			
 			if( verbose )
 				log.println( ("Template: " + name).toUpperCase() );
 			
 			try {
-				String clazzs = getTemplateClass( name );
+				String clazzs = getTemplateClass( master, name );
 				
-				makeTemplate( name );
+				makeTemplate( master, name );
 				
 				String content = out();
 				
-				File outFile = getTemplatePath( name );
+				File outFile = getTemplateFile( name );
+				File masterFile = new File( getMasterBase(), master );
 				
 				try (
 					PrintWriter fOut = new PrintWriter( new FileWriter( outFile ) );
 				) {
 					fOut.println( "@Class: " + clazzs );
-					fOut.println( "@Source: " + getMasterTemplate().getAbsolutePath() );
+					fOut.println( "@Source: " + master );
+					fOut.println( "@Timestamp: " + masterFile.lastModified()/1000 );
 					fOut.println();
 					fOut.println( content );
 					
 					if( verbose )
-						log.println( " Written: " + outFile );
+						log.println( " Written: " + outFile.getCanonicalPath() );
 				}
 				
 			} catch( Throwable t ) {
-				throw new SkriptException( name, t );
+				throw new SlicerException( name, t );
 			}
 		}
 	}
 	
-	public void run() throws Exception {
+	public void run( String master, String ... names ) throws WebTemplateException, IOException {
+		run( master, Mapper.treeSet( names ) );
+	}
+	public void run( String master, Collection<String> names ) throws WebTemplateException, IOException {
 		
 		init();
 		
-		load();
+		load( master );
 		
-		prepare();
+		prepare( master );
 		
-		parse();
+		parse( master, names );
 	}
 
-	private static class SkriptException extends Exception {
+	private static class SlicerException extends WebTemplateException {
 		
 		String name;
 		
-		SkriptException( String name, Throwable throwable ){
+		SlicerException( String name, Throwable throwable ){
 			
 			super( throwable );
 			this.name = name;

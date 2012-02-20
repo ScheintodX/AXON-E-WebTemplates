@@ -13,6 +13,7 @@ import de.axone.cache.CacheNoCache;
 import de.axone.data.Pair;
 import de.axone.tools.FileWatcher;
 import de.axone.tools.HttpWatcher;
+import de.axone.webtemplate.slicer.SlicerFactory;
 
 /**
  * This class is the factory for the webtemplates.
@@ -38,22 +39,29 @@ public class WebTemplateFactory {
 	private final FileDataHolderFactory fileDataHolderFactory;
 	private final HttpDataHolderFactory httpDataHolderFactory;
 	
-	@SuppressWarnings( "rawtypes" )
 	public WebTemplateFactory(){
-		this( new CacheNoCache(), new CacheNoCache() );
+		this( null );
+		throw new RuntimeException( "Holla" );
 	}
+	
+	@SuppressWarnings( "rawtypes" )
+	public WebTemplateFactory( SlicerFactory slicerFactory ){
+		this( new CacheNoCache(), new CacheNoCache(), slicerFactory );
+	}
+	
 	
 	@SuppressWarnings( "unchecked" )
 	public WebTemplateFactory( 
 			Cache.Direct<?,?> fileCache, 
-			Cache.Direct<?,?> httpCache
+			Cache.Direct<?,?> httpCache,
+			SlicerFactory slicerFactory
 	){
 		
 		assert fileCache != null;
 		assert httpCache != null;
 		
 		fileDataHolderFactory = new FileDataHolderFactory(
-				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache );
+				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache, slicerFactory );
 		
 		httpDataHolderFactory = new HttpDataHolderFactory(
 				(Direct<URL, Pair<HttpWatcher, DataHolder>>) httpCache );

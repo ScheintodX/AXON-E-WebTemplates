@@ -41,6 +41,7 @@ public final class DataHolder implements Cloneable {
 	
 	public static final String PARAM_FILE = "file";
 	public static final String PARAM_TIMESTAMP = "timestamp";
+	public static final String PARAM_SOURCE = "source";
 
 	public static final String NOVAL = "";
 
