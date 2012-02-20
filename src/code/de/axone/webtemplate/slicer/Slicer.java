@@ -18,12 +18,16 @@ public abstract class Slicer {
 	public abstract void init();
 	public abstract void load() throws IOException;
 	
-	public          File getTemplatePath( String name ){
+	public File getTemplatePath( String name ){
 		return new File( getOutputPath(), name );
 	}
 	
 	protected boolean verbose = false;
 	protected PrintWriter log = new PrintWriter( System.out, true );
+	
+	public void setVerbose( boolean verbose ){
+		this.verbose = verbose;
+	}
 
 	public void parse() throws Exception {
 		
