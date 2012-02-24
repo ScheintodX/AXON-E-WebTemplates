@@ -10,6 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.axone.tools.CamelCase;
 import de.axone.webtemplate.DataHolder;
 import de.axone.webtemplate.KeyException;
 import de.axone.webtemplate.WebTemplateException;
@@ -158,39 +159,8 @@ public class FormParser<T> {
 	}
 	private static String makeFormKey( String name ){
 		
-		StringBuilder result = new StringBuilder( (int)(name.length() * 1.5 ) );
-		
-		char last = ' '; // not in field names. neither upper nor lower case. not a digit.
-		int len = name.length();
-		for( int i = 0; i < len; i++ ){
-			
-			char c = name.charAt( i );
-			char next;
-			if( i < len-2 ) next = name.charAt( i+1 );
-			else next = ' ';
-			
-			boolean is_ = false;
-			
-			if( i > 0 ){
-				if( i < len-2
-						&& Character.isUpperCase( last ) 
-						&& Character.isUpperCase( c )
-						&& Character.isLowerCase( next )
-				) is_ = true;
-				
-				else if( Character.isLowerCase( last ) && Character.isUpperCase( c ) ) is_ = true;
-				else if( Character.isDigit( last ) && ! Character.isDigit( c ) ) is_ = true;
-				else if( (! Character.isDigit( last )) && Character.isDigit( c ) ) is_ = true;
-			}
-			
-			if( is_ ) result.append( '_' );
-			
-			result.append( Character.toLowerCase( c ) );
-			
-			last = c;
-		}
-		
-		return result.toString();
+		return CamelCase.toUnderscored( name );
+	
 	}
 	/*
 	private static String makeBasename( String formKey ){

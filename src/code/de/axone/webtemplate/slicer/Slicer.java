@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 
+import de.axone.exception.Assert;
 import de.axone.tools.Mapper;
 import de.axone.webtemplate.WebTemplateException;
 
@@ -13,7 +14,7 @@ import de.axone.webtemplate.WebTemplateException;
 public abstract class Slicer {
 	
 	private File masterBase;
-	private File outputBase;
+	private File templateBase;
 
 	protected boolean verbose = false;
 	protected PrintWriter log = new PrintWriter( System.out, true );
@@ -33,15 +34,15 @@ public abstract class Slicer {
 	public void setMasterBase( File masterBase ){
 		this.masterBase = masterBase;
 	}
-	public void setTemplateBase( File outputBase ){
-		this.outputBase = outputBase;
+	public void setTemplateBase( File templateBase ){
+		this.templateBase = templateBase;
 	}
 	
 	public File getMasterBase() {
 		return masterBase;
 	}
-	public File getOutputBase(){
-		return outputBase;
+	public File getTemplateBase(){
+		return templateBase;
 	}
 	
 	public void setVerbose( boolean verbose ){
@@ -52,6 +53,8 @@ public abstract class Slicer {
 		parse( master, Mapper.hashSet( names ) );
 	}
 	public void parse( String master, Collection<String> names ) throws WebTemplateException{
+		
+		Assert.notNull( master, "master" );
 		
 		for( String name : getTemplateNames( master ) ){
 			

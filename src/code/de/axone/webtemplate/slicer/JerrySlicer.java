@@ -1,10 +1,13 @@
 package de.axone.webtemplate.slicer;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringReader;
 
 import jodd.io.FileUtil;
 import jodd.lagarto.dom.jerry.Jerry;
+import de.axone.tools.Text;
 
 
 public abstract class JerrySlicer extends Slicer {
@@ -17,10 +20,8 @@ public abstract class JerrySlicer extends Slicer {
 	protected Jerry selected;
 	protected Jerry view;
 	
-	public Jerry $( String css, Object sux ){
-		
-		return $( css );
-	}
+	protected int indent=0;
+	
 	public Jerry $( String css ){
 		
 		return looking().$( css );
@@ -50,7 +51,7 @@ public abstract class JerrySlicer extends Slicer {
 		return selected;
 	}
 	
-	public Jerry select( String css ){
+	public Jerry selectOuter( String css ){
 		
 		view();
 		selected = Jerry.jerry( outerHtml( doc.$( css ) ) );
@@ -58,13 +59,21 @@ public abstract class JerrySlicer extends Slicer {
 		return selected;
 	}
 	
+	public Jerry select( String css ){
+		
+		view();
+		selected = Jerry.jerry( html( doc.$( css ) ) );
+		
+		return selected;
+	}
+	
+	public void view(){
+		view = null;
+	}
 	public Jerry view( String css ){
 		
 		view = selected.$( css );
 		return view;
-	}
-	public void view(){
-		view = null;
 	}
 	
     public Jerry doc(){
@@ -94,6 +103,17 @@ public abstract class JerrySlicer extends Slicer {
 	    }
     }
     
+    public void replace( String css, String replacement ){
+    	$(css).before( replacement ).remove();
+    }
+    /*
+    public void conditional( String css, String condition ){
+    	
+    	String html = $(css).html();
+    	$(css).html( "__if condition=\" + contidion + \"__" + html + "__endif__" );
+    }
+    */
+    
 	@Override
 	public String out(){
 		String result = out.toString();
@@ -108,6 +128,10 @@ public abstract class JerrySlicer extends Slicer {
 		System.out.println( outerHtml( selected ) );
 	}
 	
+	public void indent( int indent ){
+		this.indent = indent;
+	}
+	
 	public void write(){
 		write( html( selected ) );
 	}
@@ -118,7 +142,29 @@ public abstract class JerrySlicer extends Slicer {
     	write( snippet.html() );
 	}
 	public void write( String text ){
-    	out.append( text );
+		
+		if( indent == 0 ){
+			out.append( text );
+			
+		} else {
+			
+			try( BufferedReader r = new BufferedReader( new StringReader( text ) ) ){
+			
+		    	String l;
+		    	while( ( l = r.readLine() ) != null ){
+		    		
+		    		if( indent > 0 ) l = Text.line( '\t', indent ) + l;
+		    		else for( int i=0; i<-indent; i++ ){
+		    			if( l.length() > 0 && l.charAt( 0 ) == '\t' ) l = l.substring( 1 );
+		    		}
+		    		out.append( l ).append( "\n" );
+		    	}
+				
+			} catch( IOException e ) {
+				throw new RuntimeException( e );
+			}
+		}
+		
 	}
 	
     @Override
