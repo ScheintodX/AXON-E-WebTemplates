@@ -51,10 +51,11 @@ public abstract class JerrySlicer extends Slicer {
 		return selected;
 	}
 	
+	// Todo: $(">") anstelle von outer/inner
 	public Jerry selectOuter( String css ){
 		
 		view();
-		selected = Jerry.jerry( outerHtml( doc.$( css ) ) );
+		selected = Jerry.jerry( outerHtml( doc.$( css ) ) ).children();
 		
 		return selected;
 	}
@@ -65,6 +66,10 @@ public abstract class JerrySlicer extends Slicer {
 		selected = Jerry.jerry( html( doc.$( css ) ) );
 		
 		return selected;
+	}
+	
+	public static Jerry clone( Jerry other ){
+		return Jerry.jerry( outerHtml( other ) ).$( ">" );
 	}
 	
 	public void view(){
@@ -85,7 +90,7 @@ public abstract class JerrySlicer extends Slicer {
     	
     	return html( selected );
     }
-    public String html( Jerry jerry ){
+    public static String html( Jerry jerry ){
     	
     	return jerry.html();
     }
@@ -94,7 +99,7 @@ public abstract class JerrySlicer extends Slicer {
     	
     	return outerHtml( selected );
     }
-    public String outerHtml( Jerry jerry ){
+    public static String outerHtml( Jerry jerry ){
     	
     	if( jerry.size() > 0 ){
 	    	return jerry.get()[0].getHtml();

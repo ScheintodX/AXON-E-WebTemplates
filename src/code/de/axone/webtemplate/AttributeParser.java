@@ -83,9 +83,9 @@ public abstract class AttributeParser {
 			}
 			
 			return map;
+		} else {
+			throw new ParserException( "Not valid: '" + value + "'" );
 		}
-		
-		throw new ParserException( "Not valid: " + value );
 	}
 	
 
