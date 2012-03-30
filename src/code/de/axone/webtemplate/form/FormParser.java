@@ -27,8 +27,6 @@ public class FormParser<T> {
 	
 	//private static final Log log = Logging.getLog( FormParser.class );
 	
-	private static final Class<Form> fc = Form.class;
-	
 	private T pojo;
 	private List<FormField> parsed;
 	
@@ -64,9 +62,9 @@ public class FormParser<T> {
 	
 	private static boolean isFormable( boolean defaultFormable, Field o, On event ) throws FormParserException{
 		
-		boolean hasAnnotation = o.isAnnotationPresent( fc );
+		boolean hasAnnotation = o.isAnnotationPresent( Form.class );
 		if( hasAnnotation ){
-			Form formable = o.getAnnotation( fc );
+			Form formable = o.getAnnotation( Form.class );
 			return isFormable( formable, event );
 		} else {
 			return defaultFormable;
@@ -75,12 +73,12 @@ public class FormParser<T> {
 	
 	private static boolean isFormable( boolean defaultFormable, Class<?> cls, Method o, On event ) throws FormParserException{
 		
-		boolean hasAnnotation = o.isAnnotationPresent( fc );
+		boolean hasAnnotation = o.isAnnotationPresent( Form.class );
 		
 		String err = hasSupportedGetterAndSetter( cls, o );
 		if( hasAnnotation ){
 			if( err != null ) throw new FormParserException( err );
-			Form formable = o.getAnnotation( fc );
+			Form formable = o.getAnnotation( Form.class );
 			return isFormable( formable, event );
 		} else {
 			if( err != null ){
@@ -190,8 +188,8 @@ public class FormParser<T> {
 		
 		boolean defaultFormable = false;
 		
-		if( cls.isAnnotationPresent( fc ) ){
-			defaultFormable = cls.getAnnotation( fc ).use();
+		if( cls.isAnnotationPresent( Form.class ) ){
+			defaultFormable = cls.getAnnotation( Form.class ).use();
 		}
 			
 		for( Field field : cls.getFields() ){
@@ -200,7 +198,8 @@ public class FormParser<T> {
 				
 				String pojoName = makePojoName( field );
 				String formName = makeFormKey( pojoName );
-				result.add( new FormField( formName, pojoName, field ) );
+				FormField ff = new FormField( formName, pojoName, field );
+				result.add( ff );
 			}
 		}
 		for( Method method : cls.getMethods() ){
@@ -211,7 +210,8 @@ public class FormParser<T> {
 				String pojoName = makePojoName( method );
 				String formName = makeFormKey( pojoName );
 				Method setter = findSetter( cls, method );
-				result.add( new FormField( pojoName, formName, method, setter ) );
+				FormField ff = new FormField( pojoName, formName, method, setter );
+				result.add( ff );
 			}
 		}
 		
