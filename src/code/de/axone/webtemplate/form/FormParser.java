@@ -215,6 +215,9 @@ public class FormParser<T> {
 			}
 		}
 		
+		if( result.size() == 0 )
+			throw new FormParserException( "No parsable fields in " + cls );
+		
 		return result;
 	}
 	

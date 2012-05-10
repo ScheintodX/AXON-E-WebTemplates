@@ -101,5 +101,10 @@ public class FormValueImpl<T> implements FormValue<T> {
 		
 		this.converter = converter;
 	}
+	
+	@Override
+	public String toString(){
+		return "[FV:" + getPlainValue() + "]";
+	}
 
 }

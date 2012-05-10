@@ -21,7 +21,7 @@ public abstract class Slicer {
 	
 	public abstract List<String> getTemplateNames( String master );
 	
-	public abstract String getTemplateClass( String master, String name );
+	public abstract Class<?> getTemplateClass( String master, String name );
 	public abstract void makeTemplate( String master, String name ) throws WebTemplateException;
 	public abstract void prepare( String master ) throws WebTemplateException;
 	protected abstract String out();
@@ -58,14 +58,13 @@ public abstract class Slicer {
 		
 		for( String name : getTemplateNames( master ) ){
 			
-			//E.rr( name );
-			if( names != null && !names.contains( name ) ) continue;
+			if( names != null && names.size() > 0 && !names.contains( name ) ) continue;
 			
 			if( verbose )
 				log.println( ("Template: " + name).toUpperCase() );
 			
 			try {
-				String clazzs = getTemplateClass( master, name );
+				Class<?> clazz = getTemplateClass( master, name );
 				
 				makeTemplate( master, name );
 				
@@ -77,7 +76,7 @@ public abstract class Slicer {
 				try (
 					PrintWriter fOut = new PrintWriter( new FileWriter( outFile ) );
 				) {
-					fOut.println( "@Class: " + clazzs );
+					fOut.println( "@Class: " + clazz.getName() );
 					fOut.println( "@Source: " + master );
 					fOut.println( "@Timestamp: " + masterFile.lastModified()/1000 );
 					fOut.println();

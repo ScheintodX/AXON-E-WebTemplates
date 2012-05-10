@@ -487,7 +487,8 @@ public class FormValueFactory {
 		return createInputHiddenLongValue( name, defaultLocale );
 	}
 
-	public FormValue<Boolean> createRadioBooleanValue( String name, String trueValue, String falseValue, boolean nullable ){
+	public FormValue<Boolean> createRadioBooleanValue(
+			String name, String trueValue, String falseValue, boolean nullable ){
 		
 		LinkedList<Option> options = new LinkedList<Option>();
 		options.addLast( new OptionImpl( "true", trueValue ) );

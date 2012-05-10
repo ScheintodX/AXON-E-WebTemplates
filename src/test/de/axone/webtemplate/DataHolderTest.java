@@ -65,9 +65,10 @@ public class DataHolderTest {
 	private static class TestFunction implements Function {
 
 		@Override
-		public void render( String name,
-				DataHolder holder, 
-				HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws IOException, MissingAttributeException {
+		public void render( String name, DataHolder holder, 
+				HttpServletRequest request, HttpServletResponse response,
+				AttributeMap attributes, Object value, Translator translator
+		) throws IOException, MissingAttributeException {
 			
 			if( ! holder.isRender() ) return;
 			

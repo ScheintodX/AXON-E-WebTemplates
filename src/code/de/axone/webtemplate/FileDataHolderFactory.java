@@ -64,7 +64,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			String source = result.getParameter( DataHolder.PARAM_SOURCE );
 			if( source != null ){
 				Slicer slicer = slicerFactory.instance( source );
-				String name = slicer.getTemplateName( file );
+				//String name = slicer.getTemplateName( file );
 				File masterBase = slicer.getMasterBase();
 				File master = new File( masterBase, source );
 				
@@ -77,8 +77,9 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 					if( last > timestamp ) run = true;
 				}
 					
-				// Slice
-				if( run ) slicer.run( source, name );
+				// Slice: Allways slice all
+				//if( run ) slicer.run( source, name );
+				if( run ) slicer.run( source );
 				
 				// Store
 				result = instantiate( file );

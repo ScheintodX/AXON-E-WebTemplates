@@ -239,9 +239,9 @@ public final class DataHolder implements Cloneable {
 			}
 			if( function != null ){
 				if( key.getAttributes() != null ){
-    				function.render( functionName, this, request, response, key.getAttributes(), value, translator );
+    				function.render( functionName, this, request, response, key.getAttributes(), object, translator );
 				} else {
-					function.render( functionName, this, request, response, new AttributeMap(), value, translator );
+					function.render( functionName, this, request, response, new AttributeMap(), object, translator );
 				}
 			} else if( value != null && render ) {
 

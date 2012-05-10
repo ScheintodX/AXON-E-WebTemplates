@@ -24,10 +24,10 @@ public abstract class JerrySlicer extends Slicer {
 	
 	public Jerry $( String css ){
 		
-		return looking().$( css );
+		return $().$( css );
     }
 	
-	public Jerry looking(){
+	public Jerry $(){
 		
 		if( view != null ){
 			return view;
@@ -36,10 +36,6 @@ public abstract class JerrySlicer extends Slicer {
 		}
 	}
 	
-	public boolean has(){
-		return looking().size() > 0;
-	}
-    
 	public Jerry use( String css ){
 		
 		view();
@@ -51,7 +47,7 @@ public abstract class JerrySlicer extends Slicer {
 		return selected;
 	}
 	
-	// Todo: $(">") anstelle von outer/inner
+	// Todo: $(">") instead of outer/inner
 	public Jerry selectOuter( String css ){
 		
 		view();
@@ -111,13 +107,7 @@ public abstract class JerrySlicer extends Slicer {
     public void replace( String css, String replacement ){
     	$(css).before( replacement ).remove();
     }
-    /*
-    public void conditional( String css, String condition ){
-    	
-    	String html = $(css).html();
-    	$(css).html( "__if condition=\" + contidion + \"__" + html + "__endif__" );
-    }
-    */
+   
     
 	@Override
 	public String out(){

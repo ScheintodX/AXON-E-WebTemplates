@@ -48,9 +48,10 @@ public class AlignFunction implements Function {
 	public static AlignFunction instance(){ return instance; }
 
 	@Override
-	public void render( String name,
-			DataHolder holder, 
-			HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws Exception {
+	public void render( String name, DataHolder holder, 
+			HttpServletRequest request, HttpServletResponse response,
+			AttributeMap attributes, Object value, Translator translator
+	) throws Exception {
 		
 		String varName = attributes.getAsStringRequired( ATTRIBUTE_VAR ).trim();
 		

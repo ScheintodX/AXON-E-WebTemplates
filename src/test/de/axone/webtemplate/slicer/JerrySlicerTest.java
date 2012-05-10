@@ -128,8 +128,8 @@ public class JerrySlicerTest {
 		}
 
 		@Override
-		public String getTemplateClass( String master, String name ) {
-			return "TestClass";
+		public Class<?> getTemplateClass( String master, String name ) {
+			return this.getClass();
 		}
 
 		@Override
@@ -164,8 +164,8 @@ public class JerrySlicerTest {
 			
 			use( "#c" );
 			view( "#content" );
-			assertEquals( html( looking() ), inner );
-			assertEquals( outerHtml( looking() ), outer );
+			assertEquals( html( $() ), inner );
+			assertEquals( outerHtml( $() ), outer );
 		}
 		
 		private void sliceB(){
