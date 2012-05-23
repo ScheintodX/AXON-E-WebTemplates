@@ -18,6 +18,8 @@ public interface WebForm {
 	public void addFormValue( String name, FormValue<?> connectorValue )
 		throws WebTemplateException;
 	public FormValue<?> getFormValue( String name );
+	public void remFormValue( String name )
+		throws WebTemplateException;
 
 	public Set<String> getFormValueNames();
 

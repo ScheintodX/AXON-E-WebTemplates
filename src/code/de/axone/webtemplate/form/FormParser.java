@@ -15,6 +15,7 @@ import de.axone.webtemplate.DataHolder;
 import de.axone.webtemplate.KeyException;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.converter.ConverterException;
+import de.axone.webtemplate.element.FormValueFactory;
 import de.axone.webtemplate.form.Form.On;
 
 public class FormParser<T> {
@@ -27,12 +28,10 @@ public class FormParser<T> {
 	
 	//private static final Log log = Logging.getLog( FormParser.class );
 	
-	private T pojo;
 	private List<FormField> parsed;
 	
-	public FormParser( T pojo, On event ) throws FormParserException {
-		this.pojo = pojo;
-		this.parsed = fields( pojo.getClass(), event );
+	public FormParser( Class<T> clazz, On event ) throws FormParserException {
+		this.parsed = fields( clazz, event );
 	}
 	
 	private static boolean isFormable( Form formable, On event ) throws FormParserException{
@@ -198,7 +197,14 @@ public class FormParser<T> {
 				
 				String pojoName = makePojoName( field );
 				String formName = makeFormKey( pojoName );
-				FormField ff = new FormField( formName, pojoName, field );
+				String formType = null;
+				if( field.isAnnotationPresent( Form.class ) ) {
+					formType = field.getAnnotation( Form.class ).type();
+				}
+				if( formType == null || formType.length() == 0 ){
+					formType = field.getType().getName();
+				}
+				FormField ff = new FormField( formName, pojoName, field, formType );
 				result.add( ff );
 			}
 		}
@@ -209,8 +215,15 @@ public class FormParser<T> {
 			if( isFormable( defaultFormable, cls, method, event ) ){
 				String pojoName = makePojoName( method );
 				String formName = makeFormKey( pojoName );
+				String formType = null;
+				if( method.isAnnotationPresent( Form.class ) ) {
+					formType = method.getAnnotation( Form.class ).type();
+				}
+				if( formType == null || formType.length() == 0 ){
+					formType = method.getReturnType().getName();
+				}
 				Method setter = findSetter( cls, method );
-				FormField ff = new FormField( pojoName, formName, method, setter );
+				FormField ff = new FormField( pojoName, formName, method, setter, formType );
 				result.add( ff );
 			}
 		}
@@ -230,20 +243,23 @@ public class FormParser<T> {
 		private Method getter;
 		private Method setter;
 		private Field field;
-		private String formName;
-		private String pojoName;
+		private final String formName;
+		private final String pojoName;
+		private String formType;
 		
-		FormField( String pojoName, String formName, Method getter, Method setter ){
+		FormField( String pojoName, String formName, Method getter, Method setter, String formType ){
 			this.formName = formName;
 			this.pojoName = pojoName;
 			this.getter = getter;
 			this.setter = setter;
+			this.formType = formType;
 		}
 		
-		FormField( String formName, String pojoName, Field field ){
+		FormField( String formName, String pojoName, Field field, String formType ){
 			this.formName = formName;
 			this.pojoName = pojoName;
 			this.field = field;
+			this.formType = formType;
 		}
 		
 		public Method getter() { return getter; }
@@ -251,6 +267,16 @@ public class FormParser<T> {
 		public Field field() { return field; }
 		public String formName() { return formName; }
 		public String pojoName() { return pojoName; }
+		public String formType() { return formType; }
+		public Form form() {
+			
+			if( field != null && field.isAnnotationPresent( Form.class ) ){
+				return field.getAnnotation( Form.class );
+			} else if( getter != null && getter.isAnnotationPresent( Form.class )){
+				return getter.getAnnotation( Form.class );
+			}
+			return null;
+		}
 		
 		@Override public String toString(){
 			StringBuilder result = new StringBuilder();
@@ -265,7 +291,7 @@ public class FormParser<T> {
 		}
 	}
 	
-	private void putInPojoByMethod( Method setter, Object value ) throws FormParserException {
+	private void putInPojoByMethod( T pojo, Method setter, Object value ) throws FormParserException {
 		
 		log.trace( "setMethod: " + setter.getName() + " to " + value );
 		
@@ -275,7 +301,7 @@ public class FormParser<T> {
 			throw new FormParserException( "Error calling " + setter, e );
 		}
 	}
-	private Object getFromPojoByMethod( Method getter ) throws FormParserException {
+	private Object getFromPojoByMethod( T pojo, Method getter ) throws FormParserException {
 		
 		Object value;
 		
@@ -288,7 +314,7 @@ public class FormParser<T> {
 		return value;
 	}
 	
-	private void putInPojoByField( Field field, Object value ) throws FormParserException {
+	private void putInPojoByField( T pojo, Field field, Object value ) throws FormParserException {
 		
 		log.trace( "setField: " + field.getName() + " to " + value );
 		
@@ -298,7 +324,7 @@ public class FormParser<T> {
 			throw new FormParserException( "Error accessing " + field, e );
 		}
 	}
-	private Object getFromPojoByField( Field field ) throws FormParserException {
+	private Object getFromPojoByField( T pojo, Field field ) throws FormParserException {
 		
 		Object value;
 		
@@ -311,7 +337,7 @@ public class FormParser<T> {
 		return value;
 	}
 	
-	public void putInPojo( WebForm form ) throws WebTemplateException {
+	public void putInPojo( T pojo, WebForm form ) throws WebTemplateException {
 		
 		for( FormField field : parsed ){
 			
@@ -321,9 +347,9 @@ public class FormParser<T> {
 				Object value = formValue.getValue();
 				
 				if( field.getter != null ){
-					putInPojoByMethod( field.setter, value );
+					putInPojoByMethod( pojo, field.setter, value );
 				} else {
-					putInPojoByField( field.field, value );
+					putInPojoByField( pojo, field.field, value );
 				}
 			} else {
 				log.warn( "Don't find formValue: " + formName );
@@ -331,15 +357,15 @@ public class FormParser<T> {
 		}
 	}
 	
-	public void putInForm( WebForm form ) throws WebTemplateException {
+	public void putInForm( T pojo, WebForm form ) throws WebTemplateException {
 		
 		for( FormField field : parsed ){
 			
 			Object value;
 			if( field.getter != null ){
-				value = getFromPojoByMethod( field.getter );
+				value = getFromPojoByMethod( pojo, field.getter );
 			} else {
-				value = getFromPojoByField( field.field );
+				value = getFromPojoByField( pojo, field.field );
 			}
 			
 			FormValue<?> fVal = form.getFormValue( field.formName );
@@ -386,6 +412,38 @@ public class FormParser<T> {
 			
 			holder.setValue( holderName, form.getFormValue( name ).getPlainValue() );
 		}
+	}
+	
+	public void initializeForm( WebForm form, FormValueFactory fvf, String prefix )
+			throws WebTemplateException{
+		
+		for( FormField field : parsed ){
+			
+			String name = field.formName();
+			String fieldName = prefix != null ? prefix+name : name;
+			String type = field.formType();
+			
+			FormValue<?> formValue = fvf.byType( type, fieldName, field.form() );
+			
+			FormValue<?> oldFormValue = form.getFormValue( name );
+			
+			/*
+			if( oldFormValue == null ){
+				//TODO: Should be: compare old and new value and warn is different
+				if( ! oldFormValue.equals( formValue ) ){
+					E.rr( formValue, oldFormValue );
+					throw new WebTemplateException( "Differing FormValue already there for: " + name );
+				}
+			}
+			*/
+			
+			if( oldFormValue == null ){
+				// Skip silently already defined Values
+				form.addFormValue( name, formValue );
+			}
+			
+		}
+		
 	}
 	
 	public static class FormParserException extends WebTemplateException {

@@ -75,6 +75,11 @@ public class WebFormImpl implements WebForm {
 
 		return connectorValues.get( name );
 	}
+	@Override
+	public void remFormValue( String name ) {
+		
+		connectorValues.remove( name );
+	}
 
 	@Override
 	public boolean isValid() {

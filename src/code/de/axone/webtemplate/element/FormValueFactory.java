@@ -28,6 +28,7 @@ import de.axone.webtemplate.elements.impl.HtmlSelectElement.OptionComparator;
 import de.axone.webtemplate.elements.impl.HtmlTextAreaElement;
 import de.axone.webtemplate.elements.impl.Option;
 import de.axone.webtemplate.elements.impl.OptionImpl;
+import de.axone.webtemplate.form.Form;
 import de.axone.webtemplate.form.FormValue;
 import de.axone.webtemplate.form.FormValueImpl;
 import de.axone.webtemplate.validator.impl.CountryValidator;
@@ -64,6 +65,35 @@ public class FormValueFactory {
 	}
 	public Locale getLocale(){
 		return defaultLocale;
+	}
+	
+	public FormValue<?> byType( String type, String name, Form form ){
+		
+		boolean nullable = true;
+		
+		switch( type ){
+		case "short":
+		case "int":
+		case "long":
+			nullable=false;
+			//$FALL-THROUGH$
+		case "java.lang.Short":
+		case "java.lang.Integer":
+		case "java.lang.Long":
+		case "java.math.BigDecimal":
+			return this.createInputIntegerValue( name, nullable );
+		case "java.lang.String":
+			return this.createInputTextValue( name, 255, nullable );
+		case "java.util.Date":
+			return this.createInputDateValue( name, nullable );
+		case "boolean":
+			nullable=false;
+			//$FALL-THROUGH$
+		case "java.lang.Boolean":
+			return this.createRadioBooleanValue( name, "ja", "nein", nullable );
+		default:
+			throw new IllegalArgumentException( "unknown type: " + type );
+		}
 	}
 	
 	/*

@@ -107,7 +107,7 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 
 				HtmlInputElement inputElement = new HtmlInputElement( HtmlInputElement.InputType.RADIO, getName(), value );
 				inputElement.setContent( text );
-				inputElement.setIdAttribute( null );
+				inputElement.setIdAttribute( getIdAttribute() + "_" + value );
 
 				if( value != null && value.equals(selected) ) {
 					inputElement.addAttribute( "checked", "checked" );
