@@ -1,6 +1,7 @@
 package de.axone.webtemplate.element;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -46,8 +47,14 @@ import de.axone.webtemplate.validator.impl.UrlValidator;
 
 public class FormValueFactory {
 
+	private boolean useHtml5Input;
 	private Decorator decorator = new DefaultDecorator();
 	private Locale defaultLocale = Locale.GERMANY;
+	private String defaultAjaxValidate;
+	
+	public FormValueFactory(){
+		setUseHtml5Input( false );
+	}
 
 	public Decorator getDecorator() {
 		return decorator;
@@ -67,9 +74,37 @@ public class FormValueFactory {
 		return defaultLocale;
 	}
 	
+	public void setUseHtml5Input( boolean useHtml5Input ){
+		this.useHtml5Input = useHtml5Input;
+	}
+	public boolean isUseHtml5Input(){
+		return this.useHtml5Input;
+	}
+	
+	public void setDefaultAjaxValidate( String defaultAjaxValidate ){
+		this.defaultAjaxValidate = defaultAjaxValidate;
+	}
+	public String getDefaultAjaxValidate(){
+		return this.defaultAjaxValidate;
+	}
+	
+	protected HtmlInputElement.InputType DATE_INPUT_TYPE(){
+		return useHtml5Input ? HtmlInputElement.InputType.DATE : HtmlInputElement.InputType.TEXT;
+	}
+	protected HtmlInputElement.InputType NUMBER_INPUT_TYPE(){
+		return useHtml5Input ? HtmlInputElement.InputType.NUMBER : HtmlInputElement.InputType.TEXT;
+	}
+	
 	public FormValue<?> byType( String type, String name, Form form ){
 		
-		boolean nullable = true;
+		List<String> options = null;
+		boolean nullable=true;
+		boolean lineBreak=false;
+		if( form != null ) {
+			options = Arrays.asList( form.options() );
+			if( options.contains( "notnull" ) ) nullable = false;
+			if( options.contains( "linebreak" ) ) lineBreak = true;
+		}
 		
 		switch( type ){
 		case "short":
@@ -90,7 +125,12 @@ public class FormValueFactory {
 			nullable=false;
 			//$FALL-THROUGH$
 		case "java.lang.Boolean":
-			return this.createRadioBooleanValue( name, "ja", "nein", nullable );
+			String trueVal = "ja", falseVal="nein";
+			if( options != null && options.size() >= 2 ){
+				trueVal = options.get( 0 );
+				falseVal = options.get( 1 );
+			}
+			return this.createRadioBooleanValue( name, trueVal, falseVal, nullable, lineBreak );
 		default:
 			throw new IllegalArgumentException( "unknown type: " + type );
 		}
@@ -295,7 +335,9 @@ public class FormValueFactory {
 
 		FormValue<String> result = createInputTextValue( name, length,
 				nullable, ajaxValidate );
+		
 		result.addValidator( new PhoneValidator() );
+		
 		return result;
 	}
 
@@ -317,8 +359,8 @@ public class FormValueFactory {
 	
 	public FormValue<Date> createInputDateValue(
 			HtmlInputElement.InputType type, Locale locale, String name,
-			boolean nullable,
-			AjaxValidate ajaxValidate ){
+			DateConverter converter, boolean nullable,
+			AjaxValidate ajaxValidate, String validateString ){
 		
 		FormValueImpl<Date> result = new FormValueImpl<Date>();
 		
@@ -327,19 +369,33 @@ public class FormValueFactory {
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		result.setHtmlInput( element );
 		
-		DateConverter converter = DateConverter.ForLocale.get( locale );
 		result.setConverter( converter );
 		
-		ajaxValidate.add( "%check_date" );
+		if( validateString != null )
+			ajaxValidate.add( validateString );
 		
 		if( !nullable ) {
 			result.addValidator( new NotNullValidator() );
 			ajaxValidate.add( "required" );
 		}
 		
+		if( defaultAjaxValidate != null )
+			ajaxValidate.add( defaultAjaxValidate );
+		
 		element.addClassAttribute( ajaxValidate.text() );
 		
 		return result;
+	}
+	
+	public FormValue<Date> createInputDateValue(
+			HtmlInputElement.InputType type, Locale locale, String name,
+			boolean nullable,
+			AjaxValidate ajaxValidate ){
+		
+		return createInputDateValue( type, locale, name,
+				DateConverter.YMDForLocale( locale ), nullable,
+				ajaxValidate, "%check_date"
+		);
 	}
 	
 	public FormValue<Date> createInputDateValue(
@@ -348,8 +404,20 @@ public class FormValueFactory {
 			){
 		
 		return createInputDateValue(
-				HtmlInputElement.InputType.TEXT,
+				DATE_INPUT_TYPE(),
 				locale, name, nullable, new AjaxValidate() );
+	}
+		
+	public FormValue<Date> createInputDateValue(
+			String name, Locale locale,
+			DateConverter converter, boolean nullable, String validateString
+			){
+		
+		return createInputDateValue(
+				DATE_INPUT_TYPE(),
+				locale, name,
+				converter, nullable,
+				new AjaxValidate(), validateString );
 	}
 		
 	public FormValue<Date> createInputDateValue(
@@ -358,7 +426,7 @@ public class FormValueFactory {
 			){
 		
 		return createInputDateValue(
-				HtmlInputElement.InputType.TEXT,
+				DATE_INPUT_TYPE(),
 				defaultLocale, name, nullable, new AjaxValidate() );
 	}
 		
@@ -378,17 +446,13 @@ public class FormValueFactory {
 			BigDecimal min, BigDecimal max, boolean nullable, boolean readonly,
 			AjaxValidate ajaxValidate ){
 		
-		// Disable Type=NUMBER for chrome compatibility
-		if( type == HtmlInputElement.InputType.NUMBER )
-			type = HtmlInputElement.InputType.TEXT;
-		
 		FormValueImpl<BigDecimal> result = new FormValueImpl<BigDecimal>();
 		
 		HtmlInputElement element = new HtmlInputElement( type, name );
-		/*
+		
 		if( type == HtmlInputElement.InputType.NUMBER )
 			element.addAttribute( "step", "any" ); // Make floating point possible for Chrome
-		*/
+		
 		element.setReadonly( readonly );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
@@ -398,6 +462,9 @@ public class FormValueFactory {
 		result.setConverter( converter );
 		
 		ajaxValidate.add( "%check_price_de" );
+		
+		if( defaultAjaxValidate != null )
+			ajaxValidate.add( defaultAjaxValidate );
 		
 		if( min != null || max != null ) {
 			result.addValidator( new MinMaxValidator( min, max ) );
@@ -416,14 +483,14 @@ public class FormValueFactory {
 	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
 			String name, Locale locale, boolean nullable ) {
 			
-		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.NUMBER,
+		return createInputBigDecimalPriceValue( NUMBER_INPUT_TYPE(),
 				locale, name, null, null, nullable, new AjaxValidate() );
 				
 	}
 	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
 			String name, boolean nullable ) {
 			
-		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.NUMBER,
+		return createInputBigDecimalPriceValue( NUMBER_INPUT_TYPE(),
 				defaultLocale, name, null, null, nullable, new AjaxValidate() );
 				
 	}
@@ -431,7 +498,7 @@ public class FormValueFactory {
 	public FormValue<BigDecimal> createInputBigDecimalPriceValue(
 			String name, boolean nullable, boolean readonly ) {
 			
-		return createInputBigDecimalPriceValue( HtmlInputElement.InputType.NUMBER,
+		return createInputBigDecimalPriceValue( NUMBER_INPUT_TYPE(),
 				defaultLocale, name, null, null, nullable, readonly, new AjaxValidate() );
 				
 	}
@@ -461,6 +528,9 @@ public class FormValueFactory {
 			ajaxValidate.add( "required" );
 		}
 
+		if( defaultAjaxValidate != null )
+			ajaxValidate.add( defaultAjaxValidate );
+		
 		element.addClassAttribute( ajaxValidate.text() );
 
 		return result;
@@ -476,7 +546,7 @@ public class FormValueFactory {
 
 	public FormValue<Integer> createInputIntegerValue( String name,
 			Locale locale, Integer min, Integer max, boolean nullable ) {
-		return createInputIntegerValue( HtmlInputElement.InputType.TEXT,
+		return createInputIntegerValue( NUMBER_INPUT_TYPE(),
 				locale, name, min, max, nullable );
 	}
 
@@ -517,17 +587,22 @@ public class FormValueFactory {
 		return createInputHiddenLongValue( name, defaultLocale );
 	}
 
-	public FormValue<Boolean> createRadioBooleanValue(
-			String name, String trueValue, String falseValue, boolean nullable ){
+	public FormValue<Boolean> createRadioBooleanValue( String name,
+			String trueValue, String falseValue, boolean nullable, boolean lineBreak ){
 		
 		LinkedList<Option> options = new LinkedList<Option>();
-		options.addLast( new OptionImpl( "true", trueValue ) );
-		options.addLast( new OptionImpl( "false", falseValue ) );
+		Option trueOption = new OptionImpl( "true", trueValue );
+		Option falseOption = new OptionImpl( "false", falseValue );
+		options.addLast( trueOption );
+		options.addLast( falseOption );
 		
 		FormValue<Boolean> result = new FormValueImpl<Boolean>();
 		
+		AjaxValidate ajaxValidate = new AjaxValidate();
+		
 		HtmlRadioElement element = new HtmlRadioElement( name, options );
 		element.setDecorator( decorator );
+		element.setLineBreak( lineBreak );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		result.setHtmlInput( element );
 		
@@ -536,7 +611,15 @@ public class FormValueFactory {
 		
 		if( !nullable ) {
 			result.addValidator( new NotNullValidator() );
+			ajaxValidate.add( "radio" );
 		}
+		//ajaxValidate.add( "target:" + "input_" + name + "_true" );
+		
+		if( defaultAjaxValidate != null )
+			ajaxValidate.add( defaultAjaxValidate );
+		
+		
+		element.addClassAttribute( ajaxValidate.text() );
 		
 		return result;
 	}
@@ -642,29 +725,25 @@ public class FormValueFactory {
 			result.addValidator( new LengthValidator( length ) );
 			ajaxValidate.add( "length[0," + length + "]" );
 		}
+		
 		if( !nullable ) {
 			result.addValidator( new NotNullValidator() );
 			ajaxValidate.add( "required" );
 		}
+		
+		if( defaultAjaxValidate != null )
+			ajaxValidate.add( defaultAjaxValidate );
+		
 		element.addClassAttribute( ajaxValidate.text() );
 
 		return result;
 	}
 
-	private static class AjaxValidate {
+	protected static class AjaxValidate {
 
 		LinkedList<String> values = new LinkedList<String>();
 
-		AjaxValidate() {}
-
-		/*
-		AjaxValidate(String... values) {
-
-			for( String val : values ) {
-				this.values.addLast( val );
-			}
-		}
-		*/
+		protected AjaxValidate() {}
 
 		void add( String value ) {
 			values.addLast( value );

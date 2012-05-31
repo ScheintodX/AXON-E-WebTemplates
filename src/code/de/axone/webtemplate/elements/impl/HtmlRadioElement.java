@@ -19,6 +19,7 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 	private List<Option> options;
 	private String selected;
 	private String name;
+	private boolean lineBreak;
 
 	public enum InputType {
 		TEXT, PASSWORD, HIDDEN
@@ -73,6 +74,13 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 	public List<Option> getOptions() {
 		return options;
 	}
+	
+	public void setLineBreak( boolean lineBreak ){
+		this.lineBreak = lineBreak;
+	}
+	public boolean isLineBreak(){
+		return this.lineBreak;
+	}
 
 	// --- Lock Content ---
 	@Override
@@ -90,7 +98,11 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 				HttpServletResponse response, Translator translator )
 				throws IOException, WebTemplateException, Exception {
 
+			boolean first=true;
 			for( Option option : options ) {
+				
+				if( first ) first = false;
+				else if( lineBreak ) response.getWriter().println( "<br/>" );
 
 				String value = option.getValue();
 				String text = option.getText();
@@ -100,6 +112,7 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 						&& value.startsWith( "@@@" ) && value.endsWith( "@@@" ) ){
 					value = translator.translate( TKey.dynamic( value.substring( 3, value.length()-3 ) ) );
 				}
+				
 				if( text != null && text.length() > 6  && text.charAt(0) == '@'
 						&& text.startsWith( "@@@" ) && text.endsWith( "@@@" ) ){
 					text = translator.translate( TKey.dynamic( text.substring( 3, text.length()-3 ) ) );
@@ -108,6 +121,7 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 				HtmlInputElement inputElement = new HtmlInputElement( HtmlInputElement.InputType.RADIO, getName(), value );
 				inputElement.setContent( text );
 				inputElement.setIdAttribute( getIdAttribute() + "_" + value );
+				//inputElement.setClassAttribute( getClassAttribute() );
 
 				if( value != null && value.equals(selected) ) {
 					inputElement.addAttribute( "checked", "checked" );

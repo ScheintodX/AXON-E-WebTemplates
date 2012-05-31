@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#set -x
+
+for name in Addresse Angebot Fahrzeug Zubehoer; do
+
+	dboClass=de.axone.hvm.model.${name}DBO 
+	#formClass=de.axone.hvm.form.${name}Form 
+	formClass=${name}Form 
+	javaFile=src/code/de/axone/hvm/form/${name}Form.java
+	#javaFile=${name}Form.java
+
+	if [ ! -f $javaFile ]; then
+
+		echo ./gen_formclass $dboClass ANY $formClass
+		./gen_formclass $dboClass ANY $formClass > $javaFile
+	else
+		echo $javaFile exists
+	fi
+
+done

@@ -13,10 +13,21 @@ import de.axone.webtemplate.converter.ConverterException;
 public class DateConverter extends AbstractConverter<Date> {
 	
 	// TODO: Das verbessern / erweitern / verschieben
-	public static final HashMap<Locale, DateConverter> ForLocale = new HashMap<Locale,DateConverter>();
+	private static final HashMap<Locale, DateConverter> YMDForLocale = new HashMap<Locale,DateConverter>();
 	static{
-		ForLocale.put( Locale.US, new DateConverter( new SimpleDateFormat( "MM/dd/yyyy" ) ) );
-		ForLocale.put( Locale.GERMANY, new DateConverter( new SimpleDateFormat( "dd.MM.yyyy" ) ) );
+		YMDForLocale.put( Locale.US, new DateConverter( new SimpleDateFormat( "MM/dd/yyyy" ) ) );
+		YMDForLocale.put( Locale.GERMANY, new DateConverter( new SimpleDateFormat( "dd.MM.yyyy" ) ) );
+	}
+	private static final HashMap<Locale, DateConverter> YMForLocale = new HashMap<Locale,DateConverter>();
+	static{
+		YMForLocale.put( Locale.US, new DateConverter( new SimpleDateFormat( "MM/yyyy" ) ) );
+		YMForLocale.put( Locale.GERMANY, new DateConverter( new SimpleDateFormat( "MM.yyyy" ) ) );
+	}
+	public static DateConverter YMDForLocale( Locale locale ){
+		return YMDForLocale.get( locale );
+	}
+	public static DateConverter YMForLocale( Locale locale ){
+		return YMForLocale.get( locale );
 	}
 	
 	private DateFormat dateFormat;

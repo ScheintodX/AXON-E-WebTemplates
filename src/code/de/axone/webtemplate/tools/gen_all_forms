@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for name in Addresse Angebot Fahrzeug Zubehoer; do
+
+	dboClass=de.axone.hvm.model.$(name)DBO 
+	xhtmlFile=WebContent/$name.xhtml
+
+	./gen_form $dboClass ANY > $xhtmlFile
+
+done

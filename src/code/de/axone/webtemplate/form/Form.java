@@ -59,7 +59,7 @@ public @interface Form {
 	public String type() default "";
 	
 	/**
-	 * Option to specify in adition to type.
+	 * Option to specify in addition to type.
 	 * 
 	 * @return
 	 */
