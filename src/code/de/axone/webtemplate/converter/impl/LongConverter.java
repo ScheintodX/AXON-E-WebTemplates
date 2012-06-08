@@ -9,11 +9,18 @@ import de.axone.webtemplate.converter.ConverterException;
 
 public class LongConverter extends AbstractConverter<Long> {
 	
-	private NumberFormat numberFormat;
+	private final NumberFormat numberFormat;
 	
+	public LongConverter(){
+		this( null );
+	}
 	public LongConverter( Locale locale ){
 		
-		numberFormat = NumberFormat.getIntegerInstance( locale );
+		if( locale != null ){
+			numberFormat = NumberFormat.getIntegerInstance( locale );
+		} else {
+			numberFormat = null;
+		}
 	}
 
 	@Override
@@ -27,7 +34,11 @@ public class LongConverter extends AbstractConverter<Long> {
 			return null;
 		
 		try {
-			return numberFormat.parse( value ).longValue();
+			if( numberFormat != null ){
+				return numberFormat.parse( value ).longValue();
+			} else {
+				return Long.valueOf( value );
+			}
 			
 		} catch( ParseException e ) {
 			throw new ConverterException( e );
@@ -40,7 +51,11 @@ public class LongConverter extends AbstractConverter<Long> {
 		
 		if( number == null ) return null;
 		
-		return numberFormat.format( number.longValue() );
+		if( numberFormat != null ){
+			return numberFormat.format( number.longValue() );
+		} else {
+			return Long.toString( number );
+		}
 	}
 
 }

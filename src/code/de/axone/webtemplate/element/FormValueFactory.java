@@ -584,7 +584,7 @@ public class FormValueFactory {
 	}
 	public FormValue<Long> createInputHiddenLongValue( String name ) {
 
-		return createInputHiddenLongValue( name, defaultLocale );
+		return createInputHiddenLongValue( name, null );
 	}
 
 	public FormValue<Boolean> createRadioBooleanValue( String name,
