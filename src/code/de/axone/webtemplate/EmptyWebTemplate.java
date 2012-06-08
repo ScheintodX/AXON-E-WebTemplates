@@ -1,6 +1,8 @@
 package de.axone.webtemplate;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +39,10 @@ public class EmptyWebTemplate implements WebTemplate {
 	}
 
 	@Override
-	public void reset() {}
+	public Set<String> getParameterNames() {
+		return new TreeSet<String>();
+	}
 
+	@Override
+	public void reset() {}
 }

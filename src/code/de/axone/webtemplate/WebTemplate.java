@@ -1,5 +1,7 @@
 package de.axone.webtemplate;
 
+import java.util.Set;
+
 
 /**
  * Base class for generic WebTemplates.
@@ -74,6 +76,13 @@ public interface WebTemplate extends Renderer {
 	 * @return the value
 	 */
 	public Object getParameter( String name );
+	
+	/**
+	 * Return list of parameters' names
+	 * 
+	 * @return
+	 */
+	public Set<String> getParameterNames();
 
 	/**
 	 * Reset the WebTemplate

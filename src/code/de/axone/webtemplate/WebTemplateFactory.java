@@ -219,7 +219,7 @@ public class WebTemplateFactory {
 			}
 	
 			if( className == null ){
-				//throw new WebTemplateException( "No @Class spezified in template and no default given: " + url );
+				//throw new WebTemplateException( "No @Class specified in template and no default given: " + url );
 				className = "de.emogul.TemplatePlain";
 				log.warn( "Template missing in: " + url );
 			}

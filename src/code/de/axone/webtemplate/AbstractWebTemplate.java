@@ -2,6 +2,7 @@ package de.axone.webtemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class AbstractWebTemplate implements WebTemplate {
 	
@@ -42,4 +43,8 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 		return parameters.get( name );
 	}
 
+	@Override
+	public Set<String> getParameterNames(){
+		return parameters.keySet();
+	}
 }
