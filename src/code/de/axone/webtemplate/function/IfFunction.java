@@ -55,14 +55,14 @@ public class IfFunction implements Function {
 			String condition = holder.getParameter( conditionName );
 			
 			if( EasyParser.isYes( condition ) ){
-				holder.setRender( not );
+				holder.setRendering( not );
 			} else {
-				holder.setRender( !not );
+				holder.setRendering( !not );
 			}
 		} else if( "endif".equals( name ) ){
-			holder.setRender( true );
+			holder.setRendering( true );
 		} else if( "else".equals( name ) ){
-			holder.setRender( ! holder.isRender() );
+			holder.setRendering( ! holder.isRendering() );
 		}
 	}
 

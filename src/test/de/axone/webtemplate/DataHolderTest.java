@@ -70,7 +70,7 @@ public class DataHolderTest {
 				AttributeMap attributes, Object value, Translator translator
 		) throws IOException, MissingAttributeException {
 			
-			if( ! holder.isRender() ) return;
+			if( ! holder.isRendering() ) return;
 			
 			PrintWriter out = response.getWriter();
 			out.write( "A:"+attributes.getAsIntRequired( "a" ) );

@@ -204,12 +204,12 @@ public final class DataHolder implements Cloneable {
 		return clone;
 	}
 	
-	private boolean render = true;
-	public boolean isRender(){
-		return render;
+	private boolean rendering = true;
+	public boolean isRendering(){
+		return rendering;
 	}
-	public void setRender( boolean render ){
-		this.render = render;
+	public void setRendering( boolean render ){
+		this.rendering = render;
 	}
 
 	public void render( Object object, HttpServletRequest request,
@@ -243,7 +243,7 @@ public final class DataHolder implements Cloneable {
 				} else {
 					function.render( functionName, this, request, response, new AttributeMap(), object, translator );
 				}
-			} else if( value != null && render ) {
+			} else if( value != null && rendering ) {
 
 				if( value instanceof String ) {
 
