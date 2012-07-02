@@ -55,13 +55,14 @@ public final class DataHolder implements Cloneable {
 	private HashMap<String, String> parameters;
 
 	// Functions
-	private HashMap<String, Function> functions;
+	//private HashMap<String, Function> functions;
+	private FunctionFactory functions;
 
 	DataHolder() {
 		this.keys = new LinkedList<DataHolderKey>();
 		this.values = new HashMap<String, DataHolderItem>();
 		this.parameters = new HashMap<String, String>();
-		this.functions = new HashMap<String,Function>();
+		this.functions = new SimpleFunctionFactory();
 	}
 
 	private DataHolder(LinkedList<DataHolderKey> keys,
@@ -71,7 +72,7 @@ public final class DataHolder implements Cloneable {
 		this.keys = keys;
 		this.values = data;
 		this.parameters = parameters;
-		this.functions = new HashMap<String,Function>();
+		this.functions = new SimpleFunctionFactory();
 	}
 
 	List<DataHolderKey> getVariables() {
@@ -139,9 +140,13 @@ public final class DataHolder implements Cloneable {
 			_setValue( name, values.get( key ) );
 		}
 	}
+	
+	public void setFunctionFactory( FunctionFactory factory ){
+		this.functions = factory;
+	}
 
 	public void setFunction( String key, Function function ) {
-		functions.put( key, function );
+		functions.add( key, function );
 	}
 
 	public DataHolderItem getItem( String key ) throws KeyException {
@@ -231,7 +236,7 @@ public final class DataHolder implements Cloneable {
 			} else {
 				functionName = key.getName();
 			}
-			if( functions.containsKey( functionName ) ){
+			if( functions.has( functionName ) ){
 				function = functions.get( functionName );
 			}
 			if( key.getAttributes() != null ){
@@ -310,11 +315,7 @@ public final class DataHolder implements Cloneable {
 		
 		builder.append( "\nFUNCTIONS:\n" );
 		builder.append( Text.line( 79 ) + "\n" );
-		for( String key : functions.keySet() ){
-			
-			Function function = functions.get( key );
-			formatter.format( "%s: %s\n", key, function );
-		}
+		builder.append( functions.toString() );
 
 		return builder.toString();
 	}

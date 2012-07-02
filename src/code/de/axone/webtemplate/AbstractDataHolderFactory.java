@@ -9,7 +9,7 @@ import de.axone.webtemplate.DataHolder.DataHolderItemType;
 import de.axone.webtemplate.processor.WebTemplateProcessor;
 
 public abstract class AbstractDataHolderFactory {
-
+	
 	protected static DataHolder instantiate( String data ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 				
