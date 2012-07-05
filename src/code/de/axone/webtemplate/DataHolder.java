@@ -1,7 +1,7 @@
 package de.axone.webtemplate;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.tools.E;
 import de.axone.tools.Text;
 import de.axone.web.encoding.AmpEncoder;
 import de.axone.web.encoding.AttributeEncoder;
@@ -37,7 +38,7 @@ import de.axone.webtemplate.function.Function;
  * @author flo
  * TODO: Die Sache mit dem HolderKey umbauen so dass die Attribute im DataHoderItem landen.
  */
-public final class DataHolder implements Cloneable {
+public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 	
 	public static final String PARAM_FILE = "file";
 	public static final String PARAM_TIMESTAMP = "timestamp";
@@ -57,12 +58,13 @@ public final class DataHolder implements Cloneable {
 	// Functions
 	//private HashMap<String, Function> functions;
 	private FunctionFactory functions;
-
+	
 	DataHolder() {
 		this.keys = new LinkedList<DataHolderKey>();
 		this.values = new HashMap<String, DataHolderItem>();
 		this.parameters = new HashMap<String, String>();
 		this.functions = new SimpleFunctionFactory();
+		E.rr( "BLAH" );
 	}
 
 	private DataHolder(LinkedList<DataHolderKey> keys,
@@ -73,6 +75,7 @@ public final class DataHolder implements Cloneable {
 		this.values = data;
 		this.parameters = parameters;
 		this.functions = new SimpleFunctionFactory();
+		E.rr( "BLUB" );
 	}
 
 	List<DataHolderKey> getVariables() {
@@ -217,12 +220,24 @@ public final class DataHolder implements Cloneable {
 		this.rendering = render;
 	}
 
+	@Override
 	public void render( Object object, HttpServletRequest request,
+			HttpServletResponse response, Translator translator )
+			throws IOException, WebTemplateException, Exception {
+		
+		render( object, response.getWriter(), request, response, translator );
+	}
+
+	@Override
+	public boolean cachable() {
+		return false;
+	}
+
+	@Override
+	public void render( Object object, Writer out, HttpServletRequest request,
 			HttpServletResponse response,
 			Translator translator ) throws IOException,
 			WebTemplateException, Exception {
-
-		PrintWriter out = response.getWriter();
 
 		for( DataHolderKey key : keys ) {
 
@@ -260,9 +275,17 @@ public final class DataHolder implements Cloneable {
     					out.write( stringValue );
 					}
 
+				} else if( value instanceof CachableRenderer ) {
+					
+					CachableRenderer renderer = (CachableRenderer) value;
+					E.rr( "Cachable render: " + getClass().getCanonicalName() );
+					renderer.render( object, response.getWriter(), request, response, translator );
+					
 				} else if( value instanceof Renderer ) {
 
+					E.rr( value instanceof CachableRenderer );
 					Renderer renderer = (Renderer) value;
+					E.rr( "NON Cachable render: " + getClass().getCanonicalName() );
 					renderer.render( object, request, response, translator );
 
 				} else if( value instanceof Collection<?> ) {

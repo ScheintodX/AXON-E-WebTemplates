@@ -1,6 +1,7 @@
 package de.axone.webtemplate;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,6 +31,18 @@ public class EmptyWebTemplate implements WebTemplate {
 	}
 
 	@Override
+	public void render( Object object, Writer out, HttpServletRequest request,
+			HttpServletResponse response, Translator translator )
+			throws IOException, WebTemplateException, Exception {
+		
+		render( object, request, response, translator );
+	}
+
+	@Override
+	public boolean cachable() {
+		return true;
+	}
+	@Override
 	public void setParameter( String name, Object object ) {
 	}
 
@@ -45,4 +58,5 @@ public class EmptyWebTemplate implements WebTemplate {
 
 	@Override
 	public void reset() {}
+
 }

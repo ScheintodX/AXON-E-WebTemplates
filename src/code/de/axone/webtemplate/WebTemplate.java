@@ -57,7 +57,7 @@ import java.util.Set;
  * @author flo
  *
  */
-public interface WebTemplate extends Renderer {
+public interface WebTemplate extends Renderer, CachableRenderer {
 
 	/**
 	 * Set a named parameter
