@@ -1,6 +1,7 @@
 package de.axone.webtemplate;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Formatter;
@@ -13,7 +14,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.axone.tools.E;
 import de.axone.tools.Text;
 import de.axone.web.encoding.AmpEncoder;
 import de.axone.web.encoding.AttributeEncoder;
@@ -59,23 +59,25 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 	//private HashMap<String, Function> functions;
 	private FunctionFactory functions;
 	
+	private CacheProvider cacheProvider;
+	
 	DataHolder() {
 		this.keys = new LinkedList<DataHolderKey>();
 		this.values = new HashMap<String, DataHolderItem>();
 		this.parameters = new HashMap<String, String>();
 		this.functions = new SimpleFunctionFactory();
-		E.rr( "BLAH" );
 	}
 
 	private DataHolder(LinkedList<DataHolderKey> keys,
 			HashMap<String, DataHolderItem> data,
-			HashMap<String, String> parameters) {
+			HashMap<String, String> parameters,
+			CacheProvider cache ) {
 
 		this.keys = keys;
 		this.values = data;
 		this.parameters = parameters;
 		this.functions = new SimpleFunctionFactory();
-		E.rr( "BLUB" );
+		this.cacheProvider = cache;
 	}
 
 	List<DataHolderKey> getVariables() {
@@ -147,6 +149,9 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 	public void setFunctionFactory( FunctionFactory factory ){
 		this.functions = factory;
 	}
+	public void setCacheProvider( CacheProvider cache ){
+		this.cacheProvider = cache;
+	}
 
 	public void setFunction( String key, Function function ) {
 		functions.add( key, function );
@@ -206,8 +211,8 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 		HashMap<String, String> cloneParameters = new HashMap<String, String>(
 				parameters );
 
-		DataHolder clone = new DataHolder( cloneKeys, cloneData,
-				cloneParameters );
+		DataHolder clone = new DataHolder(
+				cloneKeys, cloneData, cloneParameters, cacheProvider );
 
 		return clone;
 	}
@@ -231,6 +236,11 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 	@Override
 	public boolean cachable() {
 		return false;
+	}
+
+	@Override
+	public String cacheKey() {
+		return null;
 	}
 
 	@Override
@@ -278,14 +288,32 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 				} else if( value instanceof CachableRenderer ) {
 					
 					CachableRenderer renderer = (CachableRenderer) value;
-					E.rr( "Cachable render: " + getClass().getCanonicalName() );
-					renderer.render( object, response.getWriter(), request, response, translator );
+					if( cacheProvider != null && renderer.cachable() ){
+						//E.rr( "-!- Cachable render: " + value.getClass().getCanonicalName() + " / " + renderer.cacheKey() );
+						String cacheK = renderer.cacheKey();
+						String cachedS = cacheProvider.getCache().get( cacheK );
+						if( cachedS == null ){
+							StringWriter s = new StringWriter();
+							renderer.render( object, s, request, response, translator );
+							cachedS = s.toString();
+							cacheProvider.getCache().put( cacheK, cachedS );
+							//E.rr( "created: " + cachedS );
+						} else {
+							
+							//E.rr( "-----------HIT--------------" );
+						}
+						response.getWriter().write( cachedS );
+					} else {
+						//E.rr( "--- Cachable render: " + value.getClass().getCanonicalName() );
+						StringWriter s = new StringWriter();
+						renderer.render( object, s, request, response, translator );
+						response.getWriter().write( s.toString() );
+					}
 					
 				} else if( value instanceof Renderer ) {
 
-					E.rr( value instanceof CachableRenderer );
 					Renderer renderer = (Renderer) value;
-					E.rr( "NON Cachable render: " + getClass().getCanonicalName() );
+					//E.rr( "NON Cachable render: " + value.getClass().getCanonicalName() );
 					renderer.render( object, request, response, translator );
 
 				} else if( value instanceof Collection<?> ) {

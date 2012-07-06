@@ -26,8 +26,8 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 		
 		this( new FileDataHolderFactory( 
 				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>(),
-				null
-		).holderFor( file ) );
+				null, null
+		).holderFor( file, null ) );
 	}
 	
 	public AbstractFileWebTemplate( DataHolder holder ) {

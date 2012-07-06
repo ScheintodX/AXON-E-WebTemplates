@@ -10,7 +10,7 @@ import de.axone.webtemplate.processor.WebTemplateProcessor;
 
 public abstract class AbstractDataHolderFactory {
 	
-	protected static DataHolder instantiate( String data ) throws IOException,
+	protected static DataHolder instantiate( String data, CacheProvider dataCache ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 				
 		DataHolder holder = new DataHolder();
@@ -94,6 +94,8 @@ public abstract class AbstractDataHolderFactory {
 		if( processor != null ){
 			holder = processor.postProcess( holder );
 		}
+		
+		holder.setCacheProvider( dataCache );
 	
 		return holder;
 	}
