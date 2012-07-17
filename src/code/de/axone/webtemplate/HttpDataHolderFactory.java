@@ -14,9 +14,6 @@ import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 
-	private static final String BEGIN_TEMPLATE = "__BEGIN_TEMPLATE__";
-	private static final String END_TEMPLATE = "__END_TEMPLATE__";
-
 	public static final Logger log =
 			LoggerFactory.getLogger( HttpDataHolderFactory.class );
 
@@ -74,7 +71,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		String encoding = response.encoding;
 		if( encoding == null ) encoding = "iso-8859-1";
 		
-		String data = removeMarker( new String( response.content, encoding ) );
+		String data = new String( response.content, encoding );
 		
 		DataHolder holder = instantiate( data, null );
 		holder.setParameter( "url", url.toString() );
@@ -84,16 +81,4 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		return holder;
 
 	}
-	
-	private static String removeMarker( String data ){
-		
-		int begin = data.indexOf( BEGIN_TEMPLATE );
-		int end = data.indexOf( END_TEMPLATE );
-		
-		begin = begin > 0 ? begin + BEGIN_TEMPLATE.length() : 0;
-		end = end > 0 ? end : data.length()-1;
-		
-		return data.substring( begin, end ).trim();
-	}
-	
 }

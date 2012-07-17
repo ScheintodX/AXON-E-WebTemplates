@@ -10,10 +10,16 @@ import de.axone.webtemplate.processor.WebTemplateProcessor;
 
 public abstract class AbstractDataHolderFactory {
 	
+	private static final String BEGIN_TEMPLATE = "<!--TEMPLATE: BEGIN-->";
+	private static final String END_TEMPLATE = "<!--TEMPLATE: END-->";
+
 	protected static DataHolder instantiate( String data, CacheProvider dataCache ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 				
 		DataHolder holder = new DataHolder();
+		
+		// Cut Markers.
+		data = removeMarker( data, BEGIN_TEMPLATE, END_TEMPLATE );
 	
 		// Replace fucking dos newlines with unix ones
 		data = data.replace( "\r\n", "\n" );
@@ -49,6 +55,14 @@ public abstract class AbstractDataHolderFactory {
 	
 		// Remove header
 		data = data.substring( count );
+		
+		// Cut between markers
+		String cut = holder.getParameter( DataHolder.PARAM_CUT );
+		if( cut != null ){
+			data = removeMarker( data, cut, cut );
+		}
+		
+		// Trim
 		data = data.trim();
 		
 		// Preprocess data
@@ -108,6 +122,17 @@ public abstract class AbstractDataHolderFactory {
 		Object object = clazz.newInstance();
 
 		return (WebTemplateProcessor) object;
+	}
+	
+	private static String removeMarker( String data, String startCut, String endCut ){
+		
+		int begin = data.indexOf( startCut );
+		int end = data.indexOf( endCut, begin );
+		
+		begin = begin > 0 ? begin + BEGIN_TEMPLATE.length() : 0;
+		end = end > 0 ? end : data.length()-1;
+		
+		return data.substring( begin, end ).trim();
 	}
 	
 }

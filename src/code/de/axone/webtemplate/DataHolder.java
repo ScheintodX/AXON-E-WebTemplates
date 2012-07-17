@@ -43,6 +43,7 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 	public static final String PARAM_FILE = "file";
 	public static final String PARAM_TIMESTAMP = "timestamp";
 	public static final String PARAM_SOURCE = "source";
+	public static final String PARAM_CUT = "Cut";
 
 	public static final String NOVAL = "";
 
@@ -299,8 +300,8 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 							cacheProvider.getCache().put( cacheK, cachedS );
 							//E.rr( "created: " + cachedS );
 						} else {
-							
 							//E.rr( "-----------HIT--------------" );
+							//E.rr( cachedS );
 						}
 						response.getWriter().write( cachedS );
 					} else {

@@ -14,7 +14,7 @@ import de.axone.webtemplate.form.Translator;
 
 public class HtmlRadioElement extends AbstractHtmlInputElement {
 
-	private static String TAGNAME = "div";
+	private static String TAGNAME = "span";
 
 	private List<Option> options;
 	private String selected;
@@ -119,7 +119,7 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 				}
 
 				HtmlInputElement inputElement = new HtmlInputElement( HtmlInputElement.InputType.RADIO, getName(), value );
-				inputElement.setContent( text );
+				//inputElement.setContent( text );
 				inputElement.setIdAttribute( getIdAttribute() + "_" + value );
 				//inputElement.setClassAttribute( getClassAttribute() );
 
@@ -128,6 +128,7 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 				}
 
 				inputElement.render(object, request, response, translator);
+				response.getWriter().write( text );
 			}
 		}
 	}
