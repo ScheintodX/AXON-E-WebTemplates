@@ -180,13 +180,11 @@ public class DefaultPager implements Pager {
 	}
 
 	@Override
-	public void render( Object object, HttpServletRequest request,
-			HttpServletResponse response, Translator translator )
+	public void render( Object object, PrintWriter out,
+			HttpServletRequest request, HttpServletResponse response, Translator translator )
 			throws IOException, WebTemplateException, Exception {
 
 		if( ! renderIfOnlyOnePage && numPages <= 1 ) return;
-
-		PrintWriter out = response.getWriter();
 
 		int lastPage = numPages-1;
 

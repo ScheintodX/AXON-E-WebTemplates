@@ -131,8 +131,8 @@ public class ResourceFunction implements Function {
 	
 	@Override
 	public void render( String name, DataHolder holder, 
-			HttpServletRequest request, HttpServletResponse response,
-			AttributeMap attributes, Object value, Translator translator
+			PrintWriter out, HttpServletRequest request,
+			HttpServletResponse response, AttributeMap attributes, Object value, Translator translator
 	) throws Exception {
 		
 		if( ! holder.isRendering() ) return;
@@ -182,8 +182,6 @@ public class ResourceFunction implements Function {
 				paths.add( pBase + src );
 			}
 		}
-		
-		PrintWriter out = response.getWriter();
 		
 		for( String path : paths ){
 			

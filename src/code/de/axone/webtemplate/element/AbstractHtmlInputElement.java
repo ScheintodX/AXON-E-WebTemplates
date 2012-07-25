@@ -1,5 +1,6 @@
 package de.axone.webtemplate.element;
 
+import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,24 +30,24 @@ public abstract class AbstractHtmlInputElement extends HtmlElement implements Ht
 	}
 	
 	@Override
-	public void render( Object object, HttpServletRequest request,
+	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response, Translator translator )
 			throws Exception {
 		
 		if( decorator != null ){
-			decorator.render( this, object, request, response, translator, isValid(), getMessages() );
+			decorator.render( this, object, out, request, response, translator, isValid(), getMessages() );
 			
 		} else {
-			renderElement( object, request, response, translator );
+			renderElement( object, out, request, response, translator );
 		}
 	}
 	
 	@Override
-	public void renderElement( Object object, HttpServletRequest request,
+	public void renderElement( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response, Translator translator )
 			throws Exception {
 		
-		super.render( object, request, response, translator );
+		super.render( object, out, request, response, translator );
 		
 	}
 

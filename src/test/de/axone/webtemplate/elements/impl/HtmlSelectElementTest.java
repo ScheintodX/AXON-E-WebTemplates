@@ -1,6 +1,6 @@
 package de.axone.webtemplate.elements.impl;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -41,7 +41,7 @@ public class HtmlSelectElementTest {
 		assertEquals( element.getName(), "testname" );
 		assertEquals( element.getValue(), "key2" );
 		
-		element.render( null, request, response, null );
+		element.render( null, response.getWriter(), request, response, null );
 		
 		//E.rr( response.getContent() );
 		

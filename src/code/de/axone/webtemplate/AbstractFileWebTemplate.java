@@ -2,6 +2,7 @@ package de.axone.webtemplate;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,15 +46,15 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 	 * @param response
 	 * @throws IOException
 	 */
-	protected abstract void doRender( Object object,
+	protected abstract void doRender( Object object, PrintWriter out,
 			HttpServletRequest request, HttpServletResponse response, Translator translator )
 			throws IOException, WebTemplateException, Exception  ;
 
 	@Override
-	public void render( Object object, HttpServletRequest request,
+	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response, Translator translator ) throws WebTemplateException, IOException, Exception {
 
-		doRender( object, request, response, translator );
+		doRender( object, out, request, response, translator );
 	}
 
 	@Override

@@ -130,7 +130,7 @@ public abstract class AbstractDataHolderFactory {
 		int end = data.indexOf( endCut, begin );
 		
 		begin = begin > 0 ? begin + BEGIN_TEMPLATE.length() : 0;
-		end = end > 0 ? end : data.length()-1;
+		end = end > 0 ? end : data.length();
 		
 		return data.substring( begin, end ).trim();
 	}

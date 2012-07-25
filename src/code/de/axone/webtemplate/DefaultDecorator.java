@@ -14,11 +14,9 @@ import de.axone.webtemplate.form.Translator;
 public class DefaultDecorator implements Decorator {
 
 	@Override
-	public void render( HtmlInput element, Object object,
+	public void render( HtmlInput element, Object object, PrintWriter out, 
 			HttpServletRequest request, HttpServletResponse response,
 			Translator translator, boolean isValid, List<String> messages ) throws Exception {
-
-		PrintWriter out = response.getWriter();
 
 		if( isValid ){
 			out.write( "<div class=\"valid\">" );
@@ -26,7 +24,7 @@ public class DefaultDecorator implements Decorator {
 			out.write( "<div class=\"invalid\">" );
 		}
 
-		element.renderElement( object, request, response, translator );
+		element.renderElement( object, out, request, response, translator );
 
 		if( messages != null ) for( String message : messages ){
 

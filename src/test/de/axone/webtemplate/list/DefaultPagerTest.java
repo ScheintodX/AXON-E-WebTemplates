@@ -2,6 +2,8 @@ package de.axone.webtemplate.list;
 
 import static org.testng.Assert.*;
 
+import java.io.PrintWriter;
+
 import org.testng.annotations.Test;
 
 import de.axone.web.TestHttpServletRequest;
@@ -20,11 +22,12 @@ public class DefaultPagerTest {
 		request.setRequestURL( new StringBuffer( "https://www.axon-e.de/blah?test=1&test=2&pageme-page=22" ) );
 		
 		TestHttpServletResponse response = new TestHttpServletResponse();
+		PrintWriter out = response.getWriter();
 		DefaultPager pager;
 		String content;
 		
 		pager = new TestDefaultPager( "pageme", 2, 5 );
-		pager.render( null, request, response, null );
+		pager.render( null, out, request, response, null );
 		
 		content = response.getContent();
 		response.resetBuffer();
@@ -34,7 +37,7 @@ public class DefaultPagerTest {
 		//----
 		
 		pager = new TestDefaultPager( "pageme", 0, 100 );
-		pager.render( null, request, response, null );
+		pager.render( null, out, request, response, null );
 		
 		content = response.getContent();
 		response.resetBuffer();
@@ -44,7 +47,7 @@ public class DefaultPagerTest {
 		//----
 		
 		pager = new TestDefaultPager( "pageme", 50, 100 );
-		pager.render( null, request, response, null );
+		pager.render( null, out, request, response, null );
 		
 		content = response.getContent();
 		response.resetBuffer();
@@ -54,7 +57,7 @@ public class DefaultPagerTest {
 		//----
 		
 		pager = new TestDefaultPager( "pageme", 99, 100 );
-		pager.render( null, request, response, null );
+		pager.render( null, out, request, response, null );
 		
 		content = response.getContent();
 		response.resetBuffer();
@@ -66,7 +69,7 @@ public class DefaultPagerTest {
 		pager = new TestDefaultPager( "pageme", 0, 1 );
 		pager.setSelectedTemplate( "__no__: __link__" );
 		pager.setRenderIfOnlyOnePage( true );
-		pager.render( null, request, response, null );
+		pager.render( null, out, request, response, null );
 		
 		content = response.getContent();
 		response.resetBuffer();

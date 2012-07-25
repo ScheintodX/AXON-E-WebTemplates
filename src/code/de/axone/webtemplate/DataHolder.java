@@ -1,8 +1,8 @@
 package de.axone.webtemplate;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -227,14 +227,6 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 	}
 
 	@Override
-	public void render( Object object, HttpServletRequest request,
-			HttpServletResponse response, Translator translator )
-			throws IOException, WebTemplateException, Exception {
-		
-		render( object, response.getWriter(), request, response, translator );
-	}
-
-	@Override
 	public boolean cachable() {
 		return false;
 	}
@@ -245,7 +237,7 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 	}
 
 	@Override
-	public void render( Object object, Writer out, HttpServletRequest request,
+	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response,
 			Translator translator ) throws IOException,
 			WebTemplateException, Exception {
@@ -270,9 +262,9 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 			}
 			if( function != null ){
 				if( key.getAttributes() != null ){
-    				function.render( functionName, this, request, response, key.getAttributes(), object, translator );
+    				function.render( functionName, this, out, request, response, key.getAttributes(), object, translator );
 				} else {
-					function.render( functionName, this, request, response, new AttributeMap(), object, translator );
+					function.render( functionName, this, out, request, response, new AttributeMap(), object, translator );
 				}
 			} else if( value != null && rendering ) {
 
@@ -294,7 +286,7 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 						String cacheK = renderer.cacheKey();
 						String cachedS = cacheProvider.getCache().get( cacheK );
 						if( cachedS == null ){
-							StringWriter s = new StringWriter();
+							PrintWriter s = new PrintWriter( new StringWriter() );
 							renderer.render( object, s, request, response, translator );
 							cachedS = s.toString();
 							cacheProvider.getCache().put( cacheK, cachedS );
@@ -306,7 +298,7 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 						response.getWriter().write( cachedS );
 					} else {
 						//E.rr( "--- Cachable render: " + value.getClass().getCanonicalName() );
-						StringWriter s = new StringWriter();
+						PrintWriter s = new PrintWriter( new StringWriter() );
 						renderer.render( object, s, request, response, translator );
 						response.getWriter().write( s.toString() );
 					}
@@ -315,7 +307,7 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 
 					Renderer renderer = (Renderer) value;
 					//E.rr( "NON Cachable render: " + value.getClass().getCanonicalName() );
-					renderer.render( object, request, response, translator );
+					renderer.render( object, out, request, response, translator );
 
 				} else if( value instanceof Collection<?> ) {
 
@@ -324,7 +316,7 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 					for( Object o : collection ) {
 
 						Renderer renderer = (Renderer) o;
-						renderer.render( object, request, response, translator );
+						renderer.render( object, out, request, response, translator );
 					}
 
 				} else {

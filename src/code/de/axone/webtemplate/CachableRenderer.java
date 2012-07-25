@@ -1,14 +1,14 @@
 package de.axone.webtemplate;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.axone.webtemplate.form.Translator;
 
-public interface CachableRenderer {
+public interface CachableRenderer extends Renderer {
 
 	/**
 	 * Render this WebTemplates content to the given HttpServletResponse
@@ -20,7 +20,8 @@ public interface CachableRenderer {
 	 * @throws IOException is thrown when some error occured accessing the writer
 	 * @throws Exception is thrown when some generic shop exception occures
 	 */
-	public void render( Object object, Writer out, HttpServletRequest request,
+	@Override
+	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response, Translator translator ) throws IOException, WebTemplateException, Exception;
 	
 	/**

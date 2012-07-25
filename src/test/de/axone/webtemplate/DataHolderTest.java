@@ -59,20 +59,19 @@ public class DataHolderTest {
 		holder.setFunction( "func", new TestFunction() );
 		
 		TestHttpServletResponse respo = new TestHttpServletResponse();
-		holder.render( null, new TestHttpServletRequest(), respo, null );
+		holder.render( null, out, new TestHttpServletRequest(), respo, null );
 	}
 	
 	private static class TestFunction implements Function {
 
 		@Override
 		public void render( String name, DataHolder holder, 
-				HttpServletRequest request, HttpServletResponse response,
-				AttributeMap attributes, Object value, Translator translator
+				PrintWriter out, HttpServletRequest request,
+				HttpServletResponse response, AttributeMap attributes, Object value, Translator translator
 		) throws IOException, MissingAttributeException {
 			
 			if( ! holder.isRendering() ) return;
 			
-			PrintWriter out = response.getWriter();
 			out.write( "A:"+attributes.getAsIntRequired( "a" ) );
 			out.write( "B:"+attributes.getAsStringRequired( "b" ) );
 			out.write( "C:"+attributes.containsKey( "c" ) );

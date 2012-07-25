@@ -1,6 +1,7 @@
 package de.axone.webtemplate;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,8 +22,9 @@ public class AutomatedFileWebTemplate extends AbstractFileWebTemplate {
 	}
 	
 	@Override
-	protected void doRender( Object object, HttpServletRequest request,
-			HttpServletResponse response, Translator translator ) throws WebTemplateException, IOException, Exception {
+	protected void doRender( Object object, PrintWriter out,
+			HttpServletRequest request, HttpServletResponse response,
+			Translator translator ) throws WebTemplateException, IOException, Exception {
 		
 		for( String key : getHolder().getKeys() ){
 			
@@ -39,7 +41,8 @@ public class AutomatedFileWebTemplate extends AbstractFileWebTemplate {
 		}
 		
 		//response.getWriter().write( getHolder().render().toString() );
-		getHolder().render( object, request, response, translator );
+		getHolder().render( object, out, request, response, translator );
+		
 	}
 	
 }

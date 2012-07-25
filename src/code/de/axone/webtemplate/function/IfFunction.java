@@ -1,5 +1,7 @@
 package de.axone.webtemplate.function;
 
+import java.io.PrintWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,8 +42,8 @@ public class IfFunction implements Function {
 
 	@Override
 	public void render( String name, DataHolder holder, 
-			HttpServletRequest request, HttpServletResponse response,
-			AttributeMap attributes, Object value, Translator translator
+			PrintWriter out, HttpServletRequest request,
+			HttpServletResponse response, AttributeMap attributes, Object value, Translator translator
 	) throws Exception {
 		
 		if( "if".equals( name ) ){

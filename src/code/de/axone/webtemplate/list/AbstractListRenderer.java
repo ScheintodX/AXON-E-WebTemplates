@@ -1,6 +1,7 @@
 package de.axone.webtemplate.list;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -112,7 +113,7 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 	}
 
 	@Override
-	public void render( Object object, HttpServletRequest request,
+	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response, Translator translator )
 			throws IOException, WebTemplateException, Exception {
 
@@ -134,7 +135,7 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 				listableItemTemplate.setHighlight( isHighlight( t ) );
 			}
 
-			itemTemplate.render( t, request, response, translator );
+			itemTemplate.render( t, out, request, response, translator );
 			i++;
 		}
 	}

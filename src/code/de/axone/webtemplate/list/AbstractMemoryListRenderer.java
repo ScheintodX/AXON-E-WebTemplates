@@ -1,6 +1,7 @@
 package de.axone.webtemplate.list;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,8 +33,8 @@ public class AbstractMemoryListRenderer<T> implements Renderer {
 	}
 
 	@Override
-	public void render( Object object, HttpServletRequest request,
-			HttpServletResponse response, Translator translator )
+	public void render( Object object, PrintWriter out,
+			HttpServletRequest request, HttpServletResponse response, Translator translator )
 			throws IOException, WebTemplateException, Exception {
 
 		this.request = request;
@@ -47,7 +48,7 @@ public class AbstractMemoryListRenderer<T> implements Renderer {
 		
 		for( T t : it ){
 			
-			itemTemplate.render( t, request, response, translator );
+			itemTemplate.render( t, out, request, response, translator );
 		}
 	}
 	

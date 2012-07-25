@@ -1,5 +1,7 @@
 package de.axone.webtemplate.function;
 
+import java.io.PrintWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -49,8 +51,8 @@ public class AlignFunction implements Function {
 
 	@Override
 	public void render( String name, DataHolder holder, 
-			HttpServletRequest request, HttpServletResponse response,
-			AttributeMap attributes, Object value, Translator translator
+			PrintWriter out, HttpServletRequest request,
+			HttpServletResponse response, AttributeMap attributes, Object value, Translator translator
 	) throws Exception {
 		
 		String varName = attributes.getAsStringRequired( ATTRIBUTE_VAR ).trim();
