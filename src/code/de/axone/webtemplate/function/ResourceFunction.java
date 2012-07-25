@@ -76,6 +76,7 @@ import de.axone.webtemplate.form.Translator;
 public class ResourceFunction implements Function {
 	
 	public static final String ATTRIBUTE_SRC = "src";
+	public static final String ATTRIBUTE_ID = "id";
 	public static final String ATTRIBUTE_MODE = "mode";
 	public static final String ATTRIBUTE_COMPRESS = "compress";
 	public static final String ATTRIBUTE_TYPE = "type";
@@ -138,6 +139,8 @@ public class ResourceFunction implements Function {
 		
 		String tmp;
 		String pSrc = attributes.getAsStringRequired( ATTRIBUTE_SRC ).trim();
+		
+		String pId = attributes.getAsString( ATTRIBUTE_ID );
 		
 		Mode pMode = this.mode;
 		tmp = attributes.getAsString( ATTRIBUTE_MODE );
@@ -216,6 +219,7 @@ public class ResourceFunction implements Function {
 						"href", path
 				);
 				if( pMedia != null ) args.put( "media", pMedia );
+				if( pId != null ) args.put( "id", pId.trim() );
 				
 				tag = Tag.simple( "link", null, args );
 				
@@ -227,6 +231,7 @@ public class ResourceFunction implements Function {
 						"type", "text/javascript",
 						"src", path
 				);
+				if( pId != null ) args.put( "id", pId.trim() );
 				tag = Tag.simple( "script", "", args );
 			} break;
 			}
