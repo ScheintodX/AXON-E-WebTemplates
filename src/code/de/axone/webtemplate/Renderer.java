@@ -14,7 +14,7 @@ public interface Renderer {
 	 * Render this WebTemplates content to the given HttpServletResponse
 	 *
 	 * @param object Any object. Depends on the implementation what is done with it.
-	 * @param out TODO
+	 * @param out A PrintWriter which should be used for output. In case of caching this is what gets cached.
 	 * @param request The HttpServletRequest. Particularilly usefull for accessing the GET/POST parameters
 	 * @param response The HttpServletResponse. Implementation my use it's writer to render the content.
 	 * @param out A Writer. Use this to output to. Normally this is the on gotten by <code>response.getWriter()</code>

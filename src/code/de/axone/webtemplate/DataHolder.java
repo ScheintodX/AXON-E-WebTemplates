@@ -38,7 +38,7 @@ import de.axone.webtemplate.function.Function;
  * @author flo
  * TODO: Die Sache mit dem HolderKey umbauen so dass die Attribute im DataHoderItem landen.
  */
-public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
+public final class DataHolder implements Cloneable, Renderer, CacheableRenderer {
 	
 	public static final String PARAM_FILE = "file";
 	public static final String PARAM_TIMESTAMP = "timestamp";
@@ -227,7 +227,7 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
 	}
 
 	@Override
-	public boolean cachable() {
+	public boolean cacheable() {
 		return false;
 	}
 
@@ -278,36 +278,30 @@ public final class DataHolder implements Cloneable, Renderer, CachableRenderer {
     					out.write( stringValue );
 					}
 
-				} else if( value instanceof CachableRenderer ) {
+				} else if( value instanceof Renderer ) {
 					
-					CachableRenderer renderer = (CachableRenderer) value;
-					if( cacheProvider != null && renderer.cachable() ){
-						//E.rr( "-!- Cachable render: " + value.getClass().getCanonicalName() + " / " + renderer.cacheKey() );
+					CacheableRenderer renderer;
+					if(
+							value instanceof CacheableRenderer 
+							&& cacheProvider != null
+							&& (renderer=(CacheableRenderer)value).cacheable()
+					) {
+						
 						String cacheK = renderer.cacheKey();
 						String cachedS = cacheProvider.getCache().get( cacheK );
+						
 						if( cachedS == null ){
-							PrintWriter s = new PrintWriter( new StringWriter() );
-							renderer.render( object, s, request, response, translator );
+							StringWriter s = new StringWriter();
+							renderer.render( object, new PrintWriter( s ), request, response, translator );
 							cachedS = s.toString();
 							cacheProvider.getCache().put( cacheK, cachedS );
-							//E.rr( "created: " + cachedS );
-						} else {
-							//E.rr( "-----------HIT--------------" );
-							//E.rr( cachedS );
 						}
 						response.getWriter().write( cachedS );
+							
 					} else {
-						//E.rr( "--- Cachable render: " + value.getClass().getCanonicalName() );
-						PrintWriter s = new PrintWriter( new StringWriter() );
-						renderer.render( object, s, request, response, translator );
-						response.getWriter().write( s.toString() );
-					}
-					
-				} else if( value instanceof Renderer ) {
 
-					Renderer renderer = (Renderer) value;
-					//E.rr( "NON Cachable render: " + value.getClass().getCanonicalName() );
-					renderer.render( object, out, request, response, translator );
+						((Renderer)value).render( object, out, request, response, translator );
+					}
 
 				} else if( value instanceof Collection<?> ) {
 
