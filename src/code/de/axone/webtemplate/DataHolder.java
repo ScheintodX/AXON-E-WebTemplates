@@ -38,7 +38,7 @@ import de.axone.webtemplate.function.Function;
  * @author flo
  * TODO: Die Sache mit dem HolderKey umbauen so dass die Attribute im DataHoderItem landen.
  */
-public final class DataHolder implements Cloneable, Renderer, CacheableRenderer {
+public final class DataHolder implements Cloneable {
 	
 	public static final String PARAM_FILE = "file";
 	public static final String PARAM_TIMESTAMP = "timestamp";
@@ -226,17 +226,6 @@ public final class DataHolder implements Cloneable, Renderer, CacheableRenderer 
 		this.rendering = render;
 	}
 
-	@Override
-	public boolean cacheable() {
-		return false;
-	}
-
-	@Override
-	public String cacheKey() {
-		return null;
-	}
-
-	@Override
 	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response,
 			Translator translator ) throws IOException,
@@ -296,6 +285,7 @@ public final class DataHolder implements Cloneable, Renderer, CacheableRenderer 
 							cachedS = s.toString();
 							cacheProvider.getCache().put( cacheK, cachedS );
 						}
+						//E.rr( cachedS );
 						response.getWriter().write( cachedS );
 							
 					} else {

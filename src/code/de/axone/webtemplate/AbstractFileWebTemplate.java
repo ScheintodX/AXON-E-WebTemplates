@@ -2,10 +2,6 @@ package de.axone.webtemplate;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +11,6 @@ import de.axone.data.Pair;
 import de.axone.tools.FileWatcher;
 import de.axone.webtemplate.DataHolder.DataHolderItem;
 import de.axone.webtemplate.DataHolder.DataHolderItemType;
-import de.axone.webtemplate.form.Translator;
 
 public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
@@ -33,28 +28,6 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 	
 	public AbstractFileWebTemplate( DataHolder holder ) {
 		super( holder );
-	}
-
-	/**
-	 * Overwrite here
-	 *
-	 * USAGE: Write your own manipulation on <tt>holder</tt>. Then add its
-	 * output to the <tt>response</tt>
-	 *
-	 * @param object
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 */
-	protected abstract void doRender( Object object, PrintWriter out,
-			HttpServletRequest request, HttpServletResponse response, Translator translator )
-			throws IOException, WebTemplateException, Exception  ;
-
-	@Override
-	public void render( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator ) throws WebTemplateException, IOException, Exception {
-
-		doRender( object, out, request, response, translator );
 	}
 
 	@Override

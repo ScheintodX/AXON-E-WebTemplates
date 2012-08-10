@@ -37,9 +37,11 @@ import de.axone.webtemplate.form.Translator;
  *  <dd>include additional parameters for debugging. (yui=no)
  *  
  * 	<dt>cache: yes/rand/file, 'rand' is default
- *  <dd>include additional parameters for debugging. (yui=no)
+ *  <dd>Append nc (nocache) parameter to url or does nothing in case of cache='yes'. 
+ *  'rand' will include a per server restart random value. 'file' will include the files newest timestamp. (Not implementd).
+ *  This will change in future versions because ?= url parameters prevent some proxies from caching
  *  
- * 	<dt>compress: true/false, defaults are 'true' for live and 'false' for dev mode
+ * 	<dt>combine: true/false, default is 'true'
  *  <dd>if true, one tag is genereated. if false multiple are generated
  *  
  * 	<dt>type: css/js
@@ -49,7 +51,7 @@ import de.axone.webtemplate.form.Translator;
  *  <dd>the type of resource. css generates &lt;link ...&gt; tags. js generates &lt;script ...&gt; tags.
  *  
  * 	<dt>base, default depends and must be set in constructor
- *  <dd>base path to prepend to all media. Handling depends on 'compress'
+ *  <dd>base path to prepend to all media. Handling depends on 'combine'
  * </dl>
  * 
  * <h4>Examples</h4>
@@ -62,7 +64,7 @@ import de.axone.webtemplate.form.Translator;
  * &lt;link rel="stylesheet" href="/css/main.css;print.css" media="print" /&gt;
  * </pre>
  * <pre>
- * __resource src="tools.js;print/print.css" base="/static/" compress="false" mode="dev"__
+ * __resource src="tools.js;print/print.css" base="/static/" combine="false" mode="dev"__
  * </pre>
  * results in:
  * <pre>
@@ -78,7 +80,7 @@ public class ResourceFunction implements Function {
 	public static final String ATTRIBUTE_SRC = "src";
 	public static final String ATTRIBUTE_ID = "id";
 	public static final String ATTRIBUTE_MODE = "mode";
-	public static final String ATTRIBUTE_COMPRESS = "compress";
+	public static final String ATTRIBUTE_COMBINE = "combine";
 	public static final String ATTRIBUTE_TYPE = "type";
 	public static final String ATTRIBUTE_CACHE = "cache";
 	public static final String ATTRIBUTE_MEDIA = "media";
@@ -95,7 +97,7 @@ public class ResourceFunction implements Function {
 	}
 	
 	private final Mode mode;
-	private final boolean compress;
+	private final boolean combine;
 	private final Cache cache;
 	private final String media;
 	private final String base;
@@ -105,16 +107,16 @@ public class ResourceFunction implements Function {
 	/**
 	 * 
 	 * @param mode
-	 * @param compress
+	 * @param combine
 	 * @param type
 	 * @param media
 	 * @param base
 	 * @param fsBase only needed for live fs ctime checks if mode==dev.
 	 * @param rand a random number used for nocache
 	 */
-	public ResourceFunction( Mode mode, boolean compress, Cache cache, String media, String base, File fsBase, int rand ){
+	public ResourceFunction( Mode mode, boolean combine, Cache cache, String media, String base, File fsBase, int rand ){
 		this.mode = mode;
-		this.compress = compress;
+		this.combine = combine;
 		this.cache = cache;
 		this.media = media;
 		this.base = base;
@@ -122,9 +124,9 @@ public class ResourceFunction implements Function {
 		this.rand = rand;
 	}
 	
-	public ResourceFunction( Mode mode, boolean compress, String base, File fsBase, int rand ){
+	public ResourceFunction( Mode mode, boolean combine, String base, File fsBase, int rand ){
 		
-		this( mode, compress, Cache.rand, null, base, fsBase, rand );
+		this( mode, combine, Cache.rand, null, base, fsBase, rand );
 	}
 	
 	private static final Pattern SEPARATOR = Pattern.compile( "\\s*;\\s*" );
@@ -146,9 +148,9 @@ public class ResourceFunction implements Function {
 		tmp = attributes.getAsString( ATTRIBUTE_MODE );
 		if( tmp != null ) pMode = Mode.valueOf( tmp.trim() );
 		
-		boolean pCompress = this.compress;
-		tmp = attributes.getAsString( ATTRIBUTE_COMPRESS );
-		if( tmp != null ) pCompress = EasyParser.isYes( tmp.trim() );
+		boolean pCombine = this.combine;
+		tmp = attributes.getAsString( ATTRIBUTE_COMBINE );
+		if( tmp != null ) pCombine = EasyParser.isYes( tmp );
 		
 		Type pType = Type.valueOf( attributes.getAsStringRequired( ATTRIBUTE_TYPE ) );
 		
@@ -175,7 +177,7 @@ public class ResourceFunction implements Function {
 		List<String> srcs = Arrays.asList( SEPARATOR.split( pSrc ) );
 		
 		List<String> paths = new LinkedList<>();
-		if( pCompress ){
+		if( pCombine ){
 			paths.add( pBase + Str.join( ";", srcs ) );
 		} else {
 			for( String src : srcs ){
