@@ -54,6 +54,7 @@ public abstract class AbstractDataHolderFactory {
 		}
 	
 		// Remove header
+		if( count > data.length() ) count=data.length();
 		data = data.substring( count );
 		
 		// Cut between markers
