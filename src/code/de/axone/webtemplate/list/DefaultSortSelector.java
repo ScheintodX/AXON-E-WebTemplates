@@ -80,6 +80,11 @@ public class DefaultSortSelector implements SortSelector {
 			out.write( Tag.hiddenInput( "q", q ) );
 		}
 		
+		String qq = request.getParameter( "qq" );
+		if( qq != null ){
+			out.write( Tag.hiddenInput( "qq", qq ) );
+		}
+		
 		if( keepPageOnSort ){
 			String pageName = nameBase + "-page";
 			String page = request.getParameter( pageName );
