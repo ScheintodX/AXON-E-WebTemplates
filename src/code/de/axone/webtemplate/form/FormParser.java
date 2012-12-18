@@ -181,17 +181,17 @@ public class FormParser<T> {
 	}
 	*/
 	
-	public static List<FormField> fields( Class<?> cls, On event ) throws FormParserException{
+	public static List<FormField> fields( Class<?> pojo, On event ) throws FormParserException{
 		
 		LinkedList<FormField> result = new LinkedList<FormField>();
 		
 		boolean defaultFormable = false;
 		
-		if( cls.isAnnotationPresent( Form.class ) ){
-			defaultFormable = cls.getAnnotation( Form.class ).use();
+		if( pojo.isAnnotationPresent( Form.class ) ){
+			defaultFormable = pojo.getAnnotation( Form.class ).use();
 		}
 			
-		for( Field field : cls.getFields() ){
+		for( Field field : pojo.getFields() ){
 			
 			if( isFormable( defaultFormable, field, event ) ){
 				
@@ -208,11 +208,11 @@ public class FormParser<T> {
 				result.add( ff );
 			}
 		}
-		for( Method method : cls.getMethods() ){
+		for( Method method : pojo.getMethods() ){
 			
 			if( COMMON_METHODS.contains( method ) ) continue;
 			
-			if( isFormable( defaultFormable, cls, method, event ) ){
+			if( isFormable( defaultFormable, pojo, method, event ) ){
 				String pojoName = makePojoName( method );
 				String formName = makeFormKey( pojoName );
 				String formType = null;
@@ -222,14 +222,14 @@ public class FormParser<T> {
 				if( formType == null || formType.length() == 0 ){
 					formType = method.getReturnType().getName();
 				}
-				Method setter = findSetter( cls, method );
+				Method setter = findSetter( pojo, method );
 				FormField ff = new FormField( pojoName, formName, method, setter, formType );
 				result.add( ff );
 			}
 		}
 		
 		if( result.size() == 0 )
-			throw new FormParserException( "No parsable fields in " + cls );
+			throw new FormParserException( "No parsable fields in " + pojo );
 		
 		return result;
 	}
@@ -360,6 +360,8 @@ public class FormParser<T> {
 	public void putInForm( T pojo, WebForm form ) throws WebTemplateException {
 		
 		for( FormField field : parsed ){
+			
+			//E.rr( field );
 			
 			Object value;
 			if( field.getter != null ){
