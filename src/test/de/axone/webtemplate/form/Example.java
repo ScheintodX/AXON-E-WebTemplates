@@ -147,7 +147,7 @@ public class Example {
 		}
 
 		@Override
-		protected void doRender( Object object, PrintWriter out, HttpServletRequest request,
+		public void render( Object object, PrintWriter out, HttpServletRequest request,
 				HttpServletResponse response, Translator translator ) throws IOException,
 				WebTemplateException, Exception {
 			

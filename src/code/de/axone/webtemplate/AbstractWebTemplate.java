@@ -1,15 +1,8 @@
 package de.axone.webtemplate;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import de.axone.webtemplate.form.Translator;
 
 public abstract class AbstractWebTemplate implements WebTemplate {
 	
@@ -24,27 +17,6 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 		setHolder( holder );
 	}
 
-	/**
-	 * Overwrite here
-	 *
-	 * USAGE: Write your own manipulation on <tt>holder</tt>. Then add its
-	 * output to the <tt>response</tt>
-	 *
-	 * @param object
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 */
-	protected abstract void doRender( Object object, PrintWriter out,
-			HttpServletRequest request, HttpServletResponse response, Translator translator )
-			throws IOException, WebTemplateException, Exception  ;
-
-	@Override
-	public void render( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator ) throws WebTemplateException, IOException, Exception {
-		
-		doRender( object, out, request, response, translator );
-	}
 
 	protected void setHolder( DataHolder holder ) {
 

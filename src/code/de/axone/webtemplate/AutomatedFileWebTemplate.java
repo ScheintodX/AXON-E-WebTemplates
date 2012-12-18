@@ -22,7 +22,7 @@ public class AutomatedFileWebTemplate extends AbstractFileWebTemplate {
 	}
 	
 	@Override
-	protected void doRender( Object object, PrintWriter out,
+	public void render( Object object, PrintWriter out,
 			HttpServletRequest request, HttpServletResponse response,
 			Translator translator ) throws WebTemplateException, IOException, Exception {
 		
