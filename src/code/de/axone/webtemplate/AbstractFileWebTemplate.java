@@ -12,6 +12,11 @@ import de.axone.tools.FileWatcher;
 import de.axone.webtemplate.DataHolder.DataHolderItem;
 import de.axone.webtemplate.DataHolder.DataHolderItemType;
 
+/**
+ * Abstract Base Template for file based WebTemplates
+ * 
+ * @author flo
+ */
 public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
 	public static final Logger log = LoggerFactory.getLogger( AbstractFileWebTemplate.class );

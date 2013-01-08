@@ -3,14 +3,21 @@ package de.axone.webtemplate;
 import static org.testng.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.testng.annotations.Test;
 
 import de.axone.cache.CacheHashMap;
 import de.axone.web.TestHttpServletRequest;
 import de.axone.web.TestHttpServletResponse;
+import de.axone.webtemplate.DataHolder.DataHolderItem;
+import de.axone.webtemplate.DataHolder.DataHolderItemType;
+import de.axone.webtemplate.form.Translator;
 
 @Test( groups="webtemplate.webtemplate" )
 public class WebTemplateTest {
@@ -46,4 +53,37 @@ public class WebTemplateTest {
 		assertEquals( response3.getContent(), "Hello, I'm . This is WebTemplate no. . Name again: ." );
 	}
 	
+	// Moved here because it is in no use but in this test
+	// And this test is good because it tests more WT functionality
+	private static final class AutomatedFileWebTemplate extends AbstractFileWebTemplate {
+		
+		public AutomatedFileWebTemplate( DataHolder holder ) {
+			super( holder );
+		}
+		
+		@Override
+		public void render( Object object, PrintWriter out,
+				HttpServletRequest request, HttpServletResponse response,
+				Translator translator ) throws WebTemplateException, IOException, Exception {
+			
+			for( String key : getHolder().getKeys() ){
+				
+				DataHolderItem value = getHolder().getItem( key );
+				
+				if( value.getType() == DataHolderItemType.VAR ){
+					
+					String parameter = request.getParameter( value.getName() );
+	    			if( parameter != null ){
+				
+	    				getHolder().setValue( key, parameter );
+	    			}
+				}
+			}
+			
+			//response.getWriter().write( getHolder().render().toString() );
+			getHolder().render( object, out, request, response, translator );
+			
+		}
+		
+}
 }
