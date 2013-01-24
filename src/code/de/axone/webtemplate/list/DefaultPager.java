@@ -183,7 +183,7 @@ public class DefaultPager implements Pager {
 	public void render( Object object, PrintWriter out,
 			HttpServletRequest request, HttpServletResponse response, Translator translator )
 			throws IOException, WebTemplateException, Exception {
-
+		
 		if( ! renderIfOnlyOnePage && numPages <= 1 ) return;
 
 		int lastPage = numPages-1;
@@ -285,8 +285,9 @@ public class DefaultPager implements Pager {
 
 		if( page > 0 || numeratePageZero ) parameters.put( pageParameter, ""+page );
 		else removeParameters = Arrays.asList( pageParameter );
-
-		return HttpLinkBuilder.makeLink( request, noHost, noPage, parametersWhitelist, parameters, removeParameters );
+		
+		return HttpLinkBuilder.makeLink( request,
+				noHost, noPage, parametersWhitelist, parameters, removeParameters, true );
 	}
 
 	protected static class Template {
