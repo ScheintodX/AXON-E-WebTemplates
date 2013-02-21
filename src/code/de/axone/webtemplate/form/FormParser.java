@@ -330,6 +330,7 @@ public class FormParser<T> {
 		
 		try {
 			value = field.get( pojo );
+			
 		} catch( Exception e ){
 			throw new FormParserException( "Error accessing " + field, e );
 		}

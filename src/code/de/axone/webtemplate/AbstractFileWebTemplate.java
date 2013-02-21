@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import de.axone.cache.CacheNoCache;
 import de.axone.data.Pair;
 import de.axone.tools.FileWatcher;
-import de.axone.webtemplate.DataHolder.DataHolderItem;
-import de.axone.webtemplate.DataHolder.DataHolderItemType;
 
 /**
  * Abstract Base Template for file based WebTemplates
@@ -32,39 +30,18 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 	}
 	
 	public AbstractFileWebTemplate( DataHolder holder ) {
+		
 		super( holder );
 	}
 
 	@Override
 	public String toString(){
-		return getParameter( "path" ) + " (" + getClass().toString() + ")";
-	}
-
-	/**
-	 * Fill templates from parameters
-	 */
-	protected void autofill() {
-
-		for( String key : holder.getKeys() ) {
-
-			try {
-				DataHolderItem item = holder.getItem( key );
-
-				if( item.getType() == DataHolderItemType.VAR ) {
-
-					if( parameters.containsKey( key ) ) {
-
-						item.setValue( parameters.get( key ) );
-					}
-				}
-
-			} catch( KeyException e ) {
-				e.printStackTrace(); // Never happens
-			}
-		}
+		
+		return getHolder().getParameter( DataHolder.PARAM_FILE ) + " (" + getClass().toString() + ")";
 	}
 
 	public static class ParserException extends WebTemplateException {
+		
 		public ParserException( String message, Throwable t ){ super( message, t ); }
 		public ParserException( Throwable t ){ super( t ); }
 		public ParserException( String message ){ super( message ); }

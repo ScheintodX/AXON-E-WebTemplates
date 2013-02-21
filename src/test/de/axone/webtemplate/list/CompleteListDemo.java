@@ -68,10 +68,18 @@ public class CompleteListDemo {
 	}
 
 	private static class MyListRenderer extends AbstractListRenderer<Integer> {
+		
+		private final Renderer itemTemplate;
 
 		public MyListRenderer(HttpServletRequest req, ListProvider<Integer> listProvider,
 				Renderer itemTemplate ) {
-			super( req, "mylist", "name", 10, listProvider, itemTemplate );
+			super( req, "mylist", "name", 10, listProvider );
+			this.itemTemplate = itemTemplate;
+		}
+
+		@Override
+		protected Renderer itemTemplate( Integer item ) {
+			return itemTemplate;
 		}
 	}
 
