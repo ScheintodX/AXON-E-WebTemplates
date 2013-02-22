@@ -41,7 +41,6 @@ public class WebTemplateFactory {
 	
 	public WebTemplateFactory(){
 		this( null );
-		throw new RuntimeException( "Holla" );
 	}
 	
 	@SuppressWarnings( "rawtypes" )
