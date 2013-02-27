@@ -114,25 +114,25 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 
 		Charset charset = Charset.forName( "UTF-8" );
 		CharsetDecoder decoder = charset.newDecoder();
-		FileInputStream fin = new FileInputStream( file );
 		
-		FileChannel cIn = fin.getChannel();
+		try (
+			FileInputStream fin = new FileInputStream( file );
+			FileChannel cIn = fin.getChannel();
+		) {
 		
-		int size = (int)file.length();
-		ByteBuffer buf;
-		try {
-			buf = Slurper.slurp( cIn, size );
-			if( buf.limit() != size ) throw new IOException( 
-					"Filesize (" + size + ") doesn't match read size (" + buf.limit() + ")" );
-		} finally {
-			if( cIn != null ) cIn.close();
-		}
-		
-		try {
-			CharBuffer cBuf = decoder.decode( buf );
-			return cBuf.toString();
-		} catch( MalformedInputException e ){
-			throw new IOException( "Perhaps not UFT-8?", e );
+			int size = (int)file.length();
+			ByteBuffer buf;
+			
+				buf = Slurper.slurp( cIn, size );
+				if( buf.limit() != size ) throw new IOException( 
+						"Filesize (" + size + ") doesn't match read size (" + buf.limit() + ")" );
+			
+			try {
+				CharBuffer cBuf = decoder.decode( buf );
+				return cBuf.toString();
+			} catch( MalformedInputException e ){
+				throw new IOException( "Perhaps not UFT-8?", e );
+			}
 		}
 		
 	}

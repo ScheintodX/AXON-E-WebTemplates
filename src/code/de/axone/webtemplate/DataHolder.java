@@ -316,6 +316,7 @@ public final class DataHolder implements Cloneable {
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
+		@SuppressWarnings( "resource" )
 		Formatter formatter = new Formatter( builder );
 
 		builder.append( "KEYS:\n" );

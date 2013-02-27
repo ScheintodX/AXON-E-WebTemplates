@@ -29,6 +29,7 @@ public class SimpleFunctionFactory implements FunctionFactory {
 	public String toString(){
 		
 		StringBuilder result = new StringBuilder();
+		@SuppressWarnings( "resource" )
 		Formatter formatter = new Formatter( result );
 		for( String key : functions.keySet() ){
 			
