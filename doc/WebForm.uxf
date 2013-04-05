@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>230</x>
+      <y>80</y>
+      <w>340</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Interface&gt;&gt;
+*WebForm*
+--
+initialize( HttpServletRequest )
+setTranslationProvider( Translator )
+--
+&lt;&lt;Debug&gt;&gt; getName() : String
+--
+addFormValue( name : String, formValue : FormValue )
+getFormValue( name : String ) : FormValue
+remFormValue( name : String )
+getFormValueNames() : Set&lt;String&gt;
+--
+getHtmlInput( name : String )
+getPlainValue( name : String )
+--
+setShowInvalid( boolean )
+isValid() : boolean
+validate() : List&lt;String&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>230</x>
+      <y>410</y>
+      <w>340</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*WebFormImpl*
+--
++ {{all from WebForm}}
+--
+- formValues : HashMap&lt;String,FormValue&gt;
+- translator : Translator
+- showInvalid : boolean</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>370</x>
+      <y>320</y>
+      <w>50</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>720</x>
+      <y>310</y>
+      <w>550</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;Helper&gt;&gt;
+*FormParser&lt;T&gt;*
+--
+&lt;&lt;C&gt;&gt; FormParser( pojoClass : T, on : On )
+--
+fields() : List&lt;FormField&gt;
+--
+putInPojo( pojo : T, WebForm form )
+putInForm( pojo : T, WebForm form )
+--
+initializeForm( form : WebForm, factory : FormValueFactory, prefix : String )</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

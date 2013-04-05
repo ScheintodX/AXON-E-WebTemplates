@@ -48,7 +48,16 @@ public @interface Form {
 	 * 
 	 * @return <tt>true</tt> if is a form field. default <tt>true</tt>
 	 */
-	public boolean use() default true;
+	public boolean enabled() default true;
+	
+	public enum Access {
+		METHOD, FIELD, BOTH;
+	}
+	
+	/**
+	 * For class: tell explicitly which access method to use
+	 */
+	public Access access() default Access.BOTH;
 	
 	/**
 	 * Specifies the type which will be used to find matching
@@ -57,6 +66,15 @@ public @interface Form {
 	 * @return
 	 */
 	public String type() default "";
+	
+	/**
+	 * Set to true if only a getter is available
+	 * 
+	 * Not that setters without getters is not possible by now
+	 * 
+	 * @return
+	 */
+	public boolean ignoreMissingSetter() default false;
 	
 	/**
 	 * Option to specify in addition to type.
@@ -114,4 +132,5 @@ public @interface Form {
 		
 		;
 	}
+	
 }

@@ -150,7 +150,7 @@ public class FormParserTest {
 		protected String myProtectedStringField = "my_protected_string_field" ;
 		
 		// Wont be included
-		@Form( use = false )
+		@Form( enabled = false )
 		public String myExcludedStringField = "my_excluded_string_field" ;
 		
 		// Wont be included
@@ -192,7 +192,7 @@ public class FormParserTest {
 		protected String myProtectedStringField = "my_protected_string_field" ;
 		
 		// Wont be included
-		@Form( use = false )
+		@Form( enabled = false )
 		public String myExcludedStringField = "my_excluded_string_field" ;
 		
 		// Wont be included

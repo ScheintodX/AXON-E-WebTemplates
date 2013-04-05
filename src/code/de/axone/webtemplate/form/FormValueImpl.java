@@ -14,7 +14,31 @@ public class FormValueImpl<T> implements FormValue<T> {
 	
 	protected HtmlInput htmlInput;
 	protected Converter<T> converter;
-	protected LinkedList<Validator<? super T>> validators = new LinkedList<Validator<? super T>>();
+	protected LinkedList<Validator<? super T>> validators = new LinkedList<>();
+	
+	@Override
+	public String toString(){
+		
+		StringBuilder result = new StringBuilder();
+		
+		result.append( htmlInput.getValue() )
+				.append( " (" )
+				.append( htmlInput.getClass().getSimpleName() )
+				.append( " : " )
+				.append( converter.getClass().getSimpleName() )
+		;
+		
+		for( Validator<? super T> validator : validators ){
+			
+			result.append( " / " )
+					.append( validator.getClass().getSimpleName() );
+			
+		}
+		
+		result.append( ")" );
+		
+		return result.toString();
+	}
 
 	@Override
 	public void addValidator( Validator<? super T> validator ) {
@@ -32,7 +56,7 @@ public class FormValueImpl<T> implements FormValue<T> {
 		
 	}
 	@Override
-	public void initialize( HttpServletRequest request ) {
+	public void readValue( HttpServletRequest request ) {
 		htmlInput.initialize( request );
 	}
 
@@ -100,11 +124,6 @@ public class FormValueImpl<T> implements FormValue<T> {
 	public void setConverter( Converter<T> converter ) {
 		
 		this.converter = converter;
-	}
-	
-	@Override
-	public String toString(){
-		return "[FV:" + getPlainValue() + "]";
 	}
 
 }

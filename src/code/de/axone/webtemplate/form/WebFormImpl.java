@@ -10,6 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.element.HtmlInput;
 
+/**
+ * This is the base implementation a webform.
+ * 
+ * @see WebForm
+ * @author flo
+ *
+ */
 public class WebFormImpl implements WebForm {
 
 	private HashMap<String, FormValue<?>> connectorValues = new HashMap<String, FormValue<?>>();
@@ -24,11 +31,11 @@ public class WebFormImpl implements WebForm {
 	}
 
 	@Override
-	public void initialize( HttpServletRequest request ){
+	public void readValues( HttpServletRequest request ){
 
 		for( FormValue<?> value : connectorValues.values() ){
 
-			value.initialize( request );
+			value.readValue( request );
 		}
 	}
 
@@ -152,6 +159,28 @@ public class WebFormImpl implements WebForm {
 			throw new WebTemplateException( "Cannot find " + getName() + "'s value: " + name );
 		
 		return value.getHtmlInput();
+	}
+	
+	@Override
+	public String toString(){
+		
+		StringBuilder result = new StringBuilder();
+		
+		result.append( getName() ).append( '\n' );
+		
+		for( String name : connectorValues.keySet() ){
+			
+			FormValue<?> value = connectorValues.get( name );
+			
+			result
+					.append( name )
+					.append( ": " )
+					.append( value )
+					.append( '\n' )
+			;
+		}
+		
+		return result.toString();
 	}
 
 }
