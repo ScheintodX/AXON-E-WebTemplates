@@ -120,16 +120,19 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 				}
 
 				HtmlInputElement inputElement = new HtmlInputElement( HtmlInputElement.InputType.RADIO, getName(), value );
-				//inputElement.setContent( text );
-				inputElement.setIdAttribute( getIdAttribute() + "_" + value );
-				//inputElement.setClassAttribute( getClassAttribute() );
+				String myId = getIdAttribute() + "_" + value;
+				inputElement.setIdAttribute( myId );
 
 				if( value != null && value.equals(selected) ) {
 					inputElement.addAttribute( "checked", "checked" );
 				}
 
 				inputElement.render( object, out, request, response, translator );
-				response.getWriter().write( text );
+				
+				//out.write( text );
+				HtmlLabelElement label = new HtmlLabelElement( myId, text );
+				label.addAttribute( "class", "radio-label" );
+				label.render( object, out, request, response, translator );
 			}
 		}
 	}
