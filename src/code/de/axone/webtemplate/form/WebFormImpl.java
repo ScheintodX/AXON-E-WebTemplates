@@ -31,7 +31,7 @@ public class WebFormImpl implements WebForm {
 	}
 
 	@Override
-	public void readValues( HttpServletRequest request ){
+	public void readFromRequest( HttpServletRequest request ){
 
 		for( FormValue<?> value : connectorValues.values() ){
 

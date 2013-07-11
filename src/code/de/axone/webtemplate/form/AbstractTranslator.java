@@ -25,7 +25,7 @@ public abstract class AbstractTranslator implements Translator {
 		if( key == null ) return S.EMPTY;
 		
 		String text = key.name();
-
+		
 		String [] parts = text.split( ":" );
 		HashMap<String,String> params = new HashMap<String,String>();
 

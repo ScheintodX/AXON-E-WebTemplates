@@ -69,7 +69,7 @@ public class WebFormTest {
 		request.setParameter( "name1", "newvalue1" );
 		request.setParameter( "name2", "newvalue2" );
 
-		webForm.readValues( request );
+		webForm.readFromRequest( request );
 
 		assertEquals( webForm.getPlainValue( "name1" ), "newvalue1" );
 		assertEquals( webForm.getPlainValue( "name2" ), "newvalue2" );

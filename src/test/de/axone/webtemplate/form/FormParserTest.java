@@ -215,7 +215,7 @@ public class FormParserTest {
 				= new FormParser<>( TestClassFieldTypes.class, On.EDIT );
 		
 		// - Put in Form -----------------------
-		parser.putInForm( pojo, form );
+		parser.putPojoInForm( pojo, form );
 		
 		NumberFormat nf = NumberFormat.getNumberInstance( Locale.GERMANY );
 		assertTrue( nf instanceof DecimalFormat );
@@ -264,7 +264,7 @@ public class FormParserTest {
 		form.getHtmlInput( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ).setValue( "22.25" );
 		
 		// - Put in pojo -------------
-		parser.putInPojo( pojo, form );
+		parser.putFormInPojo( pojo, form );
 		
 		assertEquals( Boolean.parseBoolean( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ) ), pojo.myPublicBooleanField );
 		assertEquals( (form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );

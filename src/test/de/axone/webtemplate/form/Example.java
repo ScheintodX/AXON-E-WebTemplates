@@ -53,7 +53,7 @@ public class Example {
 			//Note: prevent NPE
 			if( "save".equals( action ) ){
 				
-				form.readValues( request );
+				form.readFromRequest( request );
 				
 				if( form.isValid() ){
 					

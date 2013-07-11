@@ -1,16 +1,16 @@
 package de.axone.webtemplate.validator.impl;
 
 
-public class PostalcodeValidator extends AbstractAlphaNumValidator {
+public class VatIdValidator extends AbstractAlphaNumValidator {
 	
 	private static final String NO_VALID_POSTAL_CODE
 			="VALIDATOR_NO_VALID_POSTAL_CODE";
 	
-	public PostalcodeValidator( String pattern ){
+	public VatIdValidator( String pattern ){
 		super( pattern, false );
 	}
 		
-	public PostalcodeValidator( String pattern, boolean ignoreWhitespace ){
+	public VatIdValidator( String pattern, boolean ignoreWhitespace ){
 		
 		super( pattern, ignoreWhitespace );
 	}

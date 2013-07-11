@@ -15,7 +15,10 @@ public abstract class JerrySlicer extends Slicer {
 	protected Jerry doc;
 
 	protected String buffer;
-	protected StringBuilder out = new StringBuilder();
+	protected StringBuilder
+			out = new StringBuilder(),
+			prepend = new StringBuilder(),
+			append = new StringBuilder();
 	
 	protected Jerry selected;
 	protected Jerry view;
@@ -107,10 +110,35 @@ public abstract class JerrySlicer extends Slicer {
     public void replace( String css, String replacement ){
     	$(css).before( replacement ).remove();
     }
+    
+    @Override
+    public void prependText( String text ){
+    	prepend.append( text );
+    }
+    @Override
+    public void appendText( String text ){
+    	append.append( text );
+    }
+    
    
+    @Override
+    public int outLen(){
+    	return /*prepend.length() +*/ out.length() /*+ append.length()*/;
+    }
     
 	@Override
 	public String out(){
+		/*
+		StringBuilder result = new StringBuilder();
+		result.append( prepend )
+			.append( out )
+			.append( append );
+		out = new StringBuilder();
+		prepend = new StringBuilder();
+		append = new StringBuilder();
+		
+		return result.toString();
+		*/
 		String result = out.toString();
 		out = new StringBuilder();
 		return result;
@@ -131,7 +159,11 @@ public abstract class JerrySlicer extends Slicer {
 		write( html( selected ) );
 	}
 	public void writeOuter(){
+		write( prepend.toString() );
 		write( outerHtml( selected ) );
+		write( append.toString() );
+		prepend = new StringBuilder();
+		append = new StringBuilder();
 	}
 	public void write( Jerry snippet ){
     	write( snippet.html() );

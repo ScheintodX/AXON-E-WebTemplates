@@ -24,9 +24,12 @@ public abstract class Slicer {
 	public abstract Class<?> getTemplateClass( String master, String name );
 	public abstract void makeTemplate( String master, String name ) throws WebTemplateException;
 	public abstract void prepare( String master ) throws WebTemplateException;
+	protected abstract int outLen();
 	protected abstract String out();
 	public abstract void init();
 	public abstract void load( String master ) throws IOException;
+	public abstract void prependText( String text );
+	public abstract void appendText( String text );
 	
 	public abstract File getTemplateFile( String name );
 	public abstract String getTemplateName( File file );

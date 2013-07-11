@@ -51,13 +51,13 @@ public @interface Form {
 	public boolean enabled() default true;
 	
 	public enum Access {
-		METHOD, FIELD, BOTH;
+		METHOD, FIELD, BOTH, UNDEF;
 	}
 	
 	/**
 	 * For class: tell explicitly which access method to use
 	 */
-	public Access access() default Access.BOTH;
+	public Access access() default Access.UNDEF;
 	
 	/**
 	 * Specifies the type which will be used to find matching

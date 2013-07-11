@@ -1,6 +1,7 @@
 package de.axone.webtemplate.form;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,10 +62,9 @@ public class FormParser<T> {
 	
 	private static boolean isFormable( Form formable, On event ) throws FormParserException{
 		
-			boolean isFormable = formable.enabled();
-			List<On> on = Arrays.asList( formable.on() );
+			if( !formable.enabled() ) return false;
 			
-			if( !isFormable ) return false;
+			List<On> on = Arrays.asList( formable.on() );
 			
 			if( on.size() == 0 ) return false;
 			
@@ -100,6 +100,7 @@ public class FormParser<T> {
 		boolean hasAnnotation = method.isAnnotationPresent( Form.class );
 		
 		String err = hasSupportedGetterAndSetter( cls, method );
+		
 		if( hasAnnotation ){
 			
 			Form formable = method.getAnnotation( Form.class );
@@ -158,7 +159,12 @@ public class FormParser<T> {
 		if( isIsOrGet==2 && (getterReturn != boolean.class && getterReturn != Boolean.class ) ) return "Is getter doesn't return boolean";
 		
 		boolean ignoreMissingSetter = false;
-		Form form = getter.getAnnotation( Form.class );
+		Form form;
+		form = cls.getAnnotation( Form.class );
+		if( form != null ){
+			ignoreMissingSetter = form.ignoreMissingSetter();
+		}
+		form = getter.getAnnotation( Form.class );
 		if( form != null ){
 			ignoreMissingSetter = form.ignoreMissingSetter();
 		}
@@ -203,12 +209,20 @@ public class FormParser<T> {
 	
 	}
 	
+	/*
+	 * Parse the given Pojo and return a list of FormFields
+	 * according to the annotated settings there. (if any)
+	 */
 	public static List<FormField> fields( Class<?> pojo, On event ) throws FormParserException{
+		
+		log.debug( "Parsing: {}", pojo );
+		
+		//(new Throwable()).printStackTrace();
 		
 		LinkedList<FormField> result = new LinkedList<FormField>();
 		
 		boolean defaultFormable = false;
-		Access access = Access.METHOD;
+		Access access = Access.UNDEF;
 		
 		if( pojo.isAnnotationPresent( Form.class ) ){
 			Form aForm = pojo.getAnnotation( Form.class );
@@ -216,11 +230,19 @@ public class FormParser<T> {
 			access = aForm.access();
 		}
 		
-		if( access == Access.FIELD || access == Access.BOTH ){
+		if( access == Access.FIELD || access == Access.BOTH || access == Access.UNDEF ){
+			
+			log.debug( "  has Field access" );
 			
 			for( Field field : pojo.getFields() ){
 				
-				if( isFormable( defaultFormable, field, event ) ){
+				boolean myDefaultFormable = defaultFormable || ( access == Access.FIELD || access == Access.BOTH );
+				
+				boolean isFormable = isFormable( myDefaultFormable, field, event );
+				
+				log.debug( "{} formable: {}", field, isFormable );
+				
+				if( isFormable ){
 					
 					String pojoName = makePojoName( field );
 					String formName = makeFormKey( pojoName );
@@ -238,13 +260,24 @@ public class FormParser<T> {
 		}
 		
 		// use methods only if no fields are declared
-		if( access == Access.METHOD || access == Access.BOTH ){
+		if( access == Access.METHOD || access == Access.BOTH || access == Access.UNDEF ){
+			
+			log.debug( "  has Method access" );
 			
 			for( Method method : pojo.getMethods() ){
 			
-				if( COMMON_METHODS.contains( method ) ) continue;
+				if( COMMON_METHODS.contains( method ) ){
+					log.debug( "  skipping: is common method" );
+					continue;
+				}
 				
-				if( isFormable( defaultFormable, pojo, method, event ) ){
+				boolean myDefaultFormable = defaultFormable || ( access == Access.METHOD || access == Access.BOTH );
+				
+				boolean isFormable = isFormable( myDefaultFormable, pojo, method, event );
+				
+				log.debug( "{} formable: {}", method, isFormable );
+			
+				if( isFormable ){
 					
 					String pojoName = makePojoName( method );
 					String formName = makeFormKey( pojoName );
@@ -384,7 +417,14 @@ public class FormParser<T> {
 		return value;
 	}
 	
-	public void putInPojo( T pojo, WebForm form ) throws WebTemplateException {
+	/**
+	 * Take the form and put its' values in the pojo
+	 * 
+	 * @param pojo
+	 * @param form
+	 * @throws WebTemplateException
+	 */
+	public void putFormInPojo( T pojo, WebForm form ) throws WebTemplateException {
 		
 		for( FormField field : parsed ){
 			
@@ -393,10 +433,12 @@ public class FormParser<T> {
 			if( formValue != null ){
 				Object value = formValue.getValue();
 				
-				if( field.getter != null ){
+				if( field.setter != null ){
 					putInPojoByMethod( pojo, field.setter, value );
-				} else {
+				} else if( field.field != null ) {
 					putInPojoByField( pojo, field.field, value );
+				} else {
+					log.warn( "Missing setter for: " + field.pojoName() );
 				}
 			} else {
 				log.warn( "Don't find formValue: " + formName );
@@ -411,7 +453,7 @@ public class FormParser<T> {
 	 * @param form
 	 * @throws WebTemplateException
 	 */
-	public void putInForm( T pojo, WebForm form ) throws WebTemplateException {
+	public void putPojoInForm( T pojo, WebForm form ) throws WebTemplateException {
 		
 		for( FormField field : parsed ){
 			
@@ -446,6 +488,9 @@ public class FormParser<T> {
 	/**
 	 * Put HTML input fields in DataHolder fields
 	 * 
+	 * This method is a helper for connecting Forms and WebTemplates 
+	 * and works with a configured Form only. (so this is why it's static)
+	 * 
 	 * @param holder
 	 * @param prefix
 	 * @param form
@@ -468,19 +513,52 @@ public class FormParser<T> {
 	/**
 	 * Put the plain values from WebForm in DataHolder
 	 * 
+	 * This method is a helper for connecting Forms and WebTemplates 
+	 * and works with a configured Form only. (so this is why it's static)
+	 * 
 	 * @param holder
 	 * @param prefix
 	 * @param form
 	 */
-	public static void putInHolder( DataHolder holder, String prefix, WebForm form ) {
+	public static void putPlainInHolder( DataHolder holder, String prefix, WebForm form ) {
+		
+		if( prefix == null ) prefix="";
 		
 		for( String name : form.getFormValueNames() ){
 			
-			String holderName;
-			if( prefix != null ) holderName = prefix+name;
-			else holderName = name;
-			
-			holder.setValue( holderName, form.getFormValue( name ).getPlainValue() );
+			holder.setValue( prefix+name, form.getFormValue( name ).getPlainValue() );
+		}
+	}
+	
+	/**
+	 * Put the VERY plain values from WebForm in DataHolder
+	 * 
+	 * This method is a helper for connecting Pojos and WebTemplates 
+	 * and uses the VERY plain Values. No conversion is done. So you
+	 * have to live with what 'toString' gives you.
+	 * 
+	 * Better don't use this.
+	 * 
+	 * @param holder
+	 * @param prefix
+	 * @param form
+	 */
+	public static void putPlainInHolder( DataHolder holder, String prefix, Object pojo, On event )
+			throws FormParserException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		
+		if( prefix == null ) prefix = "";
+		
+		Class<?> clz = pojo.getClass();
+		
+		List<FormField> fields = fields( clz, event );
+		for( FormField field : fields ){
+			Object value;
+			if( field.getter() != null ){
+				value = field.getter().invoke( pojo, (Object[])null );
+			} else {
+				value = field.field().get( pojo );
+			}
+			holder.setValue( prefix + field.formName(), value );
 		}
 	}
 	
@@ -493,7 +571,7 @@ public class FormParser<T> {
 	 * @param prefix
 	 * @throws WebTemplateException
 	 */
-	public void createFormValues( WebForm form, FormValueFactory fvf, String prefix )
+	public void createFormValuesInForm( WebForm form, FormValueFactory fvf, String prefix )
 			throws WebTemplateException{
 		
 		for( FormField field : parsed ){

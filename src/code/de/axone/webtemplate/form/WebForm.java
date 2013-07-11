@@ -29,7 +29,7 @@ public interface WebForm {
 	 * 
 	 * @param request
 	 */
-	public void readValues( HttpServletRequest request );
+	public void readFromRequest( HttpServletRequest request );
 
 	
 	/**

@@ -1,5 +1,6 @@
 package de.axone.webtemplate.converter.impl;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -10,24 +11,37 @@ import de.axone.webtemplate.converter.ConverterException;
 
 public class IntegerConverter extends AbstractConverter<Integer> {
 	
-	private NumberFormat numberFormat;
+	private final NumberFormat numberFormat;
 	
 	private static final HashMap<Locale,IntegerConverter> FOR_LOCALE =
 		new HashMap<Locale,IntegerConverter>();
 	
 	public static synchronized IntegerConverter forLocale( Locale locale ){
+		return forLocale( locale, true );
+	}
+	public static synchronized IntegerConverter forLocale( Locale locale, boolean useThousandsSeparator ){
 		
 		IntegerConverter result = FOR_LOCALE.get( locale );
 		if( result == null ){
-			result = new IntegerConverter( locale );
+			result = new IntegerConverter( locale, useThousandsSeparator );
 			FOR_LOCALE.put( locale, result );
 		}
 		return result;
 	}
 	
 	public IntegerConverter( Locale locale ){
+		this( locale, true );
+	}
+	public IntegerConverter( Locale locale, boolean useThousandsSeparator ){
 		
 		numberFormat = NumberFormat.getIntegerInstance( locale );
+		if( ! useThousandsSeparator ){
+			if( !( numberFormat instanceof DecimalFormat ) )
+				throw new IllegalStateException( "Didn't get the right number format" );
+			
+			((DecimalFormat) numberFormat).setGroupingUsed( false );
+				
+		}
 	}
 
 	@Override
