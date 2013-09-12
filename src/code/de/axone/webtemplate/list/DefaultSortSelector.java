@@ -2,7 +2,9 @@ package de.axone.webtemplate.list;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +22,7 @@ public class DefaultSortSelector implements SortSelector {
 	private String sort;
 	
 	private boolean keepPageOnSort = false;
+	private List<String> keepParameters = Collections.emptyList();
 	
 	public void setMethods( String ... sortMethods ){
 		this.sortMethods = sortMethods;
@@ -42,6 +45,10 @@ public class DefaultSortSelector implements SortSelector {
 	
 	public void setKeepPageOnSort( boolean keepPageOnSort ){
 		this.keepPageOnSort = keepPageOnSort;
+	}
+	
+	public void setKeepParameters( List<String> parameterNames ){
+		this.keepParameters = parameterNames;
 	}
 
 	@Override
@@ -75,14 +82,11 @@ public class DefaultSortSelector implements SortSelector {
 		
 		out.write( select );
 		
-		String q = request.getParameter( "q" );
-		if( q != null ){
-			out.write( Tag.hiddenInput( "q", q ) );
-		}
-		
-		String qq = request.getParameter( "qq" );
-		if( qq != null ){
-			out.write( Tag.hiddenInput( "qq", qq ) );
+		for( String parameterName : keepParameters ){
+			String val = request.getParameter( parameterName );
+			if( val != null ){
+				out.write( Tag.hiddenInput( parameterName, val ) );
+			}
 		}
 		
 		if( keepPageOnSort ){

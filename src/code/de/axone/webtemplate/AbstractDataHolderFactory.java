@@ -42,10 +42,24 @@ public abstract class AbstractDataHolderFactory {
 				count += line.length()+1;
 				continue;
 			}
+			
+			// Remove some comment chars
+			if( trimmed.startsWith( "<!--" ) && trimmed.endsWith( "-->" ) ){
+				trimmed = trimmed.substring( 4, trimmed.length()-3 ).trim();
+			} else if( trimmed.startsWith( "//" ) ){
+				trimmed = trimmed.substring( 2 ).trim();
+			} else if( trimmed.startsWith( "#" ) ){
+				trimmed = trimmed.substring( 1 ).trim();
+			}
+			
+			if( trimmed.startsWith( PARAMETER_PREFIX ) ){ 
 	
-			if( ! trimmed.startsWith( PARAMETER_PREFIX ) ) break; // Quit on first not header line
-	
-			trimmed = trimmed.substring( 1 ); // remove the @
+				trimmed = trimmed.substring( 1 ); // remove the @
+				
+			} else {
+				// Quit on first not header line
+				break;
+			}
 	
 			int indexOfSep = trimmed.indexOf( PARAMETER_SEP );
 			String key = trimmed.substring( 0, indexOfSep ).trim().toLowerCase();

@@ -133,8 +133,8 @@ public class DefaultPager implements Pager {
 		this.showSelectedArrowheads = showSelectedArrowheads;
 	}
 	
-	public void setParametersWhitelist( List<String> parametersWhitelist ) {
-		this.parametersWhitelist = parametersWhitelist;
+	public void setParametersWhitelist( String ... parametersWhitelist ) {
+		this.parametersWhitelist = Arrays.asList( parametersWhitelist );
 	}
 
 	public void setLeftContainer( String leftContainer ) {

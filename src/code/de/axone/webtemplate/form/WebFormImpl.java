@@ -124,6 +124,7 @@ public class WebFormImpl implements WebForm {
 
 				for( String text : r ) {
 
+					// TODO: Das beisst sich mit der übersetzung im Decorator!!!
 					text = translator.translate( TKey.dynamic( text ) );
 					messages.addLast( text );
 				}

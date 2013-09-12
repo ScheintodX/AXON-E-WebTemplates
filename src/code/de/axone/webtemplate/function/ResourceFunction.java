@@ -126,7 +126,7 @@ public class ResourceFunction implements Function {
 	
 	public ResourceFunction( Mode mode, boolean combine, String base, File fsBase, int rand ){
 		
-		this( mode, combine, Cache.rand, null, base, fsBase, rand );
+		this( mode, combine, Cache.file, null, base, fsBase, rand );
 	}
 	
 	private static final Pattern SEPARATOR = Pattern.compile( "\\s*;\\s*" );
@@ -187,21 +187,28 @@ public class ResourceFunction implements Function {
 		
 		for( String path : paths ){
 			
+			String ext = "";
+			
 			char PS = '?';
 			
 			if( pMode == Mode.dev ){
-				path += PS+"yui=0";
+				ext += PS+"yui=0";
 				PS='&';
 			}
 			
 			switch( pCache ){
 			case rand:
-				path += PS + "nc=" + rand;
+				ext += PS + "nc=" + rand;
 				PS='&';
 				break;
 			case file:
-				FileTime ctime = Files.getLastModifiedTime( ( new File( fsBase, pBase + path ).toPath() ) );
-				path += "" + PS + ctime.toMillis()/1000;
+				String myPath = path;
+				if( myPath.startsWith( base ) ) {
+					myPath = myPath.substring( base.length() );
+				}
+				File file = new File( fsBase, myPath );
+				FileTime ctime = Files.getLastModifiedTime( ( file.toPath() ) );
+				ext += PS + "nc=" + ctime.toMillis()/1000;
 				PS='&';
 				break;
 			case yes:
@@ -216,7 +223,7 @@ public class ResourceFunction implements Function {
 				Map<String,String> args = Mapper.treeMap(
 						"rel", "stylesheet",
 						"type", "text/css",
-						"href", path
+						"href", path+ext
 				);
 				if( pMedia != null ) args.put( "media", pMedia );
 				if( pId != null ) args.put( "id", pId.trim() );
@@ -229,7 +236,7 @@ public class ResourceFunction implements Function {
 					
 				Map<String,String> args = Mapper.treeMap(
 						"type", "text/javascript",
-						"src", path
+						"src", path+ext
 				);
 				if( pId != null ) args.put( "id", pId.trim() );
 				tag = Tag.simple( "script", "", args );
