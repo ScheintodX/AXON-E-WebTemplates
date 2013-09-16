@@ -1,6 +1,7 @@
 package de.axone.webtemplate.function;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
@@ -131,6 +132,17 @@ public class ResourceFunction implements Function {
 	
 	private static final Pattern SEPARATOR = Pattern.compile( "\\s*;\\s*" );
 	
+	private long filetime( String path, String base ) throws IOException{
+		
+		String myPath = path;
+		if( myPath.startsWith( base ) ) {
+			myPath = myPath.substring( base.length() );
+		}
+		File file = new File( fsBase, myPath );
+		FileTime ctime = Files.getLastModifiedTime( ( file.toPath() ) );
+		return ctime.toMillis()/1000;
+	}
+	
 	@Override
 	public void render( String name, DataHolder holder, 
 			PrintWriter out, HttpServletRequest request,
@@ -176,14 +188,21 @@ public class ResourceFunction implements Function {
 		
 		List<String> srcs = Arrays.asList( SEPARATOR.split( pSrc ) );
 		
+		
+		long newest = 0;
 		List<String> paths = new LinkedList<>();
 		if( pCombine ){
+			for( String src : srcs ){
+				long ft = filetime( pBase + src, base );
+				if( ft > newest ) newest = ft;
+			}
 			paths.add( pBase + Str.join( ";", srcs ) );
 		} else {
 			for( String src : srcs ){
 				paths.add( pBase + src );
 			}
 		}
+		
 		
 		for( String path : paths ){
 			
@@ -202,13 +221,7 @@ public class ResourceFunction implements Function {
 				PS='&';
 				break;
 			case file:
-				String myPath = path;
-				if( myPath.startsWith( base ) ) {
-					myPath = myPath.substring( base.length() );
-				}
-				File file = new File( fsBase, myPath );
-				FileTime ctime = Files.getLastModifiedTime( ( file.toPath() ) );
-				ext += PS + "nc=" + ctime.toMillis()/1000;
+				ext += PS + "nc=" + ( pCombine ? newest : filetime( path, base ) );
 				PS='&';
 				break;
 			case yes:
