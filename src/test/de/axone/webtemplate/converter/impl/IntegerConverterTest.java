@@ -12,13 +12,13 @@ import de.axone.webtemplate.converter.ConverterException;
 public class IntegerConverterTest {
 
 	public void testConverterDE() throws Exception {
-		testConverter( IntegerConverter.forLocale( Locale.GERMAN ), "1.234", 1234 );
-		testConverter( IntegerConverter.forLocale( Locale.GERMANY ), "1.234", 1234 );
+		testConverter( IntegerConverter.instance( Locale.GERMAN ), "1.234", 1234 );
+		testConverter( IntegerConverter.instance( Locale.GERMANY ), "1.234", 1234 );
 	}
 	public void testConverterUS() throws Exception {
-		testConverter( IntegerConverter.forLocale( Locale.ENGLISH ), "1,234", 1234 );
-		testConverter( IntegerConverter.forLocale( Locale.US ), "1,234", 1234 );
-		testConverter( IntegerConverter.forLocale( Locale.UK ), "1,234", 1234 );
+		testConverter( IntegerConverter.instance( Locale.ENGLISH ), "1,234", 1234 );
+		testConverter( IntegerConverter.instance( Locale.US ), "1,234", 1234 );
+		testConverter( IntegerConverter.instance( Locale.UK ), "1,234", 1234 );
 	}
 	private void testConverter( IntegerConverter converter, String asNumber, Integer number ) throws Exception {
 		

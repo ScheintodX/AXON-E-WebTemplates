@@ -21,7 +21,7 @@ public class DateConverter extends AbstractConverter<Date> {
 	private static final HashMap<Locale, DateConverter> YMForLocale = new HashMap<Locale,DateConverter>();
 	static{
 		YMForLocale.put( Locale.US, new DateConverter( new SimpleDateFormat( "MM/yyyy" ) ) );
-		YMForLocale.put( Locale.GERMANY, new DateConverter( new SimpleDateFormat( "MM.yyyy" ) ) );
+		YMForLocale.put( Locale.GERMANY, new DateConverter( new SimpleDateFormat( "MM/yyyy" ) ) );
 	}
 	public static DateConverter YMDForLocale( Locale locale ){
 		return YMDForLocale.get( locale );

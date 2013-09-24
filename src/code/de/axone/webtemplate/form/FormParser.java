@@ -619,6 +619,10 @@ public class FormParser<T> {
 	 * @author flo
 	 */
 	public static class FormParserException extends WebTemplateException {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1462401608140462715L;
 		public FormParserException( String message ){
 			super( message );
 		}

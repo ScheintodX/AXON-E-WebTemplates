@@ -151,7 +151,7 @@ public class FormValueFactory {
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		result.setHtmlInput( element );
 		
-		IntegerConverter converter = IntegerConverter.forLocale( locale );
+		IntegerConverter converter = IntegerConverter.instance( locale );
 		result.setConverter( converter );
 		
 		if( min != null || max != null ) {
@@ -508,12 +508,12 @@ public class FormValueFactory {
 			HtmlInputElement.InputType type, Locale locale, String name,
 			Integer min, Integer max, boolean useThousandsSeparator, boolean nullable,
 			AjaxValidate ajaxValidate ) {
-
+		
 		FormValueImpl<Integer> result = new FormValueImpl<Integer>();
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
-		IntegerConverter converter = IntegerConverter.forLocale( locale, useThousandsSeparator );
+		IntegerConverter converter = IntegerConverter.instance( locale, useThousandsSeparator );
 		result.setHtmlInput( element );
 		result.setConverter( converter );
 		

@@ -13,18 +13,19 @@ public class IntegerConverter extends AbstractConverter<Integer> {
 	
 	private final NumberFormat numberFormat;
 	
-	private static final HashMap<Locale,IntegerConverter> FOR_LOCALE =
-		new HashMap<Locale,IntegerConverter>();
+	private static final HashMap<String,IntegerConverter> FOR_LOCALE_X =
+		new HashMap<>();
 	
-	public static synchronized IntegerConverter forLocale( Locale locale ){
-		return forLocale( locale, true );
+	public static synchronized IntegerConverter instance( Locale locale ){
+		return instance( locale, true );
 	}
-	public static synchronized IntegerConverter forLocale( Locale locale, boolean useThousandsSeparator ){
+	public static synchronized IntegerConverter instance( Locale locale, boolean useThousandsSeparator ){
 		
-		IntegerConverter result = FOR_LOCALE.get( locale );
+		String key = locale.toString() + (useThousandsSeparator ? "_X" : "");
+		IntegerConverter result = FOR_LOCALE_X.get( key );
 		if( result == null ){
 			result = new IntegerConverter( locale, useThousandsSeparator );
-			FOR_LOCALE.put( locale, result );
+			FOR_LOCALE_X.put( key, result );
 		}
 		return result;
 	}
@@ -40,7 +41,6 @@ public class IntegerConverter extends AbstractConverter<Integer> {
 				throw new IllegalStateException( "Didn't get the right number format" );
 			
 			((DecimalFormat) numberFormat).setGroupingUsed( false );
-				
 		}
 	}
 
@@ -67,7 +67,6 @@ public class IntegerConverter extends AbstractConverter<Integer> {
 		throws ConverterException {
 		
 		if( number == null ) return null;
-		
 		return numberFormat.format( number.longValue() );
 	}
 

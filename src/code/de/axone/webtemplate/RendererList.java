@@ -12,6 +12,11 @@ import de.axone.webtemplate.form.Translator;
 
 public class RendererList extends LinkedList<Renderer> implements Renderer {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6837253004872936303L;
+
 	@Override
 	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response, Translator translator )

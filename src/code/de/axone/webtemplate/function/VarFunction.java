@@ -74,6 +74,11 @@ public class VarFunction implements Function {
 	}
 	
 	private static final class UnknownOperationException extends FunctionException {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -1973003599724214625L;
+
 		UnknownOperationException( String op ){
 			super( "Unknown operation: " + op );
 		}

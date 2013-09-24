@@ -87,7 +87,7 @@ public class ResourceFunction implements Function {
 	public static final String ATTRIBUTE_MEDIA = "media";
 	public static final String ATTRIBUTE_BASE = "base";
 	
-	public enum Mode {
+	public enum Runmode {
 		live, dev;
 	}
 	public enum Type {
@@ -97,7 +97,7 @@ public class ResourceFunction implements Function {
 		yes, rand, file;
 	}
 	
-	private final Mode mode;
+	private final Runmode mode;
 	private final boolean combine;
 	private final Cache cache;
 	private final String media;
@@ -106,7 +106,6 @@ public class ResourceFunction implements Function {
 	private final int rand;
 	
 	/**
-	 * 
 	 * @param mode
 	 * @param combine
 	 * @param type
@@ -115,7 +114,9 @@ public class ResourceFunction implements Function {
 	 * @param fsBase only needed for live fs ctime checks if mode==dev.
 	 * @param rand a random number used for nocache
 	 */
-	public ResourceFunction( Mode mode, boolean combine, Cache cache, String media, String base, File fsBase, int rand ){
+	public ResourceFunction( Runmode mode, boolean combine,
+			Cache cache, String media, String base, File fsBase, int rand ){
+		
 		this.mode = mode;
 		this.combine = combine;
 		this.cache = cache;
@@ -125,7 +126,8 @@ public class ResourceFunction implements Function {
 		this.rand = rand;
 	}
 	
-	public ResourceFunction( Mode mode, boolean combine, String base, File fsBase, int rand ){
+	public ResourceFunction( Runmode mode, boolean combine,
+			String base, File fsBase, int rand ){
 		
 		this( mode, combine, Cache.file, null, base, fsBase, rand );
 	}
@@ -156,9 +158,9 @@ public class ResourceFunction implements Function {
 		
 		String pId = attributes.getAsString( ATTRIBUTE_ID );
 		
-		Mode pMode = this.mode;
+		Runmode pMode = this.mode;
 		tmp = attributes.getAsString( ATTRIBUTE_MODE );
-		if( tmp != null ) pMode = Mode.valueOf( tmp.trim() );
+		if( tmp != null ) pMode = Runmode.valueOf( tmp.trim() );
 		
 		boolean pCombine = this.combine;
 		tmp = attributes.getAsString( ATTRIBUTE_COMBINE );
@@ -210,7 +212,7 @@ public class ResourceFunction implements Function {
 			
 			char PS = '?';
 			
-			if( pMode == Mode.dev ){
+			if( pMode == Runmode.dev ){
 				ext += PS+"yui=0";
 				PS='&';
 			}

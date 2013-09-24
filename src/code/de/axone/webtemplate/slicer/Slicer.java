@@ -111,6 +111,10 @@ public abstract class Slicer {
 
 	private static class SlicerException extends WebTemplateException {
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5222215964190533168L;
 		String name;
 		
 		SlicerException( String name, Throwable throwable ){

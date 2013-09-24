@@ -20,6 +20,11 @@ import de.axone.webtemplate.function.MissingAttributeException;
 
 public class AttributeMap extends HashMap<String,Attribute>{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7008245950458895079L;
+
 	public String getAsString( String key ){
 		return getAsString( key, null );
 	}
