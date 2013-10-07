@@ -24,9 +24,12 @@ public abstract class Slicer {
 	public abstract Class<?> getTemplateClass( String master, String name );
 	public abstract void makeTemplate( String master, String name ) throws WebTemplateException;
 	public abstract void prepare( String master ) throws WebTemplateException;
+	protected abstract int outLen();
 	protected abstract String out();
 	public abstract void init();
 	public abstract void load( String master ) throws IOException;
+	public abstract void prependText( String text );
+	public abstract void appendText( String text );
 	
 	public abstract File getTemplateFile( String name );
 	public abstract String getTemplateName( File file );
@@ -108,6 +111,10 @@ public abstract class Slicer {
 
 	private static class SlicerException extends WebTemplateException {
 		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5222215964190533168L;
 		String name;
 		
 		SlicerException( String name, Throwable throwable ){

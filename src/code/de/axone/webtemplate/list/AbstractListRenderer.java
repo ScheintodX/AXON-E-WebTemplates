@@ -1,6 +1,7 @@
 package de.axone.webtemplate.list;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,39 +16,36 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 
 	private final String name;
 	private final ListProvider<T> listProvider;
-	private final Renderer itemTemplate;
 	private final int itemsPerPage;
 	private final int currentPage;
 	private final int numPages;
 	private String sort;
+	
+	protected abstract Renderer itemTemplate( T item );
 
 	public AbstractListRenderer(HttpServletRequest request, String name, String defaultSort,
-			int itemsPerPage, ListProvider<T> listProvider,
-			Renderer itemTemplate ) {
+			int itemsPerPage, ListProvider<T> listProvider ) {
 		
 		this( 
 				name, 
 				readPage( name, calcNumPages( listProvider, itemsPerPage ), request ), 
 				itemsPerPage, 
 				readSort( name, defaultSort, request ),
-				listProvider,
-				itemTemplate
+				listProvider
 		);
 	}
 
 	public AbstractListRenderer(String name, int currentPage, int itemsPerPage,
-			String sort, ListProvider<T> listProvider, Renderer itemTemplate ) {
+			String sort, ListProvider<T> listProvider ) {
 
 		assert name != null;
 		assert listProvider != null;
-		assert itemTemplate != null;
 		
 		this.name = name;
 		this.currentPage = currentPage;
 		this.itemsPerPage = itemsPerPage;
 		this.numPages = calcNumPages( listProvider, itemsPerPage );
 		this.listProvider = listProvider;
-		this.itemTemplate = itemTemplate;
 		this.sort = sort;
 	}
 	
@@ -112,7 +110,7 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 	}
 
 	@Override
-	public void render( Object object, HttpServletRequest request,
+	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response, Translator translator )
 			throws IOException, WebTemplateException, Exception {
 
@@ -122,6 +120,8 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 		for( Iterator<T> it = list.iterator(); it.hasNext(); ){
 			
 			T t = it.next();
+			
+			Renderer itemTemplate = itemTemplate( t );
 			
 			if( itemTemplate instanceof Listable ){
 				Listable listableItemTemplate = (Listable) itemTemplate;
@@ -134,7 +134,7 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 				listableItemTemplate.setHighlight( isHighlight( t ) );
 			}
 
-			itemTemplate.render( t, request, response, translator );
+			itemTemplate.render( t, out, request, response, translator );
 			i++;
 		}
 	}

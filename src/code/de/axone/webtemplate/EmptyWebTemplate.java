@@ -1,6 +1,7 @@
 package de.axone.webtemplate;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -24,7 +25,7 @@ public class EmptyWebTemplate implements WebTemplate {
 	public static final EmptyWebTemplate INSTANCE = new EmptyWebTemplate();
 	
 	@Override
-	public void render( Object object, HttpServletRequest request,
+	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response, Translator translator )
 			throws IOException, WebTemplateException, Exception {
 	}
@@ -45,4 +46,6 @@ public class EmptyWebTemplate implements WebTemplate {
 
 	@Override
 	public void reset() {}
+
+
 }

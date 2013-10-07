@@ -5,6 +5,10 @@ import java.util.List;
 
 public class OptionList extends LinkedList<Option> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2223259434054885248L;
 	public OptionList(){}
 	public OptionList( List<? extends Option> options ){
 		

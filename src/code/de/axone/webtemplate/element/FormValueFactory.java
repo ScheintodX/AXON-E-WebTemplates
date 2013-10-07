@@ -29,6 +29,7 @@ import de.axone.webtemplate.elements.impl.HtmlSelectElement.OptionComparator;
 import de.axone.webtemplate.elements.impl.HtmlTextAreaElement;
 import de.axone.webtemplate.elements.impl.Option;
 import de.axone.webtemplate.elements.impl.OptionImpl;
+import de.axone.webtemplate.elements.impl.OptionList;
 import de.axone.webtemplate.form.Form;
 import de.axone.webtemplate.form.FormValue;
 import de.axone.webtemplate.form.FormValueImpl;
@@ -150,7 +151,7 @@ public class FormValueFactory {
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
 		result.setHtmlInput( element );
 		
-		IntegerConverter converter = IntegerConverter.forLocale( locale );
+		IntegerConverter converter = IntegerConverter.instance( locale );
 		result.setConverter( converter );
 		
 		if( min != null || max != null ) {
@@ -505,14 +506,14 @@ public class FormValueFactory {
 
 	public FormValue<Integer> createInputIntegerValue(
 			HtmlInputElement.InputType type, Locale locale, String name,
-			Integer min, Integer max, boolean nullable,
+			Integer min, Integer max, boolean useThousandsSeparator, boolean nullable,
 			AjaxValidate ajaxValidate ) {
-
+		
 		FormValueImpl<Integer> result = new FormValueImpl<Integer>();
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
-		IntegerConverter converter = IntegerConverter.forLocale( locale );
+		IntegerConverter converter = IntegerConverter.instance( locale, useThousandsSeparator );
 		result.setHtmlInput( element );
 		result.setConverter( converter );
 		
@@ -538,26 +539,40 @@ public class FormValueFactory {
 
 	public FormValue<Integer> createInputIntegerValue(
 			HtmlInputElement.InputType type, Locale locale, String name,
-			Integer min, Integer max, boolean nullable ) {
+			Integer min, Integer max, boolean useThousandsSeparator, boolean nullable ) {
 
-		return createInputIntegerValue( type, locale, name, min, max, nullable,
+		return createInputIntegerValue( type, locale, name, min, max, useThousandsSeparator, nullable,
 				new AjaxValidate() );
 	}
 
 	public FormValue<Integer> createInputIntegerValue( String name,
+			Locale locale, Integer min, Integer max, boolean useThousandsSeparator, boolean nullable ) {
+		return createInputIntegerValue( NUMBER_INPUT_TYPE(),
+				locale, name, min, max, useThousandsSeparator, nullable );
+	}
+	public FormValue<Integer> createInputIntegerValue( String name,
 			Locale locale, Integer min, Integer max, boolean nullable ) {
 		return createInputIntegerValue( NUMBER_INPUT_TYPE(),
-				locale, name, min, max, nullable );
+				locale, name, min, max, true, nullable );
 	}
 
 	public FormValue<Integer> createInputIntegerValue( String name,
+			Locale locale, boolean useThousandsSeparator, boolean nullable ) {
+		return createInputIntegerValue( name, locale, null,
+				null, useThousandsSeparator, nullable );
+	}
+	public FormValue<Integer> createInputIntegerValue( String name,
 			Locale locale, boolean nullable ) {
 		return createInputIntegerValue( name, locale, null,
-				null, nullable );
+				null, true, nullable );
 	}
 	public FormValue<Integer> createInputIntegerValue( String name, boolean nullable ){
 		
 		return createInputIntegerValue( name, defaultLocale, nullable );
+	}
+	public FormValue<Integer> createInputIntegerValue( String name, boolean useThousandsSeparator, boolean nullable ){
+		
+		return createInputIntegerValue( name, defaultLocale, useThousandsSeparator, nullable );
 	}
 
 	public FormValue<String> createInputHiddenValue( String name ) {
@@ -738,6 +753,16 @@ public class FormValueFactory {
 
 		return result;
 	}
+	
+	protected OptionList convert( SelectableOption [] options ){
+		
+		OptionList list = new OptionList();
+		for( SelectableOption option : options ){
+			list.add( new OptionImpl( option.key(), option.title() ) );
+		}
+		return list;
+		
+	}
 
 	protected static class AjaxValidate {
 
@@ -781,4 +806,11 @@ public class FormValueFactory {
 			return result.toString();
 		}
 	}
+	
+	public interface SelectableOption {
+		public String key();
+		public String title();
+	}
+	
+	
 }

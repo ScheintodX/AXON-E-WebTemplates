@@ -1,6 +1,6 @@
 package de.axone.webtemplate.elements.impl;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
@@ -25,7 +25,7 @@ public class HtmlInputElementTest {
 		assertEquals( element.getName(), "testname" );
 		assertEquals( element.getValue(), "testvalue" );
 		
-		element.render( null, request, response, null );
+		element.render( null, response.getWriter(), request, response, null );
 		
 		assertEquals( response.getContent(), "<div class=\"valid\"><input id=\"testid\" class=\"testclass\" type=\"text\" name=\"testname\" value=\"testvalue\" /></div>" );
 	}

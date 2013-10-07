@@ -15,16 +15,7 @@ public class PostalcodeValidator_Dynamic implements Validator<String> {
 	@Override
 	public boolean isValid( String value ) {
 		
-		String code = countryProvider.getCode();
-		if( code == null ) return true; // No country -> allways valid
-		
-		PostalcodeValidator validator = 
-				PostalcodeValidatorFactory.validatorFor( code );
-		
-		if( validator == null ) 
-			throw new IllegalArgumentException( NO_COUNTRY_EXC );
-		
-		return validator.isValid( value );
+		return validate( value ) == null;
 	}
 
 	@Override

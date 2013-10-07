@@ -2,6 +2,7 @@ package de.axone.webtemplate.form;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Locale;
 
@@ -52,7 +53,7 @@ public class Example {
 			//Note: prevent NPE
 			if( "save".equals( action ) ){
 				
-				form.initialize( request );
+				form.readFromRequest( request );
 				
 				if( form.isValid() ){
 					
@@ -79,7 +80,7 @@ public class Example {
 			// Note that this is one way of doing it. 
 			// Setting parameters or accessing it externally
 			// would be fine to by now.
-			template.render( form, request, response, null );
+			template.render( form, response.getWriter(), request, response, null );
 			
 			// This is only for this example to show the output
 			E.rr( ((TestHttpServletResponse)response).getContent() );
@@ -146,7 +147,7 @@ public class Example {
 		}
 
 		@Override
-		protected void doRender( Object object, HttpServletRequest request,
+		public void render( Object object, PrintWriter out, HttpServletRequest request,
 				HttpServletResponse response, Translator translator ) throws IOException,
 				WebTemplateException, Exception {
 			
@@ -158,7 +159,7 @@ public class Example {
 			h.setValue( "input_email", form.getHtmlInput( EMAIL ) );
 			h.setValue( "input_age", form.getHtmlInput( AGE ) );
 			
-			h.render( object, request, response, translator );
+			h.render( object, out, request, response, translator );
 		}
 	}
 	

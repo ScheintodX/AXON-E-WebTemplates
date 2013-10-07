@@ -2,6 +2,7 @@ package de.axone.webtemplate;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ public final class DataHolder implements Cloneable {
 	public static final String PARAM_FILE = "file";
 	public static final String PARAM_TIMESTAMP = "timestamp";
 	public static final String PARAM_SOURCE = "source";
+	public static final String PARAM_CUT = "Cut";
 
 	public static final String NOVAL = "";
 
@@ -57,7 +59,9 @@ public final class DataHolder implements Cloneable {
 	// Functions
 	//private HashMap<String, Function> functions;
 	private FunctionFactory functions;
-
+	
+	private CacheProvider cacheProvider;
+	
 	DataHolder() {
 		this.keys = new LinkedList<DataHolderKey>();
 		this.values = new HashMap<String, DataHolderItem>();
@@ -67,12 +71,14 @@ public final class DataHolder implements Cloneable {
 
 	private DataHolder(LinkedList<DataHolderKey> keys,
 			HashMap<String, DataHolderItem> data,
-			HashMap<String, String> parameters) {
+			HashMap<String, String> parameters,
+			CacheProvider cache ) {
 
 		this.keys = keys;
 		this.values = data;
 		this.parameters = parameters;
 		this.functions = new SimpleFunctionFactory();
+		this.cacheProvider = cache;
 	}
 
 	List<DataHolderKey> getVariables() {
@@ -144,6 +150,9 @@ public final class DataHolder implements Cloneable {
 	public void setFunctionFactory( FunctionFactory factory ){
 		this.functions = factory;
 	}
+	public void setCacheProvider( CacheProvider cache ){
+		this.cacheProvider = cache;
+	}
 
 	public void setFunction( String key, Function function ) {
 		functions.add( key, function );
@@ -203,8 +212,8 @@ public final class DataHolder implements Cloneable {
 		HashMap<String, String> cloneParameters = new HashMap<String, String>(
 				parameters );
 
-		DataHolder clone = new DataHolder( cloneKeys, cloneData,
-				cloneParameters );
+		DataHolder clone = new DataHolder(
+				cloneKeys, cloneData, cloneParameters, cacheProvider );
 
 		return clone;
 	}
@@ -217,12 +226,10 @@ public final class DataHolder implements Cloneable {
 		this.rendering = render;
 	}
 
-	public void render( Object object, HttpServletRequest request,
+	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response,
 			Translator translator ) throws IOException,
 			WebTemplateException, Exception {
-
-		PrintWriter out = response.getWriter();
 
 		for( DataHolderKey key : keys ) {
 
@@ -244,9 +251,9 @@ public final class DataHolder implements Cloneable {
 			}
 			if( function != null ){
 				if( key.getAttributes() != null ){
-    				function.render( functionName, this, request, response, key.getAttributes(), object, translator );
+    				function.render( functionName, this, out, request, response, key.getAttributes(), object, translator );
 				} else {
-					function.render( functionName, this, request, response, new AttributeMap(), object, translator );
+					function.render( functionName, this, out, request, response, new AttributeMap(), object, translator );
 				}
 			} else if( value != null && rendering ) {
 
@@ -261,9 +268,30 @@ public final class DataHolder implements Cloneable {
 					}
 
 				} else if( value instanceof Renderer ) {
+					
+					CacheableRenderer renderer;
+					if(
+							value instanceof CacheableRenderer 
+							&& cacheProvider != null
+							&& (renderer=(CacheableRenderer)value).cacheable()
+					) {
+						
+						String cacheK = renderer.cacheKey();
+						String cachedS = cacheProvider.getCache().get( cacheK );
+						
+						if( cachedS == null ){
+							StringWriter s = new StringWriter();
+							renderer.render( object, new PrintWriter( s ), request, response, translator );
+							cachedS = s.toString();
+							cacheProvider.getCache().put( cacheK, cachedS );
+						}
+						//E.rr( cachedS );
+						response.getWriter().write( cachedS );
+							
+					} else {
 
-					Renderer renderer = (Renderer) value;
-					renderer.render( object, request, response, translator );
+						((Renderer)value).render( object, out, request, response, translator );
+					}
 
 				} else if( value instanceof Collection<?> ) {
 
@@ -272,7 +300,7 @@ public final class DataHolder implements Cloneable {
 					for( Object o : collection ) {
 
 						Renderer renderer = (Renderer) o;
-						renderer.render( object, request, response, translator );
+						renderer.render( object, out, request, response, translator );
 					}
 
 				} else {
@@ -288,6 +316,7 @@ public final class DataHolder implements Cloneable {
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
+		@SuppressWarnings( "resource" )
 		Formatter formatter = new Formatter( builder );
 
 		builder.append( "KEYS:\n" );

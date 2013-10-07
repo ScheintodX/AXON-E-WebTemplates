@@ -1,5 +1,6 @@
 package de.axone.webtemplate.converter.impl;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -10,24 +11,37 @@ import de.axone.webtemplate.converter.ConverterException;
 
 public class IntegerConverter extends AbstractConverter<Integer> {
 	
-	private NumberFormat numberFormat;
+	private final NumberFormat numberFormat;
 	
-	private static final HashMap<Locale,IntegerConverter> FOR_LOCALE =
-		new HashMap<Locale,IntegerConverter>();
+	private static final HashMap<String,IntegerConverter> FOR_LOCALE_X =
+		new HashMap<>();
 	
-	public static synchronized IntegerConverter forLocale( Locale locale ){
+	public static synchronized IntegerConverter instance( Locale locale ){
+		return instance( locale, true );
+	}
+	public static synchronized IntegerConverter instance( Locale locale, boolean useThousandsSeparator ){
 		
-		IntegerConverter result = FOR_LOCALE.get( locale );
+		String key = locale.toString() + (useThousandsSeparator ? "_X" : "");
+		IntegerConverter result = FOR_LOCALE_X.get( key );
 		if( result == null ){
-			result = new IntegerConverter( locale );
-			FOR_LOCALE.put( locale, result );
+			result = new IntegerConverter( locale, useThousandsSeparator );
+			FOR_LOCALE_X.put( key, result );
 		}
 		return result;
 	}
 	
 	public IntegerConverter( Locale locale ){
+		this( locale, true );
+	}
+	public IntegerConverter( Locale locale, boolean useThousandsSeparator ){
 		
 		numberFormat = NumberFormat.getIntegerInstance( locale );
+		if( ! useThousandsSeparator ){
+			if( !( numberFormat instanceof DecimalFormat ) )
+				throw new IllegalStateException( "Didn't get the right number format" );
+			
+			((DecimalFormat) numberFormat).setGroupingUsed( false );
+		}
 	}
 
 	@Override
@@ -53,7 +67,6 @@ public class IntegerConverter extends AbstractConverter<Integer> {
 		throws ConverterException {
 		
 		if( number == null ) return null;
-		
 		return numberFormat.format( number.longValue() );
 	}
 

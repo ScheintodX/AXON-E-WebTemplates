@@ -1,6 +1,7 @@
 package de.axone.webtemplate.elements.impl;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,7 @@ import de.axone.webtemplate.form.Translator;
 
 public class HtmlRadioElement extends AbstractHtmlInputElement {
 
-	private static String TAGNAME = "div";
+	private static String TAGNAME = "span";
 
 	private List<Option> options;
 	private String selected;
@@ -94,7 +95,7 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 	private class OptionRenderer implements Renderer {
 
 		@Override
-		public void render( Object object, HttpServletRequest request,
+		public void render( Object object, PrintWriter out, HttpServletRequest request,
 				HttpServletResponse response, Translator translator )
 				throws IOException, WebTemplateException, Exception {
 
@@ -119,15 +120,19 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 				}
 
 				HtmlInputElement inputElement = new HtmlInputElement( HtmlInputElement.InputType.RADIO, getName(), value );
-				inputElement.setContent( text );
-				inputElement.setIdAttribute( getIdAttribute() + "_" + value );
-				//inputElement.setClassAttribute( getClassAttribute() );
+				String myId = getIdAttribute() + "_" + value;
+				inputElement.setIdAttribute( myId );
 
 				if( value != null && value.equals(selected) ) {
 					inputElement.addAttribute( "checked", "checked" );
 				}
 
-				inputElement.render(object, request, response, translator);
+				inputElement.render( object, out, request, response, translator );
+				
+				//out.write( text );
+				HtmlLabelElement label = new HtmlLabelElement( myId, text );
+				label.addAttribute( "class", "radio-label" );
+				label.render( object, out, request, response, translator );
 			}
 		}
 	}

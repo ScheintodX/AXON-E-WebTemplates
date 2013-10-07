@@ -11,7 +11,7 @@ import de.axone.webtemplate.validator.Validator;
 
 public interface FormValue<T> {
 
-	public void initialize( HttpServletRequest request );
+	public void readValue( HttpServletRequest request );
 	
 	public void setHtmlInput( HtmlInput element );
 	public HtmlInput getHtmlInput();

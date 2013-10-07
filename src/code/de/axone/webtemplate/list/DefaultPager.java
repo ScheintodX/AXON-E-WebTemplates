@@ -71,7 +71,7 @@ public class DefaultPager implements Pager {
 	protected Template innerTemplate = new Template( "<a href=\"__link__\">__no__</a>" );
 	protected Template selectedTemplate = new Template( "<a class=\"active\">[__no__]</a>" );
 	protected Template skippedTemplate = new Template( "&hellip;" );
-	protected Template spaceTemplate = new Template( "&nbsp;" );
+	protected Template spaceTemplate = new Template( "" );
 
 	public DefaultPager(){}
 
@@ -133,8 +133,8 @@ public class DefaultPager implements Pager {
 		this.showSelectedArrowheads = showSelectedArrowheads;
 	}
 	
-	public void setParametersWhitelist( List<String> parametersWhitelist ) {
-		this.parametersWhitelist = parametersWhitelist;
+	public void setParametersWhitelist( String ... parametersWhitelist ) {
+		this.parametersWhitelist = Arrays.asList( parametersWhitelist );
 	}
 
 	public void setLeftContainer( String leftContainer ) {
@@ -180,13 +180,11 @@ public class DefaultPager implements Pager {
 	}
 
 	@Override
-	public void render( Object object, HttpServletRequest request,
-			HttpServletResponse response, Translator translator )
+	public void render( Object object, PrintWriter out,
+			HttpServletRequest request, HttpServletResponse response, Translator translator )
 			throws IOException, WebTemplateException, Exception {
-
+		
 		if( ! renderIfOnlyOnePage && numPages <= 1 ) return;
-
-		PrintWriter out = response.getWriter();
 
 		int lastPage = numPages-1;
 
@@ -287,8 +285,9 @@ public class DefaultPager implements Pager {
 
 		if( page > 0 || numeratePageZero ) parameters.put( pageParameter, ""+page );
 		else removeParameters = Arrays.asList( pageParameter );
-
-		return HttpLinkBuilder.makeLink( request, noHost, noPage, parametersWhitelist, parameters, removeParameters );
+		
+		return HttpLinkBuilder.makeLink( request,
+				noHost, noPage, parametersWhitelist, parameters, removeParameters, true );
 	}
 
 	protected static class Template {

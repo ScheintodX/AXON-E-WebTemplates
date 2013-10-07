@@ -1,5 +1,6 @@
 package de.axone.webtemplate.element;
 
+import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,7 @@ public interface HtmlInput {
 	public void initialize( HttpServletRequest request );
 	
 	public void setDecorator( Decorator renderer );
-	public void render( Object object, HttpServletRequest request, HttpServletResponse respone, Translator translator ) throws Exception;
-	public void renderElement( Object object, HttpServletRequest request, HttpServletResponse response, Translator translator ) throws Exception;
+	public void render( Object object, PrintWriter out, HttpServletRequest request, HttpServletResponse respone, Translator translator ) throws Exception;
+	public void renderElement( Object object, PrintWriter out, HttpServletRequest request, HttpServletResponse response, Translator translator ) throws Exception;
 	
 }

@@ -41,12 +41,11 @@ public class WebTemplateFactory {
 	
 	public WebTemplateFactory(){
 		this( null );
-		throw new RuntimeException( "Holla" );
 	}
 	
 	@SuppressWarnings( "rawtypes" )
 	public WebTemplateFactory( SlicerFactory slicerFactory ){
-		this( new CacheNoCache(), new CacheNoCache(), slicerFactory );
+		this( new CacheNoCache(), new CacheNoCache(), null, slicerFactory );
 	}
 	
 	
@@ -54,6 +53,7 @@ public class WebTemplateFactory {
 	public WebTemplateFactory( 
 			Cache.Direct<?,?> fileCache, 
 			Cache.Direct<?,?> httpCache,
+			Cache<?,?> dataCache,
 			SlicerFactory slicerFactory
 	){
 		
@@ -61,7 +61,7 @@ public class WebTemplateFactory {
 		assert httpCache != null;
 		
 		fileDataHolderFactory = new FileDataHolderFactory(
-				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache, slicerFactory );
+				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache, slicerFactory, null );
 		
 		httpDataHolderFactory = new HttpDataHolderFactory(
 				(Direct<URL, Pair<HttpWatcher, DataHolder>>) httpCache );
@@ -83,7 +83,7 @@ public class WebTemplateFactory {
 	 * @throws WebTemplateException if something goes wrong
 	 * @throws KeyException
 	 */
-	public WebTemplate templateFor( String className ) throws WebTemplateException {
+	public WebTemplate templateFor( String className, CacheProvider dataCache ) throws WebTemplateException {
 		
 		if( className == null ) throw new IllegalArgumentException( "'className' is null" );
 
@@ -101,22 +101,22 @@ public class WebTemplateFactory {
 		}
 	}
 
-	public WebTemplate templateFor( File file ) throws WebTemplateException {
+	public WebTemplate templateFor( File file, CacheProvider dataCache ) throws WebTemplateException {
 		
-		return templateFor( file, null );
+		return templateFor( file, null, dataCache );
 	}
 	
-	public WebTemplate templateFor( URL url ) throws WebTemplateException {
+	public WebTemplate templateFor( URL url, CacheProvider dataCache ) throws WebTemplateException {
 
-		return templateFor( url, null );
+		return templateFor( url, null, dataCache );
 	}
 
-	public WebTemplate templateFor( File file, String className ) throws WebTemplateException {
+	public WebTemplate templateFor( File file, String className, CacheProvider dataCache ) throws WebTemplateException {
 		
 		if( file == null ) throw new IllegalArgumentException( "'file' is null" );
 
 		try {
-			WebTemplate result = instantiate( file, className );
+			WebTemplate result = instantiate( file, className, dataCache );
 			return result;
 
 		} catch( ClassCastException e ) {
@@ -134,7 +134,7 @@ public class WebTemplateFactory {
 		}
 	}
 	
-	public WebTemplate templateFor( URL url, String className ) throws WebTemplateException {
+	public WebTemplate templateFor( URL url, String className, CacheProvider dataCache ) throws WebTemplateException {
 
 		if( url == null ) throw new IllegalArgumentException( "'url' is null" );
 		
@@ -160,7 +160,7 @@ public class WebTemplateFactory {
 		return FileDataHolderFactory.reloadCount;
 	}
 
-	private WebTemplate instantiate( File file, String className )
+	private WebTemplate instantiate( File file, String className, CacheProvider dataCache )
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, ClassCastException, IOException,
 			KeyException, WebTemplateException {
@@ -168,7 +168,7 @@ public class WebTemplateFactory {
 		// Get Holder
 		DataHolder holder;
 		try {
-    		holder = fileDataHolderFactory.holderFor( file );
+    		holder = fileDataHolderFactory.holderFor( file, dataCache );
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In file: " + file.getPath(), e );
 		}

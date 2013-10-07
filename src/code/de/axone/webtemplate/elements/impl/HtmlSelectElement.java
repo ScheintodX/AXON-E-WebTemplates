@@ -1,6 +1,7 @@
 package de.axone.webtemplate.elements.impl;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -117,7 +118,7 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 	private class OptionRenderer implements Renderer {
 
 		@Override
-		public void render( Object object, HttpServletRequest request,
+		public void render( Object object, PrintWriter out, HttpServletRequest request,
 				HttpServletResponse response, Translator translator )
 				throws IOException, WebTemplateException, Exception {
 
@@ -144,7 +145,7 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 					optionElement.setSelected(false);
 				}
 
-				optionElement.render(object, request, response, translator);
+				optionElement.render( object, out, request, response, translator );
 			}
 
 		}

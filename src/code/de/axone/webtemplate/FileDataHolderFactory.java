@@ -30,12 +30,12 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 	final Cache.Direct<File, Pair<FileWatcher, DataHolder>> cache;
 	static int reloadCount=0;
 	
-	public FileDataHolderFactory( Cache.Direct<File, Pair<FileWatcher, DataHolder>> cache, SlicerFactory slicerFactory ){
+	public FileDataHolderFactory( Cache.Direct<File, Pair<FileWatcher, DataHolder>> cache, SlicerFactory slicerFactory, CacheProvider cacheProvider ){
 		this.slicerFactory = slicerFactory;
 		this.cache = cache;
 	}
 
-	synchronized public DataHolder holderFor( File file )
+	synchronized public DataHolder holderFor( File file, CacheProvider dataCache )
 			throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException {
 		
 		FileWatcher watcher;
@@ -43,7 +43,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		if( !cache.containsKey( file ) ) {
 
 			watcher = new FileWatcher( file );
-			result = instantiate( file );
+			result = instantiate( file, dataCache );
 			
 			cache.put( file, new Pair<FileWatcher, DataHolder>( watcher, result ) );
 		} else {
@@ -52,7 +52,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			if( !watcher.hasChanged() ) {
 				result = cache.get( file ).getRight();
 			} else {
-				result = instantiate( file );
+				result = instantiate( file, dataCache );
 				cache.put( file, new Pair<FileWatcher, DataHolder>( watcher, result ) );
 			}
 		}
@@ -82,7 +82,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 				if( run ) slicer.run( source );
 				
 				// Store
-				result = instantiate( file );
+				result = instantiate( file, dataCache );
 				cache.put( file, new Pair<FileWatcher, DataHolder>( watcher, result ) );
 			}
 		}
@@ -90,17 +90,19 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		return result.clone();
 	}
 	
-	static DataHolder instantiate( File file ) throws IOException,
+	static DataHolder instantiate( File file, CacheProvider dataCache ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 
 		String data = slurp( file );
 		
-		DataHolder holder = instantiate( data );
+		DataHolder holder = instantiate( data, dataCache );
+		
 		holder.setParameter( DataHolder.PARAM_FILE, file.getPath() );
-		if( holder.getParameter( DataHolder.PARAM_TIMESTAMP  ) == null )
+		if( holder.getParameter( DataHolder.PARAM_TIMESTAMP  ) == null ){
 			holder.setParameter( DataHolder.PARAM_TIMESTAMP, "" + file.lastModified()/1000 ); // 1s
+		}
 		
 		log.trace( "DataHolder for " + file + " created" );
 
@@ -112,25 +114,25 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 
 		Charset charset = Charset.forName( "UTF-8" );
 		CharsetDecoder decoder = charset.newDecoder();
-		FileInputStream fin = new FileInputStream( file );
 		
-		FileChannel cIn = fin.getChannel();
+		try (
+			FileInputStream fin = new FileInputStream( file );
+			FileChannel cIn = fin.getChannel();
+		) {
 		
-		int size = (int)file.length();
-		ByteBuffer buf;
-		try {
-			buf = Slurper.slurp( cIn, size );
-			if( buf.limit() != size ) throw new IOException( 
-					"Filesize (" + size + ") doesn't match read size (" + buf.limit() + ")" );
-		} finally {
-			if( cIn != null ) cIn.close();
-		}
-		
-		try {
-			CharBuffer cBuf = decoder.decode( buf );
-			return cBuf.toString();
-		} catch( MalformedInputException e ){
-			throw new IOException( "Perhaps not UFT-8?", e );
+			int size = (int)file.length();
+			ByteBuffer buf;
+			
+				buf = Slurper.slurp( cIn, size );
+				if( buf.limit() != size ) throw new IOException( 
+						"Filesize (" + size + ") doesn't match read size (" + buf.limit() + ")" );
+			
+			try {
+				CharBuffer cBuf = decoder.decode( buf );
+				return cBuf.toString();
+			} catch( MalformedInputException e ){
+				throw new IOException( "Perhaps not UFT-8?", e );
+			}
 		}
 		
 	}

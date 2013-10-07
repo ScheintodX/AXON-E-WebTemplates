@@ -11,11 +11,19 @@ import de.axone.webtemplate.function.MissingAttributeException;
  * 
  * Todo: Das hier auf ein einfacheres System (Vermutlich mit dem StringAccessor/SA)
  * umstellen.
+ * Das ist aber nicht so einfach, da hier als perfomance-optimierung (brint das überhaupt
+ * etwas?) Integers beim parsen in integer gewandelt werden und so nicht jedes mal geparst
+ * werden müssen.
  * 
  * @author flo
  */
 
 public class AttributeMap extends HashMap<String,Attribute>{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7008245950458895079L;
 
 	public String getAsString( String key ){
 		return getAsString( key, null );

@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import de.axone.webtemplate.DataHolder.DataHolderItem;
+import de.axone.webtemplate.DataHolder.DataHolderItemType;
+
 public abstract class AbstractWebTemplate implements WebTemplate {
 	
-	protected Map<String,Object> parameters = new HashMap<String,Object>();
-
 	protected DataHolder holder;
+	
+	protected Map<String,Object> parameters = new HashMap<String,Object>();
 
 	protected AbstractWebTemplate() {}
 	
@@ -16,6 +19,8 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 
 		setHolder( holder );
 	}
+	
+	/* Holder */
 
 	protected void setHolder( DataHolder holder ) {
 
@@ -23,9 +28,30 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 	}
 
 	public DataHolder getHolder() {
+		
 		return holder;
 	}
 
+	/* Parameters */
+
+	@Override
+	public void setParameter( String name, Object object ) {
+		
+		parameters.put( name, object );
+	}
+
+	@Override
+	public Object getParameter( String name ){
+		
+		return parameters.get( name );
+	}
+
+	@Override
+	public Set<String> getParameterNames(){
+		
+		return parameters.keySet();
+	}
+	
 	@Override
 	public void reset() {
 
@@ -33,18 +59,29 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 		holder.clear();
 	}
 
-	@Override
-	public void setParameter( String name, Object object ) {
-		parameters.put( name, object );
+	/**
+	 * Fill templates from parameters
+	 */
+	protected void autofill() {
+
+		for( String key : holder.getKeys() ) {
+
+			try {
+				DataHolderItem item = holder.getItem( key );
+
+				if( item.getType() == DataHolderItemType.VAR ) {
+
+					if( parameters.containsKey( key ) ) {
+
+						item.setValue( parameters.get( key ) );
+					}
+				}
+
+			} catch( KeyException e ) {
+				e.printStackTrace(); // Never happens
+			}
+		}
+		
 	}
 
-	@Override
-	public Object getParameter( String name ){
-		return parameters.get( name );
-	}
-
-	@Override
-	public Set<String> getParameterNames(){
-		return parameters.keySet();
-	}
 }

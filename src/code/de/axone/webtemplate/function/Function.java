@@ -1,5 +1,7 @@
 package de.axone.webtemplate.function;
 
+import java.io.PrintWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,5 +18,5 @@ import de.axone.webtemplate.form.Translator;
  */
 public interface Function {
 
-	public void render( String name, DataHolder holder, HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws Exception;
+	public void render( String name, DataHolder holder, PrintWriter out, HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws Exception;
 }

@@ -1,6 +1,7 @@
 package de.axone.webtemplate.validator;
 
 
+
 public abstract class AbstractValidator<T> implements Validator<T> {
 	
 	@Override
@@ -8,5 +9,5 @@ public abstract class AbstractValidator<T> implements Validator<T> {
 		
 		return ( validate( value ) == null );
 	}
-
+	
 }
