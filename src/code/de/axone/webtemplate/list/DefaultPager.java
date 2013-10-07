@@ -71,7 +71,7 @@ public class DefaultPager implements Pager {
 	protected Template innerTemplate = new Template( "<a href=\"__link__\">__no__</a>" );
 	protected Template selectedTemplate = new Template( "<a class=\"active\">[__no__]</a>" );
 	protected Template skippedTemplate = new Template( "&hellip;" );
-	protected Template spaceTemplate = new Template( "&nbsp;" );
+	protected Template spaceTemplate = new Template( "" );
 
 	public DefaultPager(){}
 
