@@ -15,25 +15,25 @@ import de.axone.webtemplate.function.MissingAttributeException;
  * @author flo
  */
 
-public class AttributeMap extends HashMap<String,Object>{
+public class AttributeMap extends HashMap<String,Attribute>{
 
 	public String getAsString( String key ){
-		return (String)get( key );
+		return getAsString( key, null );
 	}
 	public Integer getAsInteger( String key ){
-		return (Integer)get( key );
+		return getAsInteger( key, null );
 	}
 	
 	public String getAsString( String key, String defaultValue ){
 		if( containsKey( key ) ){
-			return (String)get( key );
+			return get( key ).asString();
 		} else {
 			return defaultValue;
 		}
 	}
 	public Integer getAsInteger( String key, Integer defaultValue ){
 		if( containsKey( key ) ){
-			return (Integer)get( key );
+			return get( key ).asInteger();
 		} else {
 			return defaultValue;
 		}
@@ -48,7 +48,7 @@ public class AttributeMap extends HashMap<String,Object>{
 	
 	public String getAsStringRequired( String key, String defaultValue ) throws MissingAttributeException { 
 		if( containsKey( key ) ){
-			return (String)get( key );
+			return get( key ).asString();
 		} else if( defaultValue != null ){
 			return defaultValue;
 		} else {
@@ -58,7 +58,7 @@ public class AttributeMap extends HashMap<String,Object>{
 	
 	public int getAsIntRequired( String key, Integer defaultValue ) throws MissingAttributeException { 
 		if( containsKey( key ) ){
-			return (Integer)get( key );
+			return get( key ).asInteger();
 		} else if( defaultValue != null ){
 			return defaultValue;
 		} else {

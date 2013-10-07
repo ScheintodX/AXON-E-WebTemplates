@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import de.axone.web.encoding.HtmlEncoder;
 import de.axone.webtemplate.element.HtmlInput;
+import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
 
 public class DefaultDecorator implements Decorator {
@@ -30,7 +31,8 @@ public class DefaultDecorator implements Decorator {
 		if( messages != null ) for( String message : messages ){
 
 			out.write( "\n<p>" );
-			out.write( HtmlEncoder.ENCODE( translator.translate( message ) ) );
+			out.write( HtmlEncoder.ENCODE(
+					translator.translate( TKey.dynamic( message ) ) ) );
 			out.write( "</p>" );
 		}
 

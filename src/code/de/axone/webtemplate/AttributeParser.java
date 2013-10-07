@@ -3,7 +3,6 @@ package de.axone.webtemplate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.axone.tools.E;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 /**
@@ -51,11 +50,6 @@ public abstract class AttributeParser {
 	
 	static final String testtag = "tag att1 att2=123 att3=\"abc\" att4='abc' att5='a\"b c' att6 = 'abc'";
 	
-	public static void main( String [] args ){
-		
-		E.rr( attributePattern );
-	}
-	
 	public static AttributeMap parse( String value ) throws ParserException {
 		
 		Matcher matcher = tagPattern.matcher( value );
@@ -68,39 +62,18 @@ public abstract class AttributeParser {
 			
 			int c=0;
 			while( attMatcher.find() ){
-				//E.rr( attMatcher.groupCount() );
-				//E.rr( attMatcher.group() );
-				//E.rr( "0:" + attMatcher.group(0) );
-				//E.rr( "1:" + attMatcher.group(1) );
-				//E.rr( "2:" + attMatcher.group(2) );
-				//E.rr( "3:" + attMatcher.group(3) );
-				//E.rr( "4:" + attMatcher.group(4) );
-				//E.rr( "5:" + attMatcher.group(5) );
-				//E.rr();
 				
 				String attName = attMatcher.group(1);
 				if( c == 0 ){
-					map.put( TAG_NAME, attName );
+					map.put( TAG_NAME, new Attribute( attName, false ) );
 				} else {
-					/*
-					String attValue = attMatcher.group(2);
-					if( attValue != null ){
-    					if( attValue.charAt( 0 ) == '\'' || attValue.charAt( 0 ) == '"' ){
-    						attValue = attValue.substring( 1, attValue.length()-1 );
-        					map.put( attName, attValue );
-    					} else {
-    						map.put( attName, Integer.parseInt( attValue ) );
-    					}
-					} else {
-    						map.put( attName, null );
-					}
-					*/
+
 					if( attMatcher.group( 3 ) != null ){
-    					map.put( attName, Integer.parseInt( attMatcher.group(3) ) );
+    					map.put( attName, new Attribute( attMatcher.group(3), true ) );
 					} else if( attMatcher.group( 4 ) != null ){
-    					map.put( attName, attMatcher.group(4) );
+    					map.put( attName, new Attribute( attMatcher.group(4), false ) );
 					} else if( attMatcher.group( 5 ) != null ){
-    					map.put( attName, attMatcher.group(5) );
+    					map.put( attName, new Attribute( attMatcher.group(5), false ) );
 					} else {
 						map.put( attName, null );
 					}
@@ -110,9 +83,9 @@ public abstract class AttributeParser {
 			}
 			
 			return map;
+		} else {
+			throw new ParserException( "Not valid: '" + value + "'" );
 		}
-		
-		throw new ParserException( "Not valid: " + value );
 	}
 	
 

@@ -16,8 +16,8 @@ public class WebTemplateTest {
 	public void testAutomatedTemplate() throws Exception {
 		
 		File file = new File( "src/test/de/axone/webtemplate/TestTemplate.txt" );
-		@SuppressWarnings( "unchecked" )
-		DataHolder holder = new FileDataHolderFactory( new CacheHashMap() ).holderFor( file );
+		@SuppressWarnings( { "unchecked", "rawtypes" } )
+		DataHolder holder = new FileDataHolderFactory( new CacheHashMap( "TestCache" ), null ).holderFor( file );
 		AutomatedFileWebTemplate template = new AutomatedFileWebTemplate( holder );
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		request.setParameter( "name", "Hugo" );

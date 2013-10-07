@@ -20,37 +20,18 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
 	public static final Logger log = LoggerFactory.getLogger( AbstractFileWebTemplate.class );
 
-	private DataHolder holder;
-
 	public AbstractFileWebTemplate() {}
 	
-	protected AbstractFileWebTemplate( File file ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
+	protected AbstractFileWebTemplate( File file ) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException{
 		
 		this( new FileDataHolderFactory( 
-				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>()
+				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>(),
+				null
 		).holderFor( file ) );
 	}
-
-	protected AbstractFileWebTemplate( DataHolder holder ) throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException{
-
-		setHolder( holder );
-	}
-
-	public void setHolder( DataHolder holder ) throws KeyException, IOException{
-
-		this.holder = holder;
-	}
-
-	public DataHolder getHolder() {
-		return holder;
-	}
-
-	@Override
-	public void reset() {
-
-		super.reset();
-
-		holder.clear();
+	
+	public AbstractFileWebTemplate( DataHolder holder ) {
+		super( holder );
 	}
 
 	/**

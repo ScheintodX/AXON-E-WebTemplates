@@ -1,7 +1,9 @@
 package de.axone.webtemplate.elements.impl;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.axone.webtemplate.element.AbstractHtmlInputElement;
 
@@ -22,7 +24,34 @@ public class HtmlInputElement extends AbstractHtmlInputElement {
 			ATTRIBUTE_READONLY, ATTRIBUTE_SIZE, ATTRIBUTE_MAXLENGTH, ATTRIBUTE_ACCEPT );
 
 	public enum InputType {
-		TEXT, PASSWORD, CHECKBOX, RADIO, SUBMIT, RESET, FILE, HIDDEN, IMAGE, BUTTON
+		TEXT, PASSWORD, CHECKBOX, RADIO, SUBMIT, RESET, FILE, HIDDEN, IMAGE, BUTTON,
+		/*HMTL5*/ COLOR, DATE, DATETIME, DATETIME_LOCAL( "datetime-local" ), EMAIL,
+		          MONTH, NUMBER, RANGE, SEARCH, TEL, TIME, URL, WEEK;
+		
+		private static Map<String,InputType> forHtml;
+		static { // Called _after_ all constructors
+			forHtml = new HashMap<String,InputType>();
+			for( InputType type : InputType.values() ){
+				forHtml.put( type.html(), type );
+			}
+		}
+		private String html;
+		InputType(){
+			this.html = name().toLowerCase();
+		}
+		InputType( String html ){
+			this.html = html;
+		}
+		public String html(){
+			return html;
+		}
+		public static InputType forHtml( String html ){
+			
+			InputType result = forHtml.get( html );
+			
+			if( result != null ) return result;
+			else throw new IllegalArgumentException( "No InputType for " + html );
+		}
 	};
 
 	public HtmlInputElement(InputType type, String name) {
@@ -64,12 +93,12 @@ public class HtmlInputElement extends AbstractHtmlInputElement {
 	// --- Type ---
 	public void setType( InputType type ){
 		if( type == null ) throw new IllegalArgumentException( "'type' is null" );
-		setAttribute( ATTRIBUTE_TYPE, type.toString().toLowerCase() );
+		setAttribute( ATTRIBUTE_TYPE, type.html() );
 	}
 	public InputType getType(){
 		String typeStr = getAttribute( ATTRIBUTE_TYPE );
 		if( typeStr == null ) return null;
-		return InputType.valueOf( typeStr );
+		return InputType.forHtml( typeStr );
 	}
 
 	// --- Readonly ---

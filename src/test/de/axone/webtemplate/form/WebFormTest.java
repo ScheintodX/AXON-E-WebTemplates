@@ -4,7 +4,6 @@ import static org.testng.Assert.*;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.testng.annotations.Test;
 
@@ -20,6 +19,8 @@ import de.axone.webtemplate.validator.impl.NotNullValidator;
 
 @Test( groups="webtemplate.webform" )
 public class WebFormTest {
+
+	private static final String VALIDATOR_IS_EMPTY = "VALIDATOR_IS_EMPTY";
 
 	public void testCompleteWebConnector() throws Exception {
 
@@ -53,7 +54,7 @@ public class WebFormTest {
 		List<String> result = webForm.validate();
 		assertNotNull( result );
 		assertEquals( result.size(), 1 );
-		assertEquals( result.get( 0 ), "VALIDATOR_IS_EMPTY" );
+		assertEquals( result.get( 0 ), VALIDATOR_IS_EMPTY );
 
 		// Translation
 		webForm.setTranslationProvider( new TestTextProvider() );
@@ -93,33 +94,17 @@ public class WebFormTest {
 	private static class TestTextProvider extends AbstractTranslator {
 
 		@Override
-		public String translate( String key ) {
-
-
-			return null;
+		public boolean has( TranslationKey text ) {
+			return VALIDATOR_IS_EMPTY.equals( text.name() );
 		}
 
 		@Override
-		public String translate( String text, String ... arguments ) {
-			return translate( text );
-		}
-		
-		@Override
-		public String translate( String text, Map<String,String> arguments ) {
-			return translate( text );
-		}
-
-		@Override
-		public boolean has( String text ) {
-			return "VALIDATOR_IS_EMPTY".equals( text );
-		}
-
-		@Override
-		protected String getPlainTranslation( String text ) {
+		protected String getPlainTranslation( TranslationKey text ) {
+			String result = null;
 			
-			if( "VALIDATOR_IS_EMPTY".equals( text ) ) return "valisempty";
+			if( VALIDATOR_IS_EMPTY.equals( text.name() ) ) result = "valisempty";
 			
-			return null;
+			return result;
 		}
 	}
 

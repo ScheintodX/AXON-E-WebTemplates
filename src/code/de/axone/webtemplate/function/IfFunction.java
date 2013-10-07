@@ -33,11 +33,16 @@ import de.axone.webtemplate.form.Translator;
 public class IfFunction implements Function {
 	
 	public static final String ATTRIBUTE_CONDITION = "condition";
+	
+	private IfFunction(){}
+	private static IfFunction instance = new IfFunction();
+	public static IfFunction instance(){ return instance; }
 
 	@Override
-	public void render( String name,
-			DataHolder holder, 
-			HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws Exception {
+	public void render( String name, DataHolder holder, 
+			HttpServletRequest request, HttpServletResponse response,
+			AttributeMap attributes, Object value, Translator translator
+	) throws Exception {
 		
 		if( "if".equals( name ) ){
 			
@@ -50,14 +55,14 @@ public class IfFunction implements Function {
 			String condition = holder.getParameter( conditionName );
 			
 			if( EasyParser.isYes( condition ) ){
-				holder.setRender( not );
+				holder.setRendering( not );
 			} else {
-				holder.setRender( !not );
+				holder.setRendering( !not );
 			}
 		} else if( "endif".equals( name ) ){
-			holder.setRender( true );
+			holder.setRendering( true );
 		} else if( "else".equals( name ) ){
-			holder.setRender( ! holder.isRender() );
+			holder.setRendering( ! holder.isRendering() );
 		}
 	}
 

@@ -2,8 +2,10 @@ package de.axone.webtemplate.converter.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Locale;
 
 import de.axone.webtemplate.converter.AbstractConverter;
@@ -12,20 +14,41 @@ import de.axone.webtemplate.converter.ConverterException;
 
 public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 	
-	public static final NumberFormat EUR_DE_FORMAT = NumberFormat.getNumberInstance( Locale.GERMANY );
-	static{
-		EUR_DE_FORMAT.setMaximumFractionDigits( 2 );
-		EUR_DE_FORMAT.setMinimumFractionDigits( 2 );
-		EUR_DE_FORMAT.setRoundingMode( RoundingMode.HALF_UP );
+	private static final HashMap<Locale, BigDecimalConverter> FOR_LOCALE = new HashMap<Locale,BigDecimalConverter>();
+	static {
 	}
 	
-	private NumberFormat numberFormat;
+	public static synchronized BigDecimalConverter forLocale( Locale locale ){
+		
+		BigDecimalConverter result = FOR_LOCALE.get( locale );
+		if( result == null ){
+			result = new BigDecimalConverter( locale );
+			FOR_LOCALE.put( locale, result );
+		}
+		return result;
+	}
 	
-	public BigDecimalConverter( NumberFormat numberFormat ){
+	private DecimalFormat numberFormat;
+	
+	public BigDecimalConverter( Locale locale ){
+		
+		NumberFormat f = NumberFormat.getNumberInstance( locale );
+		if( !( f instanceof DecimalFormat ) )
+			throw new NumberFormatException( "NumberFormat is of wrong Format" );
+		DecimalFormat df = (DecimalFormat)f;
+		df.setParseBigDecimal( true );
+		df.setMaximumFractionDigits( 2 );
+		df.setMinimumFractionDigits( 2 );
+		df.setRoundingMode( RoundingMode.HALF_UP );
+		
+		this.numberFormat = df;
+	}
+	
+	public BigDecimalConverter( DecimalFormat numberFormat ){
 		
 		this.numberFormat = numberFormat;
 	}
-
+	
 	@Override
 	public BigDecimal convertFromString( String value )
 		throws ConverterException {
@@ -39,8 +62,9 @@ public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 			return null;
 		
 		try {
-			Number number = numberFormat.parse( value );
-			return new BigDecimal( number.doubleValue() );
+			DecimalFormat nf = (DecimalFormat) numberFormat.clone();
+			BigDecimal number = (BigDecimal) nf.parse( value );
+			return number;
 			
 		} catch( ParseException e ) {
 			throw new ConverterException( e );
@@ -53,6 +77,7 @@ public class BigDecimalConverter extends AbstractConverter<BigDecimal> {
 		
 		if( number == null ) return null;
 		
-		return numberFormat.format( number.doubleValue() );
+		DecimalFormat nf = (DecimalFormat) numberFormat.clone();
+		return nf.format( number );
 	}
 }

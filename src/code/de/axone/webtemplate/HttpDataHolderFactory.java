@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import de.axone.cache.Cache;
 import de.axone.data.Pair;
-import de.axone.tools.HttpWatcher;
 import de.axone.tools.HttpUtil.HttpUtilResponse;
+import de.axone.tools.HttpWatcher;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 public class HttpDataHolderFactory extends AbstractDataHolderFactory {
@@ -28,14 +28,16 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	}
 
 	synchronized public DataHolder holderFor( URL url )
-			throws KeyException, IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			throws IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
 		log.debug( url.toString() );
 		
 		HttpWatcher watcher;
 		DataHolder result=null;
 		HttpUtilResponse r;
-		if( !storage.containsKey( url ) ) {
+		
+		Pair<HttpWatcher, DataHolder> cached = storage.get( url );
+		if( cached == null ) {
 			
 			watcher = new HttpWatcher( url );
 			r=watcher.hasChanged();
@@ -45,17 +47,14 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 			storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
 			
 		} else {
-			watcher = storage.get( url ).getLeft();
 			
-			if( ( r=watcher.hasChanged() ) == null ) {
-				
-				result = storage.get( url ).getRight();
-				
+			watcher = cached.getLeft();
+			
+			r=watcher.hasChanged();
+			if( r == null ) {
+				result = cached.getRight();
 			} else {
-				
-				if( r != null ){
-					result = instantiate( url, r );
-				}
+				result = instantiate( url, r );
 				storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
 			}
 		}
@@ -68,7 +67,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	}
 	
 	static DataHolder instantiate( URL url, HttpUtilResponse response ) throws IOException,
-			KeyException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 

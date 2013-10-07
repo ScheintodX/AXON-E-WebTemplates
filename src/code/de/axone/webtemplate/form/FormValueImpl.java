@@ -80,7 +80,14 @@ public class FormValueImpl<T> implements FormValue<T> {
 	public void setValue( T value )
 		throws ConverterException {
 		
-		htmlInput.setValue( converter.convertToString( (T) value ) );
+		/*
+		E.rr( value.getClass() );
+		E.rr( converter.getClass() );
+		E.rr( htmlInput.getClass() );
+		E.rr( converter.getClass() );
+		*/
+		
+		htmlInput.setValue( converter.convertToString( value ) );
 	}
 	
 	@Override
@@ -93,6 +100,11 @@ public class FormValueImpl<T> implements FormValue<T> {
 	public void setConverter( Converter<T> converter ) {
 		
 		this.converter = converter;
+	}
+	
+	@Override
+	public String toString(){
+		return "[FV:" + getPlainValue() + "]";
 	}
 
 }

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import de.axone.web.Tag;
 import de.axone.webtemplate.WebTemplateException;
+import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
 
 public class TableHeaderSortSelector implements SortSelector {
@@ -32,6 +33,11 @@ public class TableHeaderSortSelector implements SortSelector {
 	@Override
 	public void setSelectedSort( String sort ) {
 		this.sort = sort;
+	}
+	
+	@Override
+	public String getSelectedSort( ) {
+		return this.sort;
 	}
 	
 	public void setKeepPageOnSort( boolean keepPageOnSort ){
@@ -70,7 +76,8 @@ public class TableHeaderSortSelector implements SortSelector {
 				}
 			}
 			
-			String text = translator != null ? translator.translate( method ) : method;
+			String text = translator != null ? translator.translate(
+					TKey.dynamic( method ) ) : method;
 			
 			boolean selected = method.equals( sort );
 			

@@ -3,17 +3,32 @@ package de.axone.webtemplate.form;
 import static org.testng.Assert.*;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.testng.annotations.Test;
 
 import de.axone.webtemplate.WebTemplateException;
+import de.axone.webtemplate.converter.impl.CharacterConverter;
+import de.axone.webtemplate.converter.impl.DoubleConverter;
+import de.axone.webtemplate.converter.impl.FloatConverter;
+import de.axone.webtemplate.converter.impl.IntegerConverter;
+import de.axone.webtemplate.converter.impl.LongConverter;
+import de.axone.webtemplate.converter.impl.ShortConverter;
 import de.axone.webtemplate.element.FormValueFactory;
+import de.axone.webtemplate.elements.impl.HtmlInputElement;
 import de.axone.webtemplate.form.Form.On;
 import de.axone.webtemplate.form.FormParser.FormField;
 
 @Test( groups="webtemplate.webform" )
 public class FormParserTest {
+	
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 	
 	// ==== PARSER FIELD NAMES ====================
 
@@ -196,40 +211,37 @@ public class FormParserTest {
 		
 		TestWebForm form = new TestWebForm();
 		
-		FormParser<TestClassFieldTypes> parser = new FormParser<TestClassFieldTypes>( pojo, On.EDIT );
-		
-		//List<FormField> fields = parser.fields();
-		//assertEquals( fields.size(), 17 );
-		
-		/*
-		for( FillableField field : fields ){
-			
-			E.rr( field );
-		}
-		*/
+		FormParser<TestClassFieldTypes> parser
+				= new FormParser<>( TestClassFieldTypes.class, On.EDIT );
 		
 		// - Put in Form -----------------------
-		parser.putInForm( form );
+		parser.putInForm( pojo, form );
+		
+		NumberFormat nf = NumberFormat.getNumberInstance( Locale.GERMANY );
+		assertTrue( nf instanceof DecimalFormat );
+		DecimalFormat f = (DecimalFormat) nf;
+		f.setParseBigDecimal( true );
+		DateFormat df = (DateFormat) DATE_FORMAT.clone();
 		
 		assertEquals( Boolean.parseBoolean( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ) ), pojo.myPublicBooleanField );
-		assertEquals( ((String) form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
-		assertEquals( Short.parseShort( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_FIELD ) ), pojo.myPublicShortField );
-		assertEquals( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_FIELD ) ), pojo.myPublicIntegerField );
-		assertEquals( Long.parseLong( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_FIELD ) ), pojo.myPublicLongField );
-		assertEquals( Float.parseFloat( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_FIELD ) ), pojo.myPublicFloatField );
-		assertEquals( Double.parseDouble( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_FIELD ) ), pojo.myPublicDoubleField );
+		assertEquals( (form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_FIELD ) ).shortValue(), pojo.myPublicShortField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_FIELD ) ).intValue(), pojo.myPublicIntegerField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_FIELD ) ).longValue(), pojo.myPublicLongField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_FIELD ) ).floatValue(), pojo.myPublicFloatField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_FIELD ) ).doubleValue(), pojo.myPublicDoubleField );
 		
 		assertEquals( Boolean.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_OBJECT_FIELD ) ), pojo.myPublicBooleanObjectField );
-		assertEquals( (Character)((String) form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_OBJECT_FIELD )).charAt(0), pojo.myPublicCharObjectField );
-		assertEquals( Short.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ), pojo.myPublicShortObjectField );
-		assertEquals( Integer.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ), pojo.myPublicIntegerObjectField );
-		assertEquals( Long.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ), pojo.myPublicLongObjectField );
-		assertEquals( Float.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ), pojo.myPublicFloatObjectField );
-		assertEquals( Double.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ), pojo.myPublicDoubleObjectField );
+		assertEquals( (Character)(form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_OBJECT_FIELD )).charAt(0), pojo.myPublicCharObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ).shortValue(), (short)pojo.myPublicShortObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ).intValue(), (int)pojo.myPublicIntegerObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ).longValue(), (long)pojo.myPublicLongObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ).floatValue(), (float)pojo.myPublicFloatObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ).doubleValue(), (double)pojo.myPublicDoubleObjectField );
 		
-		assertEquals( (String) form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
-		//assertEquals( new Date( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) )), pojo.myPublicDateField );
-		assertEquals( new BigDecimal( (String) form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
+		assertEquals( form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
+		assertEquals( df.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) ), pojo.myPublicDateField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
 		
 		// - Set new values value -----------
 		form.getHtmlInput( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ).setValue( "false" );
@@ -252,27 +264,28 @@ public class FormParserTest {
 		form.getHtmlInput( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ).setValue( "22.25" );
 		
 		// - Put in pojo -------------
-		parser.putInPojo( form );
+		parser.putInPojo( pojo, form );
 		
 		assertEquals( Boolean.parseBoolean( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_FIELD ) ), pojo.myPublicBooleanField );
-		assertEquals( ((String) form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
-		assertEquals( Short.parseShort( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_FIELD ) ), pojo.myPublicShortField );
-		assertEquals( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_FIELD ) ), pojo.myPublicIntegerField );
-		assertEquals( Long.parseLong( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_FIELD ) ), pojo.myPublicLongField );
-		assertEquals( Float.parseFloat( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_FIELD ) ), pojo.myPublicFloatField );
-		assertEquals( Double.parseDouble( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_FIELD ) ), pojo.myPublicDoubleField );
+		assertEquals( (form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_FIELD )).charAt(0), pojo.myPublicCharField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_FIELD ) ).shortValue(), pojo.myPublicShortField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_FIELD ) ).intValue(), pojo.myPublicIntegerField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_FIELD ) ).longValue(), pojo.myPublicLongField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_FIELD ) ).floatValue(), pojo.myPublicFloatField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_FIELD ) ).doubleValue(), pojo.myPublicDoubleField );
 		
 		assertEquals( Boolean.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_BOOLEAN_OBJECT_FIELD ) ), pojo.myPublicBooleanObjectField );
-		assertEquals( (Character)((String) form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_OBJECT_FIELD )).charAt(0), pojo.myPublicCharObjectField );
-		assertEquals( Short.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ), pojo.myPublicShortObjectField );
-		assertEquals( Integer.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ), pojo.myPublicIntegerObjectField );
-		assertEquals( Long.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ), pojo.myPublicLongObjectField );
-		assertEquals( Float.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ), pojo.myPublicFloatObjectField );
-		assertEquals( Double.valueOf( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ), pojo.myPublicDoubleObjectField );
+		assertEquals( (Character)(form.getPlainValue( TestWebForm.MY_PUBLIC_CHAR_OBJECT_FIELD )).charAt(0), pojo.myPublicCharObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ).shortValue(), (short)pojo.myPublicShortObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ).intValue(), (int)pojo.myPublicIntegerObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ).longValue(), (long)pojo.myPublicLongObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ).floatValue(), (float)pojo.myPublicFloatObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ).doubleValue(), (double)pojo.myPublicDoubleObjectField );
 		
-		assertEquals( (String) form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
-		//assertEquals( new Date( Integer.parseInt( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) )), pojo.myPublicDateField );
-		assertEquals( new BigDecimal( (String) form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
+		assertEquals( form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
+		assertEquals( df.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) ), pojo.myPublicDateField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_BIG_DECIMAL_FIELD ) ), pojo.myPublicBigDecimalField );
+		
 	}
 	
 	@Form
@@ -281,24 +294,29 @@ public class FormParserTest {
 		
 		private boolean myPublicBooleanField=true;
 		private char myPublicCharField = 'a';
-		private short myPublicShortField = Short.MAX_VALUE;
-		private int myPublicIntegerField = Integer.MAX_VALUE;
-		private long myPublicLongField = Long.MAX_VALUE;
-		private float myPublicFloatField = Float.MAX_VALUE;
-		private double myPublicDoubleField = Double.MAX_VALUE;
+		private short myPublicShortField = (short)12345;
+		private int myPublicIntegerField = 12345678;
+		private long myPublicLongField = 1234567890123L;
+		private float myPublicFloatField = 123.45f;
+		private double myPublicDoubleField = 123.456;
 		
 		private Boolean myPublicBooleanObjectField = true;
 		private Character myPublicCharObjectField = 'A';
-		private Short myPublicShortObjectField = Short.MIN_VALUE;
-		private Integer myPublicIntegerObjectField = Integer.MIN_VALUE;
-		private Long myPublicLongObjectField = Long.MIN_VALUE;
-		private Float myPublicFloatObjectField = Float.MIN_VALUE;
-		private Double myPublicDoubleObjectField = Double.MIN_VALUE;
+		private Short myPublicShortObjectField = (short)54321;
+		private Integer myPublicIntegerObjectField = 87654321;
+		private Long myPublicLongObjectField = 3210987654321L;
+		private Float myPublicFloatObjectField = 54.321f;
+		private Double myPublicDoubleObjectField = (double)654.321;
 		
 		private String myPublicStringField = "my_public_string_field";
-		//private Date myPublicDateField = new Date(1); // 1ms after epoch
+		private Date myPublicDateField;
 		private BigDecimal myPublicBigDecimalField = new BigDecimal( "19.97" );
 		
+		public TestClassFieldTypes() throws Exception{
+			// Throws exceptions so we need constructor
+			DateFormat df = (DateFormat) DATE_FORMAT.clone();
+			myPublicDateField = df.parse( "05.03.1975" );
+		}
 		
 		@Form
 		public boolean isMyPublicBooleanField() {
@@ -388,22 +406,18 @@ public class FormParserTest {
 			this.myPublicDoubleObjectField = myPublicDoubleObjectField;
 		}
 		
-		
-		
 		public String getMyPublicStringField() {
 			return myPublicStringField;
 		}
 		public void setMyPublicStringField( String myPublicStringField ) {
 			this.myPublicStringField = myPublicStringField;
 		}
-		/*
 		public Date getMyPublicDateField() {
 			return myPublicDateField;
 		}
 		public void setMyPublicDateField( Date myPublicDateField ) {
 			this.myPublicDateField = myPublicDateField;
 		}
-		*/
 		public BigDecimal getMyPublicBigDecimalField() {
 			return myPublicBigDecimalField;
 		}
@@ -437,30 +451,79 @@ public class FormParserTest {
 		
 		TestWebForm() throws WebTemplateException{
 			
-			addStringValue( MY_PUBLIC_BOOLEAN_FIELD );
-			addStringValue( MY_PUBLIC_CHAR_FIELD );
-			addStringValue( MY_PUBLIC_SHORT_FIELD );
-			addStringValue( MY_PUBLIC_INTEGER_FIELD );
-			addStringValue( MY_PUBLIC_LONG_FIELD );
-			addStringValue( MY_PUBLIC_FLOAT_FIELD );
-			addStringValue( MY_PUBLIC_DOUBLE_FIELD );
+			addBooleanValue( MY_PUBLIC_BOOLEAN_FIELD );
+			addCharValue( MY_PUBLIC_CHAR_FIELD );
+			addShortValue( MY_PUBLIC_SHORT_FIELD );
+			addIntegerValue( MY_PUBLIC_INTEGER_FIELD );
+			addLongValue( MY_PUBLIC_LONG_FIELD );
+			addFloatValue( MY_PUBLIC_FLOAT_FIELD );
+			addDoubleValue( MY_PUBLIC_DOUBLE_FIELD );
 		
-			addStringValue( MY_PUBLIC_BOOLEAN_OBJECT_FIELD );
-			addStringValue( MY_PUBLIC_CHAR_OBJECT_FIELD );
-			addStringValue( MY_PUBLIC_SHORT_OBJECT_FIELD );
-			addStringValue( MY_PUBLIC_INTEGER_OBJECT_FIELD );
-			addStringValue( MY_PUBLIC_LONG_OBJECT_FIELD );
-			addStringValue( MY_PUBLIC_FLOAT_OBJECT_FIELD );
-			addStringValue( MY_PUBLIC_DOUBLE_OBJECT_FIELD );
+			addBooleanValue( MY_PUBLIC_BOOLEAN_OBJECT_FIELD );
+			addCharValue( MY_PUBLIC_CHAR_OBJECT_FIELD );
+			addShortValue( MY_PUBLIC_SHORT_OBJECT_FIELD );
+			addIntegerValue( MY_PUBLIC_INTEGER_OBJECT_FIELD );
+			addLongValue( MY_PUBLIC_LONG_OBJECT_FIELD );
+			addFloatValue( MY_PUBLIC_FLOAT_OBJECT_FIELD );
+			addDoubleValue( MY_PUBLIC_DOUBLE_OBJECT_FIELD );
 	
 			addStringValue( MY_PUBLIC_STRING_FIELD );
-			addStringValue( MY_PUBLIC_DATE_FIELD );
-			addStringValue( MY_PUBLIC_BIG_DECIMAL_FIELD );
+			addDateValue( MY_PUBLIC_DATE_FIELD );
+			addBigDecimalValue( MY_PUBLIC_BIG_DECIMAL_FIELD );
 		}
 		
 		void addStringValue( String name ) throws WebTemplateException {
 			addFormValue( name, fvf.createInputTextValue( name, 255, false ) );
 		}
+		
+		void addBooleanValue( String name ) throws WebTemplateException {
+			addFormValue( name, fvf.createCheckboxBooleanValue( name ) );
+		}
+		
+		void addCharValue( String name ) throws WebTemplateException {
+			addFormValue( name, fvf.createInputTextValue(
+					new CharacterConverter(),
+					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
+		}
+		
+		void addShortValue( String name ) throws WebTemplateException {
+			addFormValue( name, fvf.createInputTextValue(
+					new ShortConverter( Locale.GERMANY ),
+					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
+		}
+		
+		void addIntegerValue( String name ) throws WebTemplateException {
+			addFormValue( name, fvf.createInputTextValue(
+					new IntegerConverter( Locale.GERMANY ),
+					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
+		}
+		
+		void addLongValue( String name ) throws WebTemplateException {
+			addFormValue( name, fvf.createInputTextValue(
+					new LongConverter( Locale.GERMANY),
+					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
+		}
+		
+		void addFloatValue( String name ) throws WebTemplateException {
+			addFormValue( name, fvf.createInputTextValue(
+					new FloatConverter( Locale.GERMANY),
+					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
+		}
+		
+		void addDoubleValue( String name ) throws WebTemplateException {
+			addFormValue( name, fvf.createInputTextValue(
+					new DoubleConverter( Locale.GERMANY),
+					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
+		}
+		
+		void addBigDecimalValue( String name ) throws WebTemplateException {
+			addFormValue( name, fvf.createInputBigDecimalPriceValue( name, false ) );
+		}
+		
+		void addDateValue( String name ) throws WebTemplateException {
+			addFormValue( name, fvf.createInputDateValue( name, false ) );
+		}
+		
 	}
 		
 }

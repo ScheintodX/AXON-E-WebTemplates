@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic.CountryProvider;
 
 @Test
-public class PostalCodeValidatorTest {
+public class PostalcodeValidatorTest {
 	
 	static final String[] exsGb = new String[]{ 
 		"M1 1AA", "M60 1NW", "CR2 6XH", "DN55 1PT", "W1A 1HQ", "EC1A 1BB",
@@ -39,7 +39,6 @@ public class PostalCodeValidatorTest {
 		
 		PostalcodeValidator validatorAt 
 				= PostalcodeValidatorFactory.validatorFor( "at" );
-		assertTrue( validatorAt instanceof PostalcodeValidator );
 		
 		PostalcodeValidator validatorUs 
 				= PostalcodeValidatorFactory.validatorFor( "us" );
@@ -108,8 +107,43 @@ public class PostalCodeValidatorTest {
 		for( String exGb : exsGbErr ){
 			assertNotNull( val.validate( exGb ) );
 		}
+	}
+	
+	public void testWildcardHandling(){
+		
+		PostalcodeValidator a = new PostalcodeValidator( "an" );
+		assertNull( a.validate( "A1" ) );
+		assertNotNull( a.validate( "A-1" ) );
+		assertNotNull( a.validate( "A 1" ) );
+		
+		PostalcodeValidator b = new PostalcodeValidator( "a n" );
+		assertNull( b.validate( "A 1" ) );
+		assertNotNull( b.validate( "A-1" ) );
+		assertNotNull( b.validate( "A1" ) );
+		
+		PostalcodeValidator c = new PostalcodeValidator( "a.n" );
+		assertNull( c.validate( "A 1" ) );
+		assertNull( c.validate( "A-1" ) );
+		assertNotNull( b.validate( "A1" ) );
+		
+		PostalcodeValidator d = new PostalcodeValidator( "a ?n" );
+		assertNull( d.validate( "A1" ) );
+		assertNull( d.validate( "A 1" ) );
+		assertNotNull( d.validate( "A-1" ) );
+		
+		PostalcodeValidator e = new PostalcodeValidator( "a?n" );
+		assertNull( e.validate( "A1" ) );
+		assertNotNull( e.validate( "A 1" ) );
+		assertNotNull( e.validate( "A-1" ) );
+		assertNull( e.validate( "1" ) );
+		
+		PostalcodeValidator f = new PostalcodeValidator( "a n", true );
+		assertNull( f.validate( "A 1" ) );
+		assertNull( f.validate( "A1" ) );
+		assertNotNull( f.validate( "A-1" ) );
 		
 	}
+	
 	private static class TestCountryProvider implements CountryProvider {
 
 		private String iso2;

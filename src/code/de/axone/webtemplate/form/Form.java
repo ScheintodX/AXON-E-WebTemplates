@@ -51,6 +51,21 @@ public @interface Form {
 	public boolean use() default true;
 	
 	/**
+	 * Specifies the type which will be used to find matching
+	 * construction rules in FormValueFactory
+	 * 
+	 * @return
+	 */
+	public String type() default "";
+	
+	/**
+	 * Option to specify in addition to type.
+	 * 
+	 * @return
+	 */
+	public String [] options() default "";
+	
+	/**
 	 * Tell on which action the parsing should occur.
 	 * 
 	 * This is especially useful for the 'id' field which 
@@ -93,7 +108,7 @@ public @interface Form {
 		ANY,
 		
 		/**
-		 * Parse never. Similar to formalbe=false
+		 * Parse never. Similar to formable=false
 		 */
 		NEVER
 		

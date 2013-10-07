@@ -2,24 +2,45 @@
 <classpath>
 	<classpathentry kind="src" path="src/code"/>
 	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="lib/testng.jar"/>
-	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.3.jar" sourcepath="/home/flo/java/commons/commons-beanutils-1.8.3/commons-beanutils-1.8.3-sources.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Tools"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0.20">
+	<classpathentry exported="true" kind="lib" path="lib/commons-beanutils-1.8.3.jar">
 		<attributes>
-			<attribute name="owner.project.facets" value="jst.utility"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0">
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.6.1.jar">
 		<attributes>
-			<attribute name="owner.project.facets" value="jst.utility"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-1.6.24">
+	<classpathentry exported="true" kind="lib" path="lib/jodd-3.3.1.jar">
 		<attributes>
-			<attribute name="owner.project.facets" value="jst.java"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/jodd-wot-3.3.1.jar" sourcepath="/home/flo/java/Jodd-all-3.3.1/mod">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/servlet-api.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/testng-6.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Tools">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="bin"/>

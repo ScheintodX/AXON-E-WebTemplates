@@ -18,6 +18,8 @@ public interface WebForm {
 	public void addFormValue( String name, FormValue<?> connectorValue )
 		throws WebTemplateException;
 	public FormValue<?> getFormValue( String name );
+	public void remFormValue( String name )
+		throws WebTemplateException;
 
 	public Set<String> getFormValueNames();
 
@@ -31,6 +33,13 @@ public interface WebForm {
 
 	public void setShowInvalid( boolean showInvalid );
 
+	/**
+	 * Sets a translation provider and activates translating
+	 * 
+	 * Set to NULL if you don't want translation to happen here
+	 * 
+	 * @param textProvider
+	 */
 	public void setTranslationProvider( Translator textProvider );
 
 }

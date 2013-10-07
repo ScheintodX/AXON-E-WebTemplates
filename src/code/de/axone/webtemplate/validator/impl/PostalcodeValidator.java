@@ -10,14 +10,29 @@ public class PostalcodeValidator extends AbstractValidator<String> {
 	private static final String NO_VALID_POSTAL_CODE
 			="VALIDATOR_NO_VALID_POSTAL_CODE";
 	
-	Pattern pattern;
+	final Pattern pattern;
+	final boolean ignoreWhitespace;
 
 	public PostalcodeValidator( String pattern ){
+		this( pattern, false );
+	}
 		
-		if( pattern == null ) return;
+	public PostalcodeValidator( String pattern, boolean ignoreWhitespace ){
+		
+		this.ignoreWhitespace = ignoreWhitespace;
+		
+		// Allow for empty validators which will accept everything
+		// in order to check empty zip fields
+		if( pattern == null ){
+			this.pattern = null;
+			return;
+		}
 		
 		pattern = pattern.replaceAll( "a", "[a-zA-Z]" );
 		pattern = pattern.replaceAll( "n", "[0-9]" );
+		if( ignoreWhitespace ){
+			pattern = pattern.replaceAll( " ", "\\\\s?" );
+		}
 		
 		this.pattern = Pattern.compile( pattern );
 	}
@@ -26,6 +41,7 @@ public class PostalcodeValidator extends AbstractValidator<String> {
 	public String validate( String check ){
 		
 		if( check == null ) return null;
+		if( pattern == null ) return null;
 		
 		Matcher matcher = pattern.matcher( check.toUpperCase() );
 		if( ! matcher.matches() ) return NO_VALID_POSTAL_CODE;

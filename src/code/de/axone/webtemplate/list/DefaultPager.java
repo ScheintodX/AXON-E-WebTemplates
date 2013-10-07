@@ -2,7 +2,9 @@ package de.axone.webtemplate.list;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,18 +38,20 @@ public class DefaultPager implements Pager {
 	private String nameBase;
 	private int numPages;
 	private int selectedPage;
-
-	/* Calculated values */
-	private static final int offset = 5;
+	private boolean numeratePageZero = true;
 
 	/* Configuration */
-	boolean renderIfOnlyOnePage = false;
-	boolean noHost = true;
-	boolean noPage = false;
-	boolean showBoundaries = true;
-	boolean showArrowheads = true;
-	boolean showSelectedArrowheads = true;
+	private int offset = 5;
+	protected boolean renderIfOnlyOnePage = false;
+	protected boolean noHost = true;
+	protected boolean noPage = false;
+	protected boolean showBoundaries = true;
+	protected boolean showArrowheads = true;
+	protected boolean showSelectedArrowheads = true;
 	
+	protected List<String> parametersWhitelist = null;
+	
+	@Override
 	public String toString(){
 		return Text.poster( '~', 
 			"nameBase: " + nameBase + "\n"
@@ -58,16 +62,16 @@ public class DefaultPager implements Pager {
 	}
 
 	/* Templates */
-	private String leftContainer = "<div class=\"pager\">";
-	private String rightContainer = "</div>";
-	private Template leftTemplate = new Template( "<a href=\"__link__\">&lt;&lt;</a>" );
-	private Template selectedLeftTemplate = new Template( "<a class=\"active\">&lt;&lt;</a>" );
-	private Template rightTemplate = new Template( "<a href=\"__link__\">&gt;&gt;</a>" );
-	private Template selectedRightTemplate = new Template( "<a class=\"active\">&gt;&gt;</a>" );
-	private Template innerTemplate = new Template( "<a href=\"__link__\">__no__</a>" );
-	private Template selectedTemplate = new Template( "<a class=\"active\">[__no__]</a>" );
-	private Template skippedTemplate = new Template( "&hellip;" );
-	private Template spaceTemplate = new Template( "&nbsp;" );
+	protected String leftContainer = "<div class=\"pager\">";
+	protected String rightContainer = "</div>";
+	protected Template leftTemplate = new Template( "<a href=\"__link__\">&lt;&lt;</a>" );
+	protected Template selectedLeftTemplate = new Template( "<a class=\"active\">&lt;&lt;</a>" );
+	protected Template rightTemplate = new Template( "<a href=\"__link__\">&gt;&gt;</a>" );
+	protected Template selectedRightTemplate = new Template( "<a class=\"active\">&gt;&gt;</a>" );
+	protected Template innerTemplate = new Template( "<a href=\"__link__\">__no__</a>" );
+	protected Template selectedTemplate = new Template( "<a class=\"active\">[__no__]</a>" );
+	protected Template skippedTemplate = new Template( "&hellip;" );
+	protected Template spaceTemplate = new Template( "&nbsp;" );
 
 	public DefaultPager(){}
 
@@ -97,6 +101,14 @@ public class DefaultPager implements Pager {
 
 		this.nameBase = nameBase;
 	}
+	
+	public void setNumeratePageZero( boolean numeratePageZero ){
+		this.numeratePageZero = numeratePageZero;
+	}
+	
+	public void setOffset( int offset ){
+		this.offset = offset;
+	}
 
 	public void setRenderIfOnlyOnePage( boolean renderIfOnlyOnePage ) {
 		this.renderIfOnlyOnePage = renderIfOnlyOnePage;
@@ -119,6 +131,10 @@ public class DefaultPager implements Pager {
 
 	public void setShowSelectedArrowheads( boolean showSelectedArrowheads ) {
 		this.showSelectedArrowheads = showSelectedArrowheads;
+	}
+	
+	public void setParametersWhitelist( List<String> parametersWhitelist ) {
+		this.parametersWhitelist = parametersWhitelist;
 	}
 
 	public void setLeftContainer( String leftContainer ) {
@@ -186,9 +202,10 @@ public class DefaultPager implements Pager {
 		if( end > lastPage ){
 			start = start + ( lastPage - end );
 			end = lastPage;
-		}
-		if( start < 0 ){
-			start = 0;
+			
+			if( start < 0 ){
+				start = 0;
+			}
 		}
 
 		// Container: left
@@ -264,13 +281,17 @@ public class DefaultPager implements Pager {
 	protected String makePageLink( HttpServletRequest request, int page ){
 
 		HashMap<String, String> parameters = new HashMap<String,String>();
+		List<String> removeParameters = null;
+		
+		String pageParameter = nameBase + "-page";
 
-		parameters.put( nameBase + "-page", ""+page );
+		if( page > 0 || numeratePageZero ) parameters.put( pageParameter, ""+page );
+		else removeParameters = Arrays.asList( pageParameter );
 
-		return HttpLinkBuilder.makeLink( request, noHost, noPage, parameters );
+		return HttpLinkBuilder.makeLink( request, noHost, noPage, parametersWhitelist, parameters, removeParameters );
 	}
 
-	private class Template {
+	protected static class Template {
 
 		String str;
 		boolean hasLink;

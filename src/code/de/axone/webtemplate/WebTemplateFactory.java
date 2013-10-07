@@ -8,11 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.axone.cache.Cache;
-import de.axone.cache.CacheNoCache;
 import de.axone.cache.Cache.Direct;
+import de.axone.cache.CacheNoCache;
 import de.axone.data.Pair;
 import de.axone.tools.FileWatcher;
 import de.axone.tools.HttpWatcher;
+import de.axone.webtemplate.slicer.SlicerFactory;
 
 /**
  * This class is the factory for the webtemplates.
@@ -38,22 +39,29 @@ public class WebTemplateFactory {
 	private final FileDataHolderFactory fileDataHolderFactory;
 	private final HttpDataHolderFactory httpDataHolderFactory;
 	
-	@SuppressWarnings( "unchecked" )
 	public WebTemplateFactory(){
-		this( new CacheNoCache(), new CacheNoCache() );
+		this( null );
+		throw new RuntimeException( "Holla" );
 	}
+	
+	@SuppressWarnings( "rawtypes" )
+	public WebTemplateFactory( SlicerFactory slicerFactory ){
+		this( new CacheNoCache(), new CacheNoCache(), slicerFactory );
+	}
+	
 	
 	@SuppressWarnings( "unchecked" )
 	public WebTemplateFactory( 
 			Cache.Direct<?,?> fileCache, 
-			Cache.Direct<?,?> httpCache
+			Cache.Direct<?,?> httpCache,
+			SlicerFactory slicerFactory
 	){
 		
 		assert fileCache != null;
 		assert httpCache != null;
 		
 		fileDataHolderFactory = new FileDataHolderFactory(
-				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache );
+				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache, slicerFactory );
 		
 		httpDataHolderFactory = new HttpDataHolderFactory(
 				(Direct<URL, Pair<HttpWatcher, DataHolder>>) httpCache );
@@ -90,13 +98,11 @@ public class WebTemplateFactory {
 			throw new WebTemplateException( "Cannot instantiate: " + className, e );
 		} catch( IllegalAccessException e ) {
 			throw new WebTemplateException( "Cannot access: " + className, e );
-		} catch( IOException e ) {
-			throw new WebTemplateException( "Error reading: " + className, e );
 		}
 	}
 
 	public WebTemplate templateFor( File file ) throws WebTemplateException {
-
+		
 		return templateFor( file, null );
 	}
 	
@@ -213,7 +219,7 @@ public class WebTemplateFactory {
 			}
 	
 			if( className == null ){
-				//throw new WebTemplateException( "No @Class spezified in template and no default given: " + url );
+				//throw new WebTemplateException( "No @Class specified in template and no default given: " + url );
 				className = "de.emogul.TemplatePlain";
 				log.warn( "Template missing in: " + url );
 			}
@@ -235,7 +241,7 @@ public class WebTemplateFactory {
 
 	private WebTemplate instantiate( String className )
 			throws ClassNotFoundException, InstantiationException,
-			IllegalAccessException, ClassCastException, IOException {
+			IllegalAccessException, ClassCastException {
 
 		Class<?> clazz = Class.forName( className );
 

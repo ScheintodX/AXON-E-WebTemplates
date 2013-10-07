@@ -75,6 +75,11 @@ public class WebFormImpl implements WebForm {
 
 		return connectorValues.get( name );
 	}
+	@Override
+	public void remFormValue( String name ) {
+		
+		connectorValues.remove( name );
+	}
 
 	@Override
 	public boolean isValid() {
@@ -103,17 +108,16 @@ public class WebFormImpl implements WebForm {
 
 			List<String> r = value.validate();
 
-			LinkedList<String> messages = new LinkedList<String>();
-
 			if( r == null || r.size() == 0 )
 				continue;
+
+			LinkedList<String> messages = new LinkedList<String>();
 
 			if( translator != null ) {
 
 				for( String text : r ) {
 
-					text = translator.translate( text );
-
+					text = translator.translate( TKey.dynamic( text ) );
 					messages.addLast( text );
 				}
 			} else {

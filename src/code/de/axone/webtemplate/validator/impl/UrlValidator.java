@@ -17,12 +17,13 @@ public class UrlValidator extends AbstractValidator<String> {
 	public UrlValidator(){}
 
 	@Override
+	@SuppressWarnings( "unused" )
 	public String validate( String url ) {
 		
 		if( url == null || url.length() == 0 ) return null;
 		
 		try{
-			new URL( url );
+			new URL( url ); //<-- throws Exception if URL is wrong
 		}catch( MalformedURLException e ){
 			return NO_URL+"["+e.getMessage()+"]";
 		}

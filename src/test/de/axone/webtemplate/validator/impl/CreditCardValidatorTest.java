@@ -1,14 +1,13 @@
 package de.axone.webtemplate.validator.impl;
 
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.testng.Assert.*;
 
 import org.testng.annotations.Test;
 
 @Test( groups="webtemplate.notnullvalidator" )
 public class CreditCardValidatorTest {
 
-	public void TestValidator() throws Exception {
+	public void testValidator() throws Exception {
 		
 		CreditCardNumberValidator validator = new CreditCardNumberValidator();
 		

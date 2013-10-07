@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import de.axone.web.Tag;
 import de.axone.webtemplate.WebTemplateException;
+import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
 
 public class DefaultSortSelector implements SortSelector {
@@ -34,6 +35,11 @@ public class DefaultSortSelector implements SortSelector {
 		this.sort = sort;
 	}
 	
+	@Override
+	public String getSelectedSort(){
+		return sort;
+	}
+	
 	public void setKeepPageOnSort( boolean keepPageOnSort ){
 		this.keepPageOnSort = keepPageOnSort;
 	}
@@ -57,7 +63,7 @@ public class DefaultSortSelector implements SortSelector {
 			}
 			Tag.simpleBB( 
 				options, "option",
-				translator != null ? translator.translate( method ) : method,
+				translator != null ? translator.translate( TKey.dynamic( method ) ) : method,
 				args.toArray( new String[ args.size() ] )
 			);
 		}
@@ -68,6 +74,7 @@ public class DefaultSortSelector implements SortSelector {
 				"class",
 				"submit_on_change"
 		);
+		
 		out.write( select );
 		
 		String q = request.getParameter( "q" );
