@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.testng.annotations.Test;
 
 import de.axone.cache.CacheHashMap;
-import de.axone.tools.E;
 import de.axone.web.TestHttpServletRequest;
 import de.axone.web.TestHttpServletResponse;
 import de.axone.webtemplate.DataHolder.DataHolderItem;
@@ -26,7 +25,6 @@ public class WebTemplateTest {
 	public void testAutomatedTemplate() throws Exception {
 		
 		File file = new File( "src/test/resources/de/axone/webtemplate/TestTemplate.txt" );
-		E.rr( file.getAbsolutePath() );
 		@SuppressWarnings( { "unchecked", "rawtypes" } )
 		DataHolder holder = new FileDataHolderFactory( new CacheHashMap( "TestCache" ), null, null ).holderFor( file, null );
 		StringWriter s = new StringWriter();

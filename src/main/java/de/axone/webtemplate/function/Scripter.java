@@ -1,14 +1,11 @@
 package de.axone.webtemplate.function;
 
-import static org.testng.Assert.*;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.annotations.Test;
 
 public class Scripter {
 	
@@ -113,17 +110,5 @@ public class Scripter {
 		return result.toString();
 	}
 	
-	@Test
-	public void testScripter() throws Exception {
-		
-		Scripter scripter = new Scripter();
-		
-		assertEquals( scripter.run( "<b><?5+4?></b>" ), "<b></b>" );
-		// 'print' not functioning
-		//assertEquals( scripter.run( "<b><?print(5+4)?></b>" ), "<b>9</b>" );
-		assertEquals( scripter.run( "<b><?=5+4?></b>" ), "<b>9</b>" );
-		assertEquals( scripter.run( "<b><?='5+4'?></b>" ), "<b>5+4</b>" );
-		assertEquals( scripter.run( "<?var a=5+4?><b><?=a?></b>" ), "<b>9</b>" );
-		
-	}
+
 }
