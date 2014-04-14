@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: 'eclipse-wtp'
 
 version = '1.0.0'
 
@@ -11,11 +11,11 @@ dependencies {
 
 	compile project(':Tools')
 
-	compile files( fileTree( dir: 'lib/compile', includes: ['*.jar'] ) )
-	compile files( fileTree( dir: 'lib/compileDepends', includes: ['*.jar'] ) )
+	compile 'commons-beanutils:commons-beanutils:1.8.3'
+	compile 'org.jodd:jodd-wot:3.3.1'
+	compile 'org.slf4j:slf4j-api:1.6.1'
 
-	testCompile files( fileTree( dir: 'lib/testCompile', includes: ['*.jar'] ) )
-	testRuntime files( fileTree( dir: 'lib/testRuntime', includes: ['*.jar'] ) )
+	compile 'javax.servlet:javax.servlet-api:3.0.1'
 }
 
 test {
