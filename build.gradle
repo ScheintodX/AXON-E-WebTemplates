@@ -18,7 +18,7 @@ eclipse {
 				def node = cp.asNode()
 				node.children().each { child ->
 
-					if( child.@kind == 'lib' ) {
+					if( child.@kind == 'lib' || ( child.@kind == 'src' && ['/Tools'].contains( child.@path ) ) ) {
 						def attribs = child.appendNode 'attributes'
 						def attrib = attribs.appendNode 'attribute';
 						attrib.@name = "org.eclipse.jst.component.nondependency"
