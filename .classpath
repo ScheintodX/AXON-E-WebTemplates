@@ -13,11 +13,35 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/compile/commons-beanutils-1.8.3.jar"/>
-	<classpathentry kind="lib" path="lib/compile/jodd-3.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/compile/jodd-wot-3.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/compileDepends/javax.servlet-api-3.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/compile/slf4j-api-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/testRuntime/testng-6.1.jar"/>
+	<classpathentry kind="lib" path="lib/compile/commons-beanutils-1.8.3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/compile/jodd-3.3.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/compile/jodd-wot-3.3.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/compileDepends/javax.servlet-api-3.0.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/compile/slf4j-api-1.6.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/testRuntime/testng-6.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.nondependency" value=""/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="build.eclipse"/>
 </classpath>
