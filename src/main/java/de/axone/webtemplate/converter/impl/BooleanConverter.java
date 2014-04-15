@@ -3,10 +3,12 @@ package de.axone.webtemplate.converter.impl;
 import de.axone.tools.EasyParser;
 import de.axone.webtemplate.converter.AbstractConverter;
 import de.axone.webtemplate.converter.ConverterException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class BooleanConverter extends AbstractConverter<Boolean> {
 	
 	@Override
+	@SuppressFBWarnings( "NP_BOOLEAN_RETURN_NULL" )
 	public Boolean convertFromString( String value )
 		throws ConverterException {
 		

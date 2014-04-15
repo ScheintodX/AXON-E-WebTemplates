@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.axone.webtemplate.validator.Validator;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class UstIdValidator implements Validator<String> {
 	
@@ -151,6 +152,7 @@ public class UstIdValidator implements Validator<String> {
 		 * @param value
 		 * @return
 		 */
+		@SuppressFBWarnings( "NP_BOOLEAN_RETURN_NULL" )
 		private Boolean isValid( String value ) {
 			
 			// Skip if first 2 iso2 doesn't match
