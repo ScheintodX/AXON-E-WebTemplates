@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<configuration>
+  <appender name="ConsoleOut" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%-5p: %c{1} %m%n</pattern>
+    </encoder>
+  </appender>
+  <logger name="de.axone.webtemplate" level="INFO"/>
+  <logger name="de.axone.webtemplate.form" level="DEBUG"/>
+  <root level="INFO">
+    <appender-ref ref="ConsoleOut"/>
+  </root>
+</configuration>
