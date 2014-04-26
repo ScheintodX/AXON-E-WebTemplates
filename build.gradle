@@ -39,6 +39,11 @@ eclipse {
 	}
 }
 
+compileJava {
+	options.fork = true  
+	options.forkOptions.executable = "javac"  
+}
+
 dependencies {
 
 	compile project(':Tools')

@@ -1,10 +1,14 @@
 package de.axone.webtemplate.slicer;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.axone.exception.Assert;
 import de.axone.tools.Mapper;
@@ -16,8 +20,7 @@ public abstract class Slicer {
 	private File masterBase;
 	private File templateBase;
 
-	protected boolean verbose = false;
-	protected PrintWriter log = new PrintWriter( System.out, true );
+	protected static final Logger log = LoggerFactory.getLogger( Slicer.class );
 	
 	public abstract List<String> getTemplateNames( String master );
 	
@@ -48,10 +51,6 @@ public abstract class Slicer {
 		return templateBase;
 	}
 	
-	public void setVerbose( boolean verbose ){
-		this.verbose = verbose;
-	}
-
 	public void parse( String master, String ... names ) throws WebTemplateException{
 		parse( master, Mapper.hashSet( names ) );
 	}
@@ -63,8 +62,7 @@ public abstract class Slicer {
 			
 			if( names != null && names.size() > 0 && !names.contains( name ) ) continue;
 			
-			if( verbose )
-				log.println( ("Template: " + name).toUpperCase() );
+			log.debug( "TEMPLATE: {}", name.toUpperCase() );
 			
 			try {
 				Class<?> clazz = getTemplateClass( master, name );
@@ -77,7 +75,9 @@ public abstract class Slicer {
 				File masterFile = new File( getMasterBase(), master );
 				
 				try (
-					PrintWriter fOut = new PrintWriter( new FileWriter( outFile ) );
+					PrintWriter fOut = new PrintWriter(
+							new OutputStreamWriter(
+									new FileOutputStream( outFile ), "utf-8" ) );
 				) {
 					fOut.println( "@Class: " + clazz.getName() );
 					fOut.println( "@Source: " + master );
@@ -85,8 +85,7 @@ public abstract class Slicer {
 					fOut.println();
 					fOut.println( content );
 					
-					if( verbose )
-						log.println( " Written: " + outFile.getCanonicalPath() );
+					log.debug( " Written: {}", outFile.getCanonicalPath() );
 				}
 				
 			} catch( Throwable t ) {

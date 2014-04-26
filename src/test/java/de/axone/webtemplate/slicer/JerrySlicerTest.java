@@ -78,7 +78,6 @@ public class JerrySlicerTest {
 		slicer = new TestSlicer();
 		slicer.setMasterBase( masterBase );
 		slicer.setTemplateBase( templates );
-		slicer.setVerbose( true );
 		
 		slicer.init();
 		

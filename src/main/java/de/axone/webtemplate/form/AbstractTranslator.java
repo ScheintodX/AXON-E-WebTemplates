@@ -64,7 +64,8 @@ public abstract class AbstractTranslator implements Translator {
 		
 		// Replace parameters
 		if( arguments != null ) {
-			for( String pKey : arguments.keySet() ) {
+			for( Map.Entry<String,String> entry : arguments.entrySet() ) {
+				String pKey = entry.getKey();
 				String replaceMe = "###" + pKey + "###";
 				String replacement = arguments.get( pKey );
 				result = result.replaceAll( replaceMe,

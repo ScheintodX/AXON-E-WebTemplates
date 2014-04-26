@@ -1,9 +1,11 @@
 package de.axone.webtemplate.slicer;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.Writer;
 
 import jodd.io.FileUtil;
 import jodd.lagarto.dom.jerry.Jerry;
@@ -14,7 +16,6 @@ public abstract class JerrySlicer extends Slicer {
 	
 	protected Jerry doc;
 
-	protected String buffer;
 	protected StringBuilder
 			out = new StringBuilder(),
 			prepend = new StringBuilder(),
@@ -204,13 +205,12 @@ public abstract class JerrySlicer extends Slicer {
     	File masterFile = new File( getMasterBase(), master );
 		doc = Jerry.jerry( FileUtil.readString( masterFile ) );
 		
-		if( verbose )
-			log.println( "    Read: " + masterFile );
+		log.debug( "    Read: {}", masterFile );
     }
     	   
     public void save( File file ) throws IOException{
     	
-    	FileWriter f = new FileWriter( file );
+    	Writer f = new OutputStreamWriter( new FileOutputStream( file ), "utf-8" );
     	f.write( out.toString() );
     	f.close();
     }
