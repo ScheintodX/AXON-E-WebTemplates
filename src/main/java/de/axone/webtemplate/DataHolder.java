@@ -230,7 +230,7 @@ public final class DataHolder implements Cloneable {
 			HttpServletResponse response,
 			Translator translator ) throws IOException,
 			WebTemplateException, Exception {
-
+		
 		for( DataHolderKey key : keys ) {
 
 			DataHolderItem item = values.get( key.getName() );

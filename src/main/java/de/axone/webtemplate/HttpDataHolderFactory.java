@@ -6,7 +6,7 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.axone.cache.Cache;
+import de.axone.cache.ng.CacheNG;
 import de.axone.data.Pair;
 import de.axone.tools.HttpUtil.HttpUtilResponse;
 import de.axone.tools.HttpWatcher;
@@ -17,10 +17,10 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	public static final Logger log =
 			LoggerFactory.getLogger( HttpDataHolderFactory.class );
 
-	final Cache.Direct<URL, Pair<HttpWatcher, DataHolder>> storage;
+	final CacheNG.Cache<URL, Pair<HttpWatcher, DataHolder>> storage;
 	static int reloadCount=0;
 	
-	public HttpDataHolderFactory( Cache.Direct<URL, Pair<HttpWatcher, DataHolder>> storage ){
+	public HttpDataHolderFactory( CacheNG.Cache<URL, Pair<HttpWatcher, DataHolder>> storage ){
 		this.storage =  storage;
 	}
 
@@ -33,7 +33,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		DataHolder result=null;
 		HttpUtilResponse r;
 		
-		Pair<HttpWatcher, DataHolder> cached = storage.get( url );
+		Pair<HttpWatcher, DataHolder> cached = storage.fetch( url );
 		if( cached == null ) {
 			
 			watcher = new HttpWatcher( url );

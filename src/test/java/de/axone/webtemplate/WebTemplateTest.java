@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.testng.annotations.Test;
 
-import de.axone.cache.CacheHashMap;
+import de.axone.cache.ng.CacheHashMap;
+import de.axone.cache.ng.RealmImpl;
 import de.axone.web.TestHttpServletRequest;
 import de.axone.web.TestHttpServletResponse;
 import de.axone.webtemplate.DataHolder.DataHolderItem;
@@ -26,7 +27,8 @@ public class WebTemplateTest {
 		
 		File file = new File( "src/test/resources/de/axone/webtemplate/TestTemplate.txt" );
 		@SuppressWarnings( { "unchecked", "rawtypes" } )
-		DataHolder holder = new FileDataHolderFactory( new CacheHashMap( "TestCache" ), null, null ).holderFor( file, null );
+		DataHolder holder = new FileDataHolderFactory( new CacheHashMap(
+				new RealmImpl( "TestCache" ) ), null, null ).holderFor( file, null );
 		StringWriter s = new StringWriter();
 		holder.render( null, new PrintWriter( s ), null, null, null );
 		AutomatedFileWebTemplate template = new AutomatedFileWebTemplate( holder );

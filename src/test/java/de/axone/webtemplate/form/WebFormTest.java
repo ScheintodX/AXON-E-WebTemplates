@@ -2,6 +2,7 @@ package de.axone.webtemplate.form;
 
 import static org.testng.Assert.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -105,6 +106,16 @@ public class WebFormTest {
 			if( VALIDATOR_IS_EMPTY.equals( text.name() ) ) result = "valisempty";
 			
 			return result;
+		}
+
+		@Override
+		public String format( Number number ) {
+			return number.toString();
+		}
+
+		@Override
+		public String format( int style, Date date ) {
+			return ""+date.getTime();
 		}
 	}
 

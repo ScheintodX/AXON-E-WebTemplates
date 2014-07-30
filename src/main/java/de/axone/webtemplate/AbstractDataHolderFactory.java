@@ -60,7 +60,7 @@ public abstract class AbstractDataHolderFactory {
 				// Quit on first not header line
 				break;
 			}
-	
+			
 			int indexOfSep = trimmed.indexOf( PARAMETER_SEP );
 			String key = trimmed.substring( 0, indexOfSep ).trim().toLowerCase();
 			String value = trimmed.substring( indexOfSep+1 ).trim();

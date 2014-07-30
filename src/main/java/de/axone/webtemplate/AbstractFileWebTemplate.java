@@ -6,7 +6,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.axone.cache.CacheNoCache;
+import de.axone.cache.ng.CacheNoCache;
+import de.axone.cache.ng.RealmImpl;
 import de.axone.data.Pair;
 import de.axone.tools.FileWatcher;
 
@@ -24,7 +25,7 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 	protected AbstractFileWebTemplate( File file ) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException{
 		
 		this( new FileDataHolderFactory( 
-				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>(),
+				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>( new RealmImpl<>( "testnocache" ) ),
 				null, null
 		).holderFor( file, null ) );
 	}

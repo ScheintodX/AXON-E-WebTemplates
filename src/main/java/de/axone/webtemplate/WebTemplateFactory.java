@@ -8,8 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.axone.cache.Cache;
-import de.axone.cache.Cache.Direct;
-import de.axone.cache.CacheNoCache;
+import de.axone.cache.ng.CacheNG;
+import de.axone.cache.ng.CacheNoCache;
+import de.axone.cache.ng.RealmImpl;
 import de.axone.data.Pair;
 import de.axone.tools.FileWatcher;
 import de.axone.tools.HttpWatcher;
@@ -43,16 +44,15 @@ public class WebTemplateFactory {
 		this( null );
 	}
 	
-	@SuppressWarnings( "rawtypes" )
 	public WebTemplateFactory( SlicerFactory slicerFactory ){
-		this( new CacheNoCache(), new CacheNoCache(), null, slicerFactory );
+		this( new CacheNoCache<File,Pair<FileWatcher,DataHolder>>( new RealmImpl<>( "WTF:FileCache" ) ),
+				new CacheNoCache<URL,Pair<HttpWatcher,DataHolder>>( new RealmImpl<>( "WTF:HttpCache" ) ), null, slicerFactory );
 	}
 	
 	
-	@SuppressWarnings( "unchecked" )
 	public WebTemplateFactory( 
-			Cache.Direct<?,?> fileCache, 
-			Cache.Direct<?,?> httpCache,
+			CacheNG.Cache<File,Pair<FileWatcher,DataHolder>> fileCache, 
+			CacheNG.Cache<URL,Pair<HttpWatcher,DataHolder>> httpCache,
 			Cache<?,?> dataCache,
 			SlicerFactory slicerFactory
 	){
@@ -60,11 +60,11 @@ public class WebTemplateFactory {
 		assert fileCache != null;
 		assert httpCache != null;
 		
-		fileDataHolderFactory = new FileDataHolderFactory(
-				(Direct<File, Pair<FileWatcher, DataHolder>>) fileCache, slicerFactory, null );
+		fileDataHolderFactory =
+				new FileDataHolderFactory( fileCache, slicerFactory, null );
 		
-		httpDataHolderFactory = new HttpDataHolderFactory(
-				(Direct<URL, Pair<HttpWatcher, DataHolder>>) httpCache );
+		httpDataHolderFactory =
+				new HttpDataHolderFactory( httpCache );
 		
 	}
 
@@ -172,7 +172,7 @@ public class WebTemplateFactory {
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In file: " + file.getPath(), e );
 		}
-
+		
 		// First try to get classname from holder
 		String classNameFromHolder = holder.getParameter( "class" );
 

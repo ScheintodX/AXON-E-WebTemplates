@@ -27,8 +27,7 @@ public interface CacheableRenderer extends Renderer {
 	 * For consistency this key shall be of the format aaa[.bbb[.ccc[...]]]
 	 * e.q. article.12345.picturelist
 	 * 
-	 * Invalidation is done via invalidate( "article" ) or invalidate( "article.12345" ) usw.
-	 * in the frontends/backends. (TODO)
+	 * TODO: Invalidation is done via invalidate( "article" ) or invalidate( "article.12345" ) usw. in the frontends/backends.
 	 * 
 	 * @return a cache key
 	 */

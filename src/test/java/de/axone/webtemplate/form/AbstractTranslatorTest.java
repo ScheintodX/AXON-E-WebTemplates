@@ -2,6 +2,7 @@ package de.axone.webtemplate.form;
 
 import static org.testng.Assert.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +55,16 @@ public class AbstractTranslatorTest {
 		@Override
 		public boolean has( TranslationKey text ) {
 			return getPlainTranslation( text ) != null;
+		}
+
+		@Override
+		public String format( Number number ) {
+			return number.toString();
+		}
+
+		@Override
+		public String format( int style, Date date ) {
+			return ""+date.getTime();
 		}
 		
 	}

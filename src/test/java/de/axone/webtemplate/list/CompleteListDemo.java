@@ -34,37 +34,39 @@ public class CompleteListDemo {
 	private void doTest( HttpServletRequest req, HttpServletResponse resp )
 			throws WebTemplateException, Exception {
 
-		PrintWriter out = resp.getWriter();
-		assertNotNull( out );
-
-		// Pager ohne Listen:
-
-		int page = 0;
-		if( req.getParameter( "test-page" ) != null ) {
-			page = Integer.parseInt( req.getParameter( "test-page" ) );
+		try( PrintWriter out = resp.getWriter(); ){
+			
+			assertNotNull( out );
+	
+			// Pager ohne Listen:
+	
+			int page = 0;
+			if( req.getParameter( "test-page" ) != null ) {
+				page = Integer.parseInt( req.getParameter( "test-page" ) );
+			}
+			DefaultPager pager = new DefaultPager( "test", page, 100 );
+	
+			pager.render( null, out, req, resp, null );
+	
+			out.println( "<hr/>" );
+			out.println( "<hr/>" );
+	
+			// Pager mit Listen:
+	
+			MyListProvider listProvider = new MyListProvider();
+			MyItemTemplate itemTemplate = new MyItemTemplate();
+			pager = new DefaultPager();
+			pager.setShowArrowheads( false );
+			pager.setShowBoundaries( false );
+			MyListRenderer listRenderer = new MyListRenderer( req, listProvider,
+					itemTemplate );
+			
+			listRenderer.initPager( pager );
+	
+			listRenderer.render( null, out, req, resp, null );
+			out.println( "<hr/>" );
+			pager.render( null, out, req, resp, null );
 		}
-		DefaultPager pager = new DefaultPager( "test", page, 100 );
-
-		pager.render( null, out, req, resp, null );
-
-		out.println( "<hr/>" );
-		out.println( "<hr/>" );
-
-		// Pager mit Listen:
-
-		MyListProvider listProvider = new MyListProvider();
-		MyItemTemplate itemTemplate = new MyItemTemplate();
-		pager = new DefaultPager();
-		pager.setShowArrowheads( false );
-		pager.setShowBoundaries( false );
-		MyListRenderer listRenderer = new MyListRenderer( req, listProvider,
-				itemTemplate );
-		
-		listRenderer.initPager( pager );
-
-		listRenderer.render( null, out, req, resp, null );
-		out.println( "<hr/>" );
-		pager.render( null, out, req, resp, null );
 	}
 
 	private static class MyListRenderer extends AbstractListRenderer<Integer> {

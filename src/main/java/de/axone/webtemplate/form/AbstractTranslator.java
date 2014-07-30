@@ -1,5 +1,7 @@
 package de.axone.webtemplate.form;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -74,6 +76,16 @@ public abstract class AbstractTranslator implements Translator {
 		}
 		
 		return result;
+	}
+
+	@Override
+	public String format( Number number ) {
+		return number.toString();
+	}
+
+	@Override
+	public String format( int style, Date date ) {
+		return DateFormat.getDateInstance( style ).format( date );
 	}
 
 }

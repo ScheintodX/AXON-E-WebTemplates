@@ -13,7 +13,7 @@ import java.nio.charset.MalformedInputException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.axone.cache.Cache;
+import de.axone.cache.ng.CacheNG;
 import de.axone.data.Pair;
 import de.axone.tools.FileWatcher;
 import de.axone.tools.Slurper;
@@ -27,10 +27,10 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			LoggerFactory.getLogger( FileDataHolderFactory.class );
 
 	final SlicerFactory slicerFactory;
-	final Cache.Direct<File, Pair<FileWatcher, DataHolder>> cache;
+	final CacheNG.Cache<File, Pair<FileWatcher, DataHolder>> cache;
 	static int reloadCount=0;
 	
-	public FileDataHolderFactory( Cache.Direct<File, Pair<FileWatcher, DataHolder>> cache, SlicerFactory slicerFactory, CacheProvider cacheProvider ){
+	public FileDataHolderFactory( CacheNG.Cache<File, Pair<FileWatcher, DataHolder>> cache, SlicerFactory slicerFactory, CacheProvider cacheProvider ){
 		this.slicerFactory = slicerFactory;
 		this.cache = cache;
 	}
@@ -40,17 +40,18 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		
 		FileWatcher watcher;
 		DataHolder result;
-		if( !cache.containsKey( file ) ) {
+		if( !cache.isCached( file ) ) {
 
 			watcher = new FileWatcher( file );
 			result = instantiate( file, dataCache );
 			
 			cache.put( file, new Pair<FileWatcher, DataHolder>( watcher, result ) );
+			
 		} else {
-			watcher = cache.get( file ).getLeft();
+			watcher = cache.fetch( file ).getLeft();
 			
 			if( !watcher.hasChanged() ) {
-				result = cache.get( file ).getRight();
+				result = cache.fetch( file ).getRight();
 			} else {
 				result = instantiate( file, dataCache );
 				cache.put( file, new Pair<FileWatcher, DataHolder>( watcher, result ) );
@@ -62,6 +63,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			
 			// If has source
 			String source = result.getParameter( DataHolder.PARAM_SOURCE );
+			
 			if( source != null ){
 				Slicer slicer = slicerFactory.instance( source );
 				//String name = slicer.getTemplateName( file );
@@ -75,8 +77,11 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 					long timestamp = Long.parseLong( timestampS );
 					long last = master.lastModified() / 1000;
 					if( last > timestamp ) run = true;
+				} else {
+					// no timestamp -> run
+					run = true;
 				}
-					
+				
 				// Slice: Allways slice all
 				//if( run ) slicer.run( source, name );
 				if( run ) slicer.run( source );

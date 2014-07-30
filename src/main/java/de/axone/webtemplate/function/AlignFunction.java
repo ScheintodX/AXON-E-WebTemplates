@@ -13,7 +13,10 @@ import de.axone.webtemplate.DataHolder.DataHolderItem;
 import de.axone.webtemplate.form.Translator;
 
 /**
- * Prints a template variable
+ * Changes a variables alignment and printing
+ * 
+ * The variable is not printed but formated. It has to be included
+ * directly somewhere else to be printed
  * 
  * <h4>Parameters</h4>
  * 	
@@ -31,9 +34,11 @@ import de.axone.webtemplate.form.Translator;
  * <h4>Examples</h4>
  * 
  * <pre>
- * __if condition="showList"__
- *   __article_list id="123"__
- * __endif__
+ * __align var="identifier" align="left" width="10"__
+ * 
+ * somehwere else:
+ * __identifier__
+ * 
  * </pre>
  * 
  * @author flo
@@ -71,7 +76,6 @@ public class AlignFunction implements Function {
 		String s = Text.align( type, v.toString(), width, ' ' );
 		
 		holder.setValue( varName, s );
-		//response.getWriter().write( s );
 	}
 
 }
