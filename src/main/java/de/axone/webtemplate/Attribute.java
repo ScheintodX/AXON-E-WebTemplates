@@ -20,7 +20,7 @@ public class Attribute {
 	public Attribute( String value, boolean isInt ){
 		this.value = value;
 		if( isInt ){
-			intValue = Integer.valueOf( value );
+			intValue = Integer.parseInt( value );
 		}
 	}
 	
@@ -52,7 +52,7 @@ public class Attribute {
 	private void makeInt(){
 		
 		try {
-			intValue = Integer.valueOf( value );
+			intValue = Integer.parseInt( value );
 			isInt = true;
 		} catch( NumberFormatException e ){
 			isInt = false;

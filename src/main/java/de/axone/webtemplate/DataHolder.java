@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.axone.tools.Text;
+import de.axone.web.SuperURL;
 import de.axone.web.encoding.AmpEncoder;
 import de.axone.web.encoding.AttributeEncoder;
 import de.axone.web.encoding.Encoder;
@@ -119,9 +120,6 @@ public final class DataHolder implements Cloneable {
 	}
 
 	public void setValue( String key, Object value ) {
-		_setValue( key, value );
-	}
-	private void _setValue( String key, Object value ) {
 
 		if( values.containsKey( key ) ) {
 			values.get( key ).setValue( value );
@@ -129,12 +127,10 @@ public final class DataHolder implements Cloneable {
 	}
 
 	public void setValues( String basename, Map<String, String> values ) {
-		_setValues( basename, values );
-	}
 
-	private void _setValues( String basename, Map<String, ? extends Object> values ) {
-
-		for( String key : values.keySet() ) {
+		for( Map.Entry<String,? extends Object> entry : values.entrySet() ){
+			
+			String key = entry.getKey();
 
 			String name;
 			if( basename == null ) {
@@ -143,7 +139,7 @@ public final class DataHolder implements Cloneable {
 				if( key.length() > 0 ) name = basename+"_"+key;
 				else name = basename;
 			}
-			_setValue( name, values.get( key ) );
+			setValue( name, entry.getValue() );
 		}
 	}
 	
@@ -227,9 +223,7 @@ public final class DataHolder implements Cloneable {
 	}
 
 	public void render( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response,
-			Translator translator ) throws IOException,
-			WebTemplateException, Exception {
+			HttpServletResponse response, Translator translator ) throws IOException, WebTemplateException, Exception {
 		
 		for( DataHolderKey key : keys ) {
 
@@ -303,6 +297,10 @@ public final class DataHolder implements Cloneable {
 						renderer.render( object, out, request, response, translator );
 					}
 
+				} else if( value instanceof SuperURL ){
+					
+					((SuperURL)value).writeInHolder( out );
+					
 				} else {
 
 					String stringValue = value.toString();

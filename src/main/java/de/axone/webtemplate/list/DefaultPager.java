@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import de.axone.tools.Text;
 import de.axone.web.HttpLinkBuilder;
+import de.axone.web.SuperURL;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.Translator;
 
@@ -276,7 +277,7 @@ public class DefaultPager implements Pager {
 		if( rightContainer != null ) out.write( rightContainer );
 	}
 
-	protected String makePageLink( HttpServletRequest request, int page ){
+	protected SuperURL makePageLink( HttpServletRequest request, int page ){
 
 		HashMap<String, String> parameters = new HashMap<String,String>();
 		List<String> removeParameters = null;
@@ -287,7 +288,7 @@ public class DefaultPager implements Pager {
 		else removeParameters = Arrays.asList( pageParameter );
 		
 		return HttpLinkBuilder.makeLink( request,
-				noHost, noPage, parametersWhitelist, parameters, removeParameters, true );
+				noHost, noPage, parametersWhitelist, parameters, removeParameters );
 	}
 
 	protected static class Template {
@@ -305,10 +306,10 @@ public class DefaultPager implements Pager {
 			hasNo = str.contains( "__no__" );
 		}
 
-		String toString( int index, String link ){
+		String toString( int index, SuperURL link ){
 
 			String s = str;
-			if( hasLink ) s = s.replaceAll( "__link__", link );
+			if( hasLink ) s = s.replaceAll( "__link__", link.toAttribute() );
 			if( hasIndex ) s = s.replaceAll( "__index__", ""+index );
 			if( hasNo ) s = s.replaceAll( "__no__", ""+(index+1) );
 

@@ -2,6 +2,7 @@ package de.axone.webtemplate.elements.impl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -154,7 +155,7 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 
 	/*  ************** Option *************** */
 
-	public static class OptionComparator implements Comparator<Option> {
+	public static class OptionComparator implements Comparator<Option>, Serializable {
 
 		@Override
 		public int compare( Option o1, Option o2 ) {

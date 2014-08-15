@@ -119,7 +119,7 @@ public class JerrySlicerTest {
 		return b.toString();
 	}
 	
-	private class TestSlicer extends JerrySlicer {
+	private static class TestSlicer extends JerrySlicer {
 
 		@Override
 		public List<String> getTemplateNames( String master ) {

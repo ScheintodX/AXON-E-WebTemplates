@@ -702,10 +702,9 @@ public class FormValueFactory {
 
 		LinkedList<Option> optionsList = new LinkedList<Option>();
 
-		for( String key : options.keySet() ) {
+		for( Map.Entry<String,String> entry : options.entrySet() ){
 
-			String value = options.get( key );
-			optionsList.add( new OptionImpl( key, value ) );
+			optionsList.add( new OptionImpl( entry.getKey(), entry.getValue() ) );
 		}
 
 		Collections.sort( optionsList, new OptionComparator() );

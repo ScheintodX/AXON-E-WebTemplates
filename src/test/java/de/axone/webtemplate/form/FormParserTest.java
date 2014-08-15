@@ -24,6 +24,7 @@ import de.axone.webtemplate.element.FormValueFactory;
 import de.axone.webtemplate.elements.impl.HtmlInputElement;
 import de.axone.webtemplate.form.Form.On;
 import de.axone.webtemplate.form.FormParser.FormField;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @Test( groups="webtemplate.webform" )
 public class FormParserTest {
@@ -48,6 +49,7 @@ public class FormParserTest {
 	
 	@Form
 	@SuppressWarnings( "unused" )
+	@SuppressFBWarnings( { "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD", "URF_UNREAD_FIELD" } )
 	private static class TestClassForFieldNames {
 		
 		public String aaaaaa = "aaaaaa";
@@ -135,6 +137,7 @@ public class FormParserTest {
 	
 	@Form
 	@SuppressWarnings( "unused" )
+	@SuppressFBWarnings( { "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD", "URF_UNREAD_FIELD" } )
 	private static class TestClassFieldsAnnotatedOutside {
 		
 		// Only public will be included
@@ -173,6 +176,7 @@ public class FormParserTest {
 	}
 	
 	@SuppressWarnings( "unused" )
+	@SuppressFBWarnings( { "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD", "URF_UNREAD_FIELD" } )
 	private static class TestClassFieldsAnnotatedInside {
 		
 		// Only public will be included
@@ -236,8 +240,8 @@ public class FormParserTest {
 		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ).shortValue(), (short)pojo.myPublicShortObjectField );
 		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ).intValue(), (int)pojo.myPublicIntegerObjectField );
 		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ).longValue(), (long)pojo.myPublicLongObjectField );
-		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ).floatValue(), (float)pojo.myPublicFloatObjectField );
-		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ).doubleValue(), (double)pojo.myPublicDoubleObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ).floatValue(), pojo.myPublicFloatObjectField, 0.00001f );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ).doubleValue(), pojo.myPublicDoubleObjectField, 0.00001d );
 		
 		assertEquals( form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
 		assertEquals( df.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) ), pojo.myPublicDateField );
@@ -279,8 +283,8 @@ public class FormParserTest {
 		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_SHORT_OBJECT_FIELD ) ).shortValue(), (short)pojo.myPublicShortObjectField );
 		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_INTEGER_OBJECT_FIELD ) ).intValue(), (int)pojo.myPublicIntegerObjectField );
 		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_LONG_OBJECT_FIELD ) ).longValue(), (long)pojo.myPublicLongObjectField );
-		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ).floatValue(), (float)pojo.myPublicFloatObjectField );
-		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ).doubleValue(), (double)pojo.myPublicDoubleObjectField );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_FLOAT_OBJECT_FIELD ) ).floatValue(), pojo.myPublicFloatObjectField, 0.001f );
+		assertEquals( nf.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DOUBLE_OBJECT_FIELD ) ).doubleValue(), pojo.myPublicDoubleObjectField, 0.001d );
 		
 		assertEquals( form.getPlainValue( TestWebForm.MY_PUBLIC_STRING_FIELD ), pojo.myPublicStringField );
 		assertEquals( df.parse( form.getPlainValue( TestWebForm.MY_PUBLIC_DATE_FIELD ) ), pojo.myPublicDateField );
