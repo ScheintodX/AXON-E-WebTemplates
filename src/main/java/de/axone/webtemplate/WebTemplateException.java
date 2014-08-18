@@ -1,6 +1,6 @@
 package de.axone.webtemplate;
 
-import de.axone.web.encoding.HtmlEncoder;
+import de.axone.web.encoding.Encoder_Html;
 
 
 public class WebTemplateException extends Exception {
@@ -10,10 +10,10 @@ public class WebTemplateException extends Exception {
 	 */
 	private static final long serialVersionUID = 4095990154660635781L;
 	public WebTemplateException( String message, Throwable cause ){
-		super( HtmlEncoder.ENCODE( message ), cause );
+		super( Encoder_Html.ENCODE( message ), cause );
 	}
 	public WebTemplateException( String message ){
-		super( HtmlEncoder.ENCODE( message ) );
+		super( Encoder_Html.ENCODE( message ) );
 	}
 	public WebTemplateException( Throwable cause ){
 		super( cause );

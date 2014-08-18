@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import de.axone.tools.Text;
 import de.axone.web.HttpLinkBuilder;
 import de.axone.web.SuperURL;
+import de.axone.web.SuperURLPrinter;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.Translator;
 
@@ -35,7 +36,7 @@ import de.axone.webtemplate.form.Translator;
  * @author flo
  */
 public class DefaultPager implements Pager {
-
+	
 	private String nameBase;
 	private int numPages;
 	private int selectedPage;
@@ -45,7 +46,7 @@ public class DefaultPager implements Pager {
 	private int offset = 5;
 	protected boolean renderIfOnlyOnePage = false;
 	protected boolean noHost = true;
-	protected boolean noPage = false;
+	protected boolean noPath = false;
 	protected boolean showBoundaries = true;
 	protected boolean showArrowheads = true;
 	protected boolean showSelectedArrowheads = true;
@@ -118,8 +119,8 @@ public class DefaultPager implements Pager {
 	public void setNoHost( boolean noHost ){
 		this.noHost = noHost;
 	}
-	public void setNoPage( boolean noPage ){
-		this.noPage = noPage;
+	public void setNoPath( boolean noPath ){
+		this.noPath = noPath;
 	}
 
 	public void setShowBoundaries( boolean showBoundaries ) {
@@ -206,6 +207,8 @@ public class DefaultPager implements Pager {
 				start = 0;
 			}
 		}
+		
+		SuperURLPrinter printer = SuperURLPrinter.MinimalEncoded;
 
 		// Container: left
 		if( leftContainer != null ) out.write( leftContainer );
@@ -213,10 +216,10 @@ public class DefaultPager implements Pager {
 		// Arrowheads left
 		if( showArrowheads ){
 			if( selectedPage > 0 ){
-    			out.write( leftTemplate.toString( selectedPage-1, makePageLink( request, selectedPage-1 ) ) );
+    			out.write( leftTemplate.toString( selectedPage-1, printer, makePageLink( request, selectedPage-1 ) ) );
     			out.write( spaceTemplate.toString( selectedPage-1 ) );
 			} else if( showSelectedArrowheads ){
-    			out.write( selectedLeftTemplate.toString( selectedPage-1, makePageLink( request, selectedPage-1 ) ) );
+    			out.write( selectedLeftTemplate.toString( selectedPage-1, printer, makePageLink( request, selectedPage-1 ) ) );
     			out.write( spaceTemplate.toString( selectedPage-1 ) );
 			}
 		}
@@ -224,7 +227,7 @@ public class DefaultPager implements Pager {
 		if( showBoundaries ){
 		// First Page
     		if( start > 0 ){
-    			out.write( innerTemplate.toString( 0, makePageLink( request, 0 ) ) );
+    			out.write( innerTemplate.toString( 0, printer, makePageLink( request, 0 ) ) );
     			out.write( spaceTemplate.toString() );
     		}
 
@@ -243,9 +246,9 @@ public class DefaultPager implements Pager {
 
 			if( p == selectedPage ){
 
-				out.write( selectedTemplate.toString( p, makePageLink( request, p ) ) );
+				out.write( selectedTemplate.toString( p, printer, makePageLink( request, p ) ) );
 			} else {
-				out.write( innerTemplate.toString( p, makePageLink( request, p ) ) );
+				out.write( innerTemplate.toString( p, printer, makePageLink( request, p ) ) );
 			}
 		}
 
@@ -258,7 +261,7 @@ public class DefaultPager implements Pager {
     		// LastPage
     		if( end < lastPage ){
     			out.write( spaceTemplate.toString() );
-    			out.write( innerTemplate.toString( lastPage, makePageLink( request, lastPage ) ) );
+    			out.write( innerTemplate.toString( lastPage, printer, makePageLink( request, lastPage ) ) );
     		}
 		}
 
@@ -266,10 +269,10 @@ public class DefaultPager implements Pager {
 		if( showArrowheads ){
 			if( selectedPage < lastPage ){
     			out.write( spaceTemplate.toString() );
-    			out.write( rightTemplate.toString( selectedPage+1, makePageLink( request, selectedPage+1 ) ) );
+    			out.write( rightTemplate.toString( selectedPage+1, printer, makePageLink( request, selectedPage+1 ) ) );
 			} else if( showSelectedArrowheads ){
     			out.write( spaceTemplate.toString() );
-    			out.write( selectedRightTemplate.toString( selectedPage+1, makePageLink( request, selectedPage+1 ) ) );
+    			out.write( selectedRightTemplate.toString( selectedPage+1, printer, makePageLink( request, selectedPage+1 ) ) );
 			}
 		}
 
@@ -287,8 +290,10 @@ public class DefaultPager implements Pager {
 		if( page > 0 || numeratePageZero ) parameters.put( pageParameter, ""+page );
 		else removeParameters = Arrays.asList( pageParameter );
 		
-		return HttpLinkBuilder.makeLink( request,
-				noHost, noPage, parametersWhitelist, parameters, removeParameters );
+		SuperURL result = HttpLinkBuilder.makeLink( request,
+				noHost, noPath, parametersWhitelist, parameters, removeParameters );
+		
+		return result;
 	}
 
 	protected static class Template {
@@ -306,10 +311,10 @@ public class DefaultPager implements Pager {
 			hasNo = str.contains( "__no__" );
 		}
 
-		String toString( int index, SuperURL link ){
+		String toString( int index, SuperURLPrinter printer, SuperURL link ){
 
 			String s = str;
-			if( hasLink ) s = s.replaceAll( "__link__", link.toAttribute() );
+			if( hasLink ) s = s.replaceAll( "__link__", printer.toString( link ) );
 			if( hasIndex ) s = s.replaceAll( "__index__", ""+index );
 			if( hasNo ) s = s.replaceAll( "__no__", ""+(index+1) );
 

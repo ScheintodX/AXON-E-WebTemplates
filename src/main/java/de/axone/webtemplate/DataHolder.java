@@ -16,12 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import de.axone.tools.Text;
 import de.axone.web.SuperURL;
-import de.axone.web.encoding.AmpEncoder;
-import de.axone.web.encoding.AttributeEncoder;
+import de.axone.web.SuperURL.FinalEncoding;
+import de.axone.web.SuperURLPrinter;
 import de.axone.web.encoding.Encoder;
-import de.axone.web.encoding.HtmlEncoder;
-import de.axone.web.encoding.TextEncoder;
-import de.axone.web.encoding.UrlEncoder;
+import de.axone.web.encoding.Encoder_Amp;
+import de.axone.web.encoding.Encoder_Attribute;
+import de.axone.web.encoding.Encoder_Html;
+import de.axone.web.encoding.Encoder_Text;
+import de.axone.web.encoding.Encoder_Url;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
@@ -47,7 +49,10 @@ public final class DataHolder implements Cloneable {
 	public static final String PARAM_CUT = "Cut";
 
 	public static final String NOVAL = "";
-
+	
+	public static final SuperURLPrinter URL_PRINTER = SuperURLPrinter.MinimalEncoded
+			.finishFor( FinalEncoding.Attribute );
+	
 	// List in proper order
 	private LinkedList<DataHolderKey> keys;
 
@@ -251,17 +256,8 @@ public final class DataHolder implements Cloneable {
 				}
 			} else if( value != null && rendering ) {
 
-				if( value instanceof String ) {
-
-					String stringValue = (String) value;
-					if( item.isTranslate() && translator != null ){
-
-    					out.write( translator.translate( TKey.dynamic( stringValue ) ) );
-					} else {
-    					out.write( stringValue );
-					}
-
-				} else if( value instanceof Renderer ) {
+				// ==== RENDERER ====
+				if( value instanceof Renderer ) {
 					
 					CacheableRenderer renderer;
 					if(
@@ -279,7 +275,6 @@ public final class DataHolder implements Cloneable {
 							cachedS = s.toString();
 							cacheProvider.getCache().put( cacheK, cachedS );
 						}
-						//E.rr( cachedS );
 						response.getWriter().write( cachedS );
 							
 					} else {
@@ -287,6 +282,7 @@ public final class DataHolder implements Cloneable {
 						((Renderer)value).render( object, out, request, response, translator );
 					}
 
+				// ==== COLLECTION  ====
 				} else if( value instanceof Collection<?> ) {
 
 					Collection<?> collection = (Collection<?>) value;
@@ -297,13 +293,25 @@ public final class DataHolder implements Cloneable {
 						renderer.render( object, out, request, response, translator );
 					}
 
+				// ==== SUPERURL  ====
 				} else if( value instanceof SuperURL ){
 					
-					((SuperURL)value).writeInHolder( out );
+					URL_PRINTER.write( out, (SuperURL)value );
 					
+				// ==== STRING / OBJECT  ====
 				} else {
+					
+					String stringValue = value.toString(); // Does nothing for String anyway
+					
+					if( item.isTranslate() && translator != null ){
 
-					String stringValue = value.toString();
+						stringValue = translator.translate( TKey.dynamic( stringValue ) );
+					}
+					
+					if( item.encoding != null && item.encoding.encoder != null ){
+		    			stringValue = item.encoding.encoder.encode( stringValue );
+		    		}
+					
 					out.write( stringValue );
 				}
 			}
@@ -355,12 +363,13 @@ public final class DataHolder implements Cloneable {
 	static enum DataHolderEncodingType {
 
 		none('(',')', null ),
-		attribute('#','#', AttributeEncoder.instance() ),
-		amp('&','&', AmpEncoder.instance() ),
-		text('[',']', TextEncoder.instance() ),
-		url('@', '@', UrlEncoder.instance() ),
-		html('{','}', HtmlEncoder.instance() ),
-		defaultEncoding( null, null, AttributeEncoder.instance() );
+		attribute('#','#', Encoder_Attribute.instance() ),
+		amp('&','&', Encoder_Amp.instance() ),
+		text('[',']', Encoder_Text.instance() ),
+		url('@', '@', Encoder_Url.instance() ),
+		html('{','}', Encoder_Html.instance() ),
+		// Better safe than sorry:
+		defaultEncoding( null, null, Encoder_Attribute.instance() );
 
 		Character begin, end;
 		Encoder encoder;
@@ -370,6 +379,7 @@ public final class DataHolder implements Cloneable {
 			this.end=end;
 			this.encoder = encoder;
 		}
+		
 		static DataHolderEncodingType matching( String probe ){
 
 			if( probe == null || probe.length() < 2 ) return defaultEncoding;
@@ -386,6 +396,7 @@ public final class DataHolder implements Cloneable {
 			}
 			return defaultEncoding;
 		}
+		
 		boolean mustBeTrimmed(){
 			return begin != null;
 		}
@@ -420,12 +431,7 @@ public final class DataHolder implements Cloneable {
 		}
 
 		public Object getValue() {
-
-			if( value != null && value instanceof String && encoding != null && encoding.encoder != null ){
-    			return encoding.encoder.encode( (String)value );
-    		} else {
-    			return value;
-    		}
+			return value;
 		}
 
 		public void setValue( Object value ) {
