@@ -1,15 +1,14 @@
 package de.axone.webtemplate;
 
 import java.io.IOException;
-import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.axone.cache.ng.CacheNG;
-import de.axone.data.Pair;
+import de.axone.tools.HttpDataWatcher;
 import de.axone.tools.HttpUtil.HttpUtilResponse;
-import de.axone.tools.HttpWatcher;
+import de.axone.web.SuperURL;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 public class HttpDataHolderFactory extends AbstractDataHolderFactory {
@@ -17,42 +16,41 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	public static final Logger log =
 			LoggerFactory.getLogger( HttpDataHolderFactory.class );
 
-	final CacheNG.Cache<URL, Pair<HttpWatcher, DataHolder>> storage;
+	final CacheNG.Cache<SuperURL, HttpDataWatcher<DataHolder>> storage;
 	static int reloadCount=0;
 	
-	public HttpDataHolderFactory( CacheNG.Cache<URL, Pair<HttpWatcher, DataHolder>> storage ){
+	public HttpDataHolderFactory( CacheNG.Cache<SuperURL, HttpDataWatcher<DataHolder>> storage ){
 		this.storage =  storage;
 	}
 
-	synchronized public DataHolder holderFor( URL url )
+	synchronized public DataHolder holderFor( SuperURL url )
 			throws IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-		log.debug( url.toString() );
+		log.debug( url.toDebug() );
 		
-		HttpWatcher watcher;
 		DataHolder result=null;
 		HttpUtilResponse r;
 		
-		Pair<HttpWatcher, DataHolder> cached = storage.fetch( url );
-		if( cached == null ) {
+		HttpDataWatcher<DataHolder> watcher = storage.fetch( url );
+		if( watcher == null ) {
 			
-			watcher = new HttpWatcher( url );
+			watcher = new HttpDataWatcher<>( url );
 			r=watcher.hasChanged();
 			if( r != null ){
 				result = instantiate( url, r );
 			}
-			storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
+			watcher.setData( result );
+			storage.put( url, watcher );
 			
 		} else {
 			
-			watcher = cached.getLeft();
-			
 			r=watcher.hasChanged();
 			if( r == null ) {
-				result = cached.getRight();
+				result = watcher.getData();
 			} else {
 				result = instantiate( url, r );
-				storage.put( url, new Pair<HttpWatcher, DataHolder>( watcher, result ) );
+				watcher.setData( result );
+				storage.put( url, watcher );
 			}
 		}
 		
@@ -63,7 +61,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		}
 	}
 	
-	static DataHolder instantiate( URL url, HttpUtilResponse response ) throws IOException,
+	static DataHolder instantiate( SuperURL url, HttpUtilResponse response ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
@@ -74,10 +72,10 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		String data = new String( response.content, encoding );
 		
 		DataHolder holder = instantiate( data, null );
-		holder.setParameter( "url", url.toString() );
+		holder.setParameter( "url", url.toValue() );
 		
-		log.trace( "DataHolder for " + url.toString() + " created" );
-
+		log.trace( "DataHolder for " + url.toDebug() + " created" );
+		
 		return holder;
 
 	}

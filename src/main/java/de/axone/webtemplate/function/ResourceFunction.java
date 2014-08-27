@@ -88,7 +88,7 @@ public class ResourceFunction implements Function {
 	public static final String ATTRIBUTE_BASE = "base";
 	
 	public enum Runmode {
-		live, dev;
+		dev, live;
 	}
 	public enum Type {
 		css, js;

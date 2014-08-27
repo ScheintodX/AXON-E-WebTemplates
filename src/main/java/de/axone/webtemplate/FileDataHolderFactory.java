@@ -14,8 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.axone.cache.ng.CacheNG;
-import de.axone.data.Pair;
-import de.axone.tools.FileWatcher;
+import de.axone.tools.FileDataWatcher;
 import de.axone.tools.Slurper;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.slicer.Slicer;
@@ -27,10 +26,10 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			LoggerFactory.getLogger( FileDataHolderFactory.class );
 
 	final SlicerFactory slicerFactory;
-	final CacheNG.Cache<File, Pair<FileWatcher, DataHolder>> cache;
+	final CacheNG.Cache<File, FileDataWatcher<DataHolder>> cache;
 	static int reloadCount=0;
 	
-	public FileDataHolderFactory( CacheNG.Cache<File, Pair<FileWatcher, DataHolder>> cache, SlicerFactory slicerFactory, CacheProvider cacheProvider ){
+	public FileDataHolderFactory( CacheNG.Cache<File, FileDataWatcher<DataHolder>> cache, SlicerFactory slicerFactory, CacheProvider cacheProvider ){
 		this.slicerFactory = slicerFactory;
 		this.cache = cache;
 	}
@@ -38,23 +37,24 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 	synchronized public DataHolder holderFor( File file, CacheProvider dataCache )
 			throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException {
 		
-		FileWatcher watcher;
+		FileDataWatcher<DataHolder> watcher;
 		DataHolder result;
 		if( !cache.isCached( file ) ) {
 
-			watcher = new FileWatcher( file );
 			result = instantiate( file, dataCache );
+			watcher = new FileDataWatcher<>( file, result );
 			
-			cache.put( file, new Pair<FileWatcher, DataHolder>( watcher, result ) );
+			cache.put( file, watcher );
 			
 		} else {
-			watcher = cache.fetch( file ).getLeft();
+			watcher = cache.fetch( file );
 			
 			if( !watcher.hasChanged() ) {
-				result = cache.fetch( file ).getRight();
+				result = cache.fetch( file ).getData();
 			} else {
 				result = instantiate( file, dataCache );
-				cache.put( file, new Pair<FileWatcher, DataHolder>( watcher, result ) );
+				watcher.setData( result );
+				cache.put( file, watcher );
 			}
 		}
 		
@@ -88,7 +88,8 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 				
 				// Store
 				result = instantiate( file, dataCache );
-				cache.put( file, new Pair<FileWatcher, DataHolder>( watcher, result ) );
+				watcher.setData( result );
+				cache.put( file, watcher );
 			}
 		}
 		

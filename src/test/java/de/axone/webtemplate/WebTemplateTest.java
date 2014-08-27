@@ -25,17 +25,24 @@ public class WebTemplateTest {
 	
 	public void testAutomatedTemplate() throws Exception {
 		
-		File file = new File( "src/test/resources/de/axone/webtemplate/TestTemplate.txt" );
+		// ../WebTemplates because we want this to be runnable from using project, too
+		File file = new File( "../WebTemplates/src/test/resources/de/axone/webtemplate/TestTemplate.txt" );
+		
 		@SuppressWarnings( { "unchecked", "rawtypes" } )
 		DataHolder holder = new FileDataHolderFactory( new CacheHashMap(
 				new RealmImpl( "TestCache" ) ), null, null ).holderFor( file, null );
+		
 		StringWriter s = new StringWriter();
 		holder.render( null, new PrintWriter( s ), null, null, null );
+		
 		AutomatedFileWebTemplate template = new AutomatedFileWebTemplate( holder );
+		
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		request.setParameter( "name", "Hugo" );
 		request.setParameter( "no", "123" );
+		
 		TestHttpServletResponse response = new TestHttpServletResponse();
+		
 		
 		template.render( null, response.getWriter(), request, response, null );
 		

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 
 
+
 public interface Translator {
 
 	public String translate( TranslationKey text );

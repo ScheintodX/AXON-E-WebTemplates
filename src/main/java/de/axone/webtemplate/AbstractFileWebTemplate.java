@@ -8,8 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.axone.cache.ng.CacheNoCache;
 import de.axone.cache.ng.RealmImpl;
-import de.axone.data.Pair;
-import de.axone.tools.FileWatcher;
+import de.axone.tools.FileDataWatcher;
 
 /**
  * Abstract Base Template for file based WebTemplates
@@ -25,7 +24,7 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 	protected AbstractFileWebTemplate( File file ) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException{
 		
 		this( new FileDataHolderFactory( 
-				new CacheNoCache<File, Pair<FileWatcher, DataHolder>>( new RealmImpl<>( "testnocache" ) ),
+				new CacheNoCache<File, FileDataWatcher<DataHolder>>( new RealmImpl<>( "testnocache" ) ),
 				null, null
 		).holderFor( file, null ) );
 	}

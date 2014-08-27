@@ -2,6 +2,7 @@ package de.axone.webtemplate;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Formatter;
@@ -14,6 +15,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.data.Label;
 import de.axone.tools.Text;
 import de.axone.web.SuperURL;
 import de.axone.web.SuperURL.FinalEncoding;
@@ -41,7 +43,9 @@ import de.axone.webtemplate.function.Function;
  * @author flo
  * TODO: Die Sache mit dem HolderKey umbauen so dass die Attribute im DataHoderItem landen.
  */
-public final class DataHolder implements Cloneable {
+public final class DataHolder implements Cloneable, Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	public static final String PARAM_FILE = "file";
 	public static final String PARAM_TIMESTAMP = "timestamp";
@@ -64,8 +68,10 @@ public final class DataHolder implements Cloneable {
 
 	// Functions
 	//private HashMap<String, Function> functions;
+	// TOOD: serialization / ?
 	private FunctionFactory functions;
 	
+	// TODO: serialization / Der sollte eigentlich wo anders hin.
 	private CacheProvider cacheProvider;
 	
 	DataHolder() {
@@ -125,6 +131,8 @@ public final class DataHolder implements Cloneable {
 	}
 
 	public void setValue( String key, Object value ) {
+		
+		key = key.toLowerCase();
 
 		if( values.containsKey( key ) ) {
 			values.get( key ).setValue( value );
@@ -132,10 +140,12 @@ public final class DataHolder implements Cloneable {
 	}
 
 	public void setValues( String basename, Map<String, String> values ) {
+		
+		basename = basename.toLowerCase();
 
 		for( Map.Entry<String,? extends Object> entry : values.entrySet() ){
 			
-			String key = entry.getKey();
+			String key = entry.getKey().toLowerCase();
 
 			String name;
 			if( basename == null ) {
@@ -298,14 +308,33 @@ public final class DataHolder implements Cloneable {
 					
 					URL_PRINTER.write( out, (SuperURL)value );
 					
+				// === Labels are mostly enum constants implementing this
+				} else if( value instanceof Label ){
+					
+					out.write( ((Label)value).label() );
+					
 				// ==== STRING / OBJECT  ====
+					
 				} else {
 					
-					String stringValue = value.toString(); // Does nothing for String anyway
+					String stringValue;
 					
-					if( item.isTranslate() && translator != null ){
-
-						stringValue = translator.translate( TKey.dynamic( stringValue ) );
+					if( value instanceof Translatable ){
+						
+						if( translator != null ) {
+							stringValue = ((Translatable)value).translated( translator );
+						} else {
+							stringValue = ((Translatable)value).plain();
+						}
+						
+					} else {
+						
+						stringValue = value.toString(); // Does nothing for String anyway
+						
+						if( item.isTranslate() && translator != null ){
+	
+							stringValue = translator.translate( TKey.dynamic( stringValue ) );
+						}
 					}
 					
 					if( item.encoding != null && item.encoding.encoder != null ){
@@ -355,7 +384,7 @@ public final class DataHolder implements Cloneable {
 		return builder.toString();
 	}
 
-	enum DataHolderItemType {
+	enum DataHolderItemType implements Serializable {
 
 		TEXT, VAR;
 	}
@@ -402,8 +431,10 @@ public final class DataHolder implements Cloneable {
 		}
 	};
 
-	public static class DataHolderItem implements Cloneable {
+	public static class DataHolderItem implements Cloneable, Serializable {
 
+		private static final long serialVersionUID = 1L;
+	
 		private String name;
 		private Object value;
 		private DataHolderItemType type;
@@ -482,13 +513,15 @@ public final class DataHolder implements Cloneable {
 		}
 	}
 
-	public static class DataHolderKey {
+	public static class DataHolderKey implements Serializable {
 
+		private static final long serialVersionUID = 1L;
+		
 		String name;
 		AttributeMap attributes;
 
 		DataHolderKey( String name, AttributeMap attributes ){
-			this.name = name;
+			this.name = name.toLowerCase();
 			this.attributes = attributes;
 		}
 

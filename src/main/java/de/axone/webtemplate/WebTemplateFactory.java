@@ -2,7 +2,6 @@ package de.axone.webtemplate;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,9 +10,9 @@ import de.axone.cache.Cache;
 import de.axone.cache.ng.CacheNG;
 import de.axone.cache.ng.CacheNoCache;
 import de.axone.cache.ng.RealmImpl;
-import de.axone.data.Pair;
-import de.axone.tools.FileWatcher;
-import de.axone.tools.HttpWatcher;
+import de.axone.tools.FileDataWatcher;
+import de.axone.tools.HttpDataWatcher;
+import de.axone.web.SuperURL;
 import de.axone.webtemplate.slicer.SlicerFactory;
 
 /**
@@ -34,6 +33,8 @@ import de.axone.webtemplate.slicer.SlicerFactory;
  */
 public class WebTemplateFactory {
 	
+	private static final String P_CLASS = "class";
+
 	public static final Logger log =
 			LoggerFactory.getLogger( WebTemplateFactory.class );
 	
@@ -45,14 +46,14 @@ public class WebTemplateFactory {
 	}
 	
 	public WebTemplateFactory( SlicerFactory slicerFactory ){
-		this( new CacheNoCache<File,Pair<FileWatcher,DataHolder>>( new RealmImpl<>( "WTF:FileCache" ) ),
-				new CacheNoCache<URL,Pair<HttpWatcher,DataHolder>>( new RealmImpl<>( "WTF:HttpCache" ) ), null, slicerFactory );
+		this( new CacheNoCache<File,FileDataWatcher<DataHolder>>( new RealmImpl<>( "WTF:FileCache" ) ),
+				new CacheNoCache<SuperURL,HttpDataWatcher<DataHolder>>( new RealmImpl<>( "WTF:HttpCache" ) ), null, slicerFactory );
 	}
 	
 	
 	public WebTemplateFactory( 
-			CacheNG.Cache<File,Pair<FileWatcher,DataHolder>> fileCache, 
-			CacheNG.Cache<URL,Pair<HttpWatcher,DataHolder>> httpCache,
+			CacheNG.Cache<File,FileDataWatcher<DataHolder>> fileCache, 
+			CacheNG.Cache<SuperURL,HttpDataWatcher<DataHolder>> httpCache,
 			Cache<?,?> dataCache,
 			SlicerFactory slicerFactory
 	){
@@ -106,7 +107,7 @@ public class WebTemplateFactory {
 		return templateFor( file, null, dataCache );
 	}
 	
-	public WebTemplate templateFor( URL url, CacheProvider dataCache ) throws WebTemplateException {
+	public WebTemplate templateFor( SuperURL url, CacheProvider dataCache ) throws WebTemplateException {
 
 		return templateFor( url, null, dataCache );
 	}
@@ -134,7 +135,7 @@ public class WebTemplateFactory {
 		}
 	}
 	
-	public WebTemplate templateFor( URL url, String className, CacheProvider dataCache ) throws WebTemplateException {
+	public WebTemplate templateFor( SuperURL url, String className, CacheProvider dataCache ) throws WebTemplateException {
 
 		if( url == null ) throw new IllegalArgumentException( "'url' is null" );
 		
@@ -174,7 +175,7 @@ public class WebTemplateFactory {
 		}
 		
 		// First try to get classname from holder
-		String classNameFromHolder = holder.getParameter( "class" );
+		String classNameFromHolder = holder.getParameter( P_CLASS );
 
 		if( classNameFromHolder != null ){
 			className = classNameFromHolder;
@@ -196,7 +197,7 @@ public class WebTemplateFactory {
 		return template;
 	}
 
-	private WebTemplate instantiate( URL url, String className )
+	private WebTemplate instantiate( SuperURL url, String className )
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, ClassCastException, IOException,
 			KeyException, WebTemplateException {
@@ -212,7 +213,7 @@ public class WebTemplateFactory {
 		// First try to get classname from holder
 		if( holder != null ){
 			
-			String classNameFromHolder = holder.getParameter( "class" );
+			String classNameFromHolder = holder.getParameter( P_CLASS );
 	
 			if( classNameFromHolder != null ){
 				className = classNameFromHolder;

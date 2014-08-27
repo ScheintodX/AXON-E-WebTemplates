@@ -20,18 +20,11 @@ import de.axone.webtemplate.function.MissingAttributeException;
 
 public class AttributeMap extends HashMap<String,Attribute>{
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7008245950458895079L;
-
+	private static final long serialVersionUID = 1L;
+	
 	public String getAsString( String key ){
 		return getAsString( key, null );
 	}
-	public Integer getAsInteger( String key ){
-		return getAsInteger( key, null );
-	}
-	
 	public String getAsString( String key, String defaultValue ){
 		if( containsKey( key ) ){
 			return get( key ).asString();
@@ -39,21 +32,9 @@ public class AttributeMap extends HashMap<String,Attribute>{
 			return defaultValue;
 		}
 	}
-	public Integer getAsInteger( String key, Integer defaultValue ){
-		if( containsKey( key ) ){
-			return get( key ).asInteger();
-		} else {
-			return defaultValue;
-		}
-	}
-	
 	public String getAsStringRequired( String key ) throws MissingAttributeException { 
 		return getAsStringRequired( key, null );
 	}
-	public int getAsIntRequired( String key ) throws MissingAttributeException { 
-		return getAsIntRequired( key, null );
-	}
-	
 	public String getAsStringRequired( String key, String defaultValue ) throws MissingAttributeException { 
 		if( containsKey( key ) ){
 			return get( key ).asString();
@@ -64,6 +45,20 @@ public class AttributeMap extends HashMap<String,Attribute>{
 		}
 	}
 	
+	
+	public Integer getAsInteger( String key ){
+		return getAsInteger( key, null );
+	}
+	public Integer getAsInteger( String key, Integer defaultValue ){
+		if( containsKey( key ) ){
+			return get( key ).asInteger();
+		} else {
+			return defaultValue;
+		}
+	}
+	public int getAsIntRequired( String key ) throws MissingAttributeException { 
+		return getAsIntRequired( key, null );
+	}
 	public int getAsIntRequired( String key, Integer defaultValue ) throws MissingAttributeException { 
 		if( containsKey( key ) ){
 			return get( key ).asInteger();
@@ -73,4 +68,5 @@ public class AttributeMap extends HashMap<String,Attribute>{
 			throw new MissingAttributeException( key );
 		}
 	}
+	
 }

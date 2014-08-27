@@ -22,7 +22,6 @@ public class DefaultPagerTest {
 		
 		TestHttpServletResponse response = new TestHttpServletResponse();
 		
-		@SuppressWarnings( "resource" )
 		PrintWriter out = response.getWriter();
 		 
 		Pager pager = new TestDefaultPager( "pageme", 2, 5 );
@@ -39,7 +38,6 @@ public class DefaultPagerTest {
 		
 		TestHttpServletResponse response = new TestHttpServletResponse();
 		
-		@SuppressWarnings( "resource" )
 		PrintWriter out = response.getWriter();
 		 
 		Pager pager = new TestDefaultPager( "pageme", 0, 100 );
@@ -56,7 +54,6 @@ public class DefaultPagerTest {
 		
 		TestHttpServletResponse response = new TestHttpServletResponse();
 		
-		@SuppressWarnings( "resource" )
 		PrintWriter out = response.getWriter();
 		 
 		Pager pager = new TestDefaultPager( "pageme", 50, 100 );
@@ -73,7 +70,6 @@ public class DefaultPagerTest {
 		
 		TestHttpServletResponse response = new TestHttpServletResponse();
 		
-		@SuppressWarnings( "resource" )
 		PrintWriter out = response.getWriter();
 		 
 		Pager pager = new TestDefaultPager( "pageme", 99, 100 );
@@ -91,7 +87,6 @@ public class DefaultPagerTest {
 		
 		TestHttpServletResponse response = new TestHttpServletResponse();
 		
-		@SuppressWarnings( "resource" )
 		PrintWriter out = response.getWriter();
 		 
 		TestDefaultPager pager = new TestDefaultPager( "pageme", 0, 1 );
