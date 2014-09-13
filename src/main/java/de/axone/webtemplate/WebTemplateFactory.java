@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import de.axone.cache.Cache;
 import de.axone.cache.ng.CacheNG;
 import de.axone.cache.ng.CacheNoCache;
+import de.axone.cache.ng.CacheProvider;
 import de.axone.cache.ng.RealmImpl;
+import de.axone.refactor.Refactor;
 import de.axone.tools.FileDataWatcher;
 import de.axone.tools.HttpDataWatcher;
 import de.axone.web.SuperURL;
@@ -46,15 +48,16 @@ public class WebTemplateFactory {
 	}
 	
 	public WebTemplateFactory( SlicerFactory slicerFactory ){
+		
 		this( new CacheNoCache<File,FileDataWatcher<DataHolder>>( new RealmImpl<>( "WTF:FileCache" ) ),
 				new CacheNoCache<SuperURL,HttpDataWatcher<DataHolder>>( new RealmImpl<>( "WTF:HttpCache" ) ), null, slicerFactory );
+		
 	}
-	
 	
 	public WebTemplateFactory( 
 			CacheNG.Cache<File,FileDataWatcher<DataHolder>> fileCache, 
 			CacheNG.Cache<SuperURL,HttpDataWatcher<DataHolder>> httpCache,
-			Cache<?,?> dataCache,
+			Cache<?,?> contentCache,
 			SlicerFactory slicerFactory
 	){
 		
@@ -84,12 +87,12 @@ public class WebTemplateFactory {
 	 * @throws WebTemplateException if something goes wrong
 	 * @throws KeyException
 	 */
-	public WebTemplate templateFor( String className, CacheProvider dataCache ) throws WebTemplateException {
+	public WebTemplate templateFor( String className, CacheProvider<String,String> contentCache ) throws WebTemplateException {
 		
 		if( className == null ) throw new IllegalArgumentException( "'className' is null" );
 
 		try {
-			return instantiate( className );
+			return instantiateClassByName( className );
 
 		} catch( ClassCastException e ) {
 			throw new WebTemplateException( "Wrong class: " + className, e );
@@ -102,22 +105,22 @@ public class WebTemplateFactory {
 		}
 	}
 
-	public WebTemplate templateFor( File file, CacheProvider dataCache ) throws WebTemplateException {
+	public WebTemplate templateFor( File file, CacheProvider<String,String> contentCache ) throws WebTemplateException {
 		
-		return templateFor( file, null, dataCache );
+		return templateFor( file, null, contentCache );
 	}
 	
-	public WebTemplate templateFor( SuperURL url, CacheProvider dataCache ) throws WebTemplateException {
+	public WebTemplate templateFor( SuperURL url, CacheProvider<String,String> contentCache ) throws WebTemplateException {
 
-		return templateFor( url, null, dataCache );
+		return templateFor( url, null, contentCache );
 	}
 
-	public WebTemplate templateFor( File file, String className, CacheProvider dataCache ) throws WebTemplateException {
+	public WebTemplate templateFor( File file, String className, CacheProvider<String,String> contentCache ) throws WebTemplateException {
 		
 		if( file == null ) throw new IllegalArgumentException( "'file' is null" );
 
 		try {
-			WebTemplate result = instantiate( file, className, dataCache );
+			WebTemplate result = instantiateFile( file, className, contentCache );
 			return result;
 
 		} catch( ClassCastException e ) {
@@ -135,12 +138,12 @@ public class WebTemplateFactory {
 		}
 	}
 	
-	public WebTemplate templateFor( SuperURL url, String className, CacheProvider dataCache ) throws WebTemplateException {
+	public WebTemplate templateFor( SuperURL url, String className, CacheProvider<String,String> contentCache ) throws WebTemplateException {
 
 		if( url == null ) throw new IllegalArgumentException( "'url' is null" );
 		
 		try {
-			WebTemplate result = instantiate( url, className );
+			WebTemplate result = instantiateURL( url, className );
 			return result;
 
 		} catch( ClassCastException e ) {
@@ -161,7 +164,7 @@ public class WebTemplateFactory {
 		return FileDataHolderFactory.reloadCount;
 	}
 
-	private WebTemplate instantiate( File file, String className, CacheProvider dataCache )
+	private WebTemplate instantiateFile( File file, String className, CacheProvider<String,String> contentCache )
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, ClassCastException, IOException,
 			KeyException, WebTemplateException {
@@ -169,7 +172,7 @@ public class WebTemplateFactory {
 		// Get Holder
 		DataHolder holder;
 		try {
-    		holder = fileDataHolderFactory.holderFor( file, dataCache );
+    		holder = fileDataHolderFactory.holderFor( file, contentCache );
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In file: " + file.getPath(), e );
 		}
@@ -187,7 +190,7 @@ public class WebTemplateFactory {
 
 		AbstractFileWebTemplate template;
 		try {
-    		template = (AbstractFileWebTemplate) instantiate( className );
+    		template = (AbstractFileWebTemplate) instantiateClassByName( className );
 		} catch( Exception e ){
 			throw new WebTemplateException( "Cannot instantiate '" + className + "' in file: " + file.getPath(), e );
 		}
@@ -197,7 +200,7 @@ public class WebTemplateFactory {
 		return template;
 	}
 
-	private WebTemplate instantiate( SuperURL url, String className )
+	private WebTemplate instantiateURL( SuperURL url, String className )
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, ClassCastException, IOException,
 			KeyException, WebTemplateException {
@@ -227,7 +230,7 @@ public class WebTemplateFactory {
 	
 			AbstractFileWebTemplate template;
 			try {
-	    		template = (AbstractFileWebTemplate) instantiate( className );
+	    		template = (AbstractFileWebTemplate) instantiateClassByName( className );
 			} catch( Exception e ){
 				throw new WebTemplateException( "Cannot instantiate '" + className + "' in file: " + url, e );
 			}
@@ -239,12 +242,42 @@ public class WebTemplateFactory {
 			return null;
 		}
 	}
-
-	private WebTemplate instantiate( String className )
+	
+	
+	/*
+	private String lastClazzName;
+	private Class<?> lastClazz;
+	private Lock lock = new ReentrantLock();
+	*/
+	
+	@Refactor( action="Make faster", reason="Single method which takes the most time" )
+	private WebTemplate instantiateClassByName( String className )
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, ClassCastException {
-
-		Class<?> clazz = Class.forName( className );
+		
+		Class<?> clazz;
+		
+		// IdentityMap wäre auch noch eine Möglichkeit...
+		// pretty simple cache but has about 60% hit rate and is fast
+		/*
+		lock.lock();
+		try {
+			
+			if( lastClazzName == className ){
+				
+				clazz = lastClazz;
+				
+			} else {
+			
+				clazz = Class.forName( className );
+				lastClazz = clazz;
+				lastClazzName = className;
+			}
+		} finally {
+			lock.unlock();
+		}
+		*/
+		clazz = Class.forName( className );
 
 		Object object = clazz.newInstance();
 

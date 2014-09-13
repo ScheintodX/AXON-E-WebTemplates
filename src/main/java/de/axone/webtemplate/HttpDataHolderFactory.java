@@ -55,7 +55,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		}
 		
 		if( result != null ){
-			return result.clone();
+			return result.freshCopy();
 		} else {
 			return null;
 		}

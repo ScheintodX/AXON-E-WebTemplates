@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.axone.cache.ng.CacheNG;
+import de.axone.cache.ng.CacheProvider;
 import de.axone.tools.FileDataWatcher;
 import de.axone.tools.Slurper;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
@@ -29,19 +30,19 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 	final CacheNG.Cache<File, FileDataWatcher<DataHolder>> cache;
 	static int reloadCount=0;
 	
-	public FileDataHolderFactory( CacheNG.Cache<File, FileDataWatcher<DataHolder>> cache, SlicerFactory slicerFactory, CacheProvider cacheProvider ){
+	public FileDataHolderFactory( CacheNG.Cache<File, FileDataWatcher<DataHolder>> cache, SlicerFactory slicerFactory, CacheProvider<String,String> cacheProvider ){
 		this.slicerFactory = slicerFactory;
 		this.cache = cache;
 	}
 
-	synchronized public DataHolder holderFor( File file, CacheProvider dataCache )
+	synchronized public DataHolder holderFor( File file, CacheProvider<String,String> contentCache )
 			throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException {
 		
 		FileDataWatcher<DataHolder> watcher;
 		DataHolder result;
 		if( !cache.isCached( file ) ) {
 
-			result = instantiate( file, dataCache );
+			result = instantiate( file, contentCache );
 			watcher = new FileDataWatcher<>( file, result );
 			
 			cache.put( file, watcher );
@@ -52,7 +53,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			if( !watcher.hasChanged() ) {
 				result = cache.fetch( file ).getData();
 			} else {
-				result = instantiate( file, dataCache );
+				result = instantiate( file, contentCache );
 				watcher.setData( result );
 				cache.put( file, watcher );
 			}
@@ -87,23 +88,23 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 				if( run ) slicer.run( source );
 				
 				// Store
-				result = instantiate( file, dataCache );
+				result = instantiate( file, contentCache );
 				watcher.setData( result );
 				cache.put( file, watcher );
 			}
 		}
 		
-		return result.clone();
+		return result.freshCopy();
 	}
 	
-	static DataHolder instantiate( File file, CacheProvider dataCache ) throws IOException,
+	static DataHolder instantiate( File file, CacheProvider<String,String> contentCache ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 
 		String data = slurp( file );
 		
-		DataHolder holder = instantiate( data, dataCache );
+		DataHolder holder = instantiate( data, contentCache );
 		
 		holder.setParameter( DataHolder.PARAM_FILE, file.getPath() );
 		if( holder.getParameter( DataHolder.PARAM_TIMESTAMP  ) == null ){

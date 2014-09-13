@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.cache.ng.CacheProvider;
 import de.axone.data.Label;
 import de.axone.tools.Text;
 import de.axone.web.SuperURL;
@@ -43,7 +44,7 @@ import de.axone.webtemplate.function.Function;
  * @author flo
  * TODO: Die Sache mit dem HolderKey umbauen so dass die Attribute im DataHoderItem landen.
  */
-public final class DataHolder implements Cloneable, Serializable {
+public final class DataHolder implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -72,7 +73,7 @@ public final class DataHolder implements Cloneable, Serializable {
 	private FunctionFactory functions;
 	
 	// TODO: serialization / Der sollte eigentlich wo anders hin.
-	private CacheProvider cacheProvider;
+	private CacheProvider<String,String> contentCache;
 	
 	DataHolder() {
 		this.keys = new LinkedList<DataHolderKey>();
@@ -84,13 +85,13 @@ public final class DataHolder implements Cloneable, Serializable {
 	private DataHolder(LinkedList<DataHolderKey> keys,
 			HashMap<String, DataHolderItem> data,
 			HashMap<String, String> parameters,
-			CacheProvider cache ) {
+			CacheProvider<String,String> cache ) {
 
 		this.keys = keys;
 		this.values = data;
 		this.parameters = parameters;
 		this.functions = new SimpleFunctionFactory();
-		this.cacheProvider = cache;
+		this.contentCache = cache;
 	}
 
 	List<DataHolderKey> getVariables() {
@@ -161,8 +162,8 @@ public final class DataHolder implements Cloneable, Serializable {
 	public void setFunctionFactory( FunctionFactory factory ){
 		this.functions = factory;
 	}
-	public void setCacheProvider( CacheProvider cache ){
-		this.cacheProvider = cache;
+	public void setCacheProvider( CacheProvider<String,String> cache ){
+		this.contentCache = cache;
 	}
 
 	public void setFunction( String key, Function function ) {
@@ -212,19 +213,19 @@ public final class DataHolder implements Cloneable, Serializable {
 		}
 	}
 
-	@Override
-	public DataHolder clone() {
-
+	public DataHolder freshCopy() {
+		
 		LinkedList<DataHolderKey> cloneKeys = new LinkedList<DataHolderKey>( keys );
+		
 		HashMap<String, DataHolderItem> cloneData = new HashMap<String, DataHolderItem>();
 		for( String key : values.keySet() ) {
-			cloneData.put( key, values.get( key ).clone() );
+			cloneData.put( key, values.get( key ).freshCopy() );
 		}
-		HashMap<String, String> cloneParameters = new HashMap<String, String>(
-				parameters );
+		
+		HashMap<String, String> cloneParameters = new HashMap<String, String>( parameters );
 
 		DataHolder clone = new DataHolder(
-				cloneKeys, cloneData, cloneParameters, cacheProvider );
+				cloneKeys, cloneData, cloneParameters, contentCache );
 
 		return clone;
 	}
@@ -272,18 +273,18 @@ public final class DataHolder implements Cloneable, Serializable {
 					CacheableRenderer renderer;
 					if(
 							value instanceof CacheableRenderer 
-							&& cacheProvider != null
+							&& contentCache != null
 							&& (renderer=(CacheableRenderer)value).cacheable()
 					) {
 						
 						String cacheK = renderer.cacheKey();
-						String cachedS = cacheProvider.getCache().get( cacheK );
+						String cachedS = contentCache.getCache().fetch( cacheK );
 						
 						if( cachedS == null ){
 							StringWriter s = new StringWriter();
 							renderer.render( object, new PrintWriter( s ), request, response, translator );
 							cachedS = s.toString();
-							cacheProvider.getCache().put( cacheK, cachedS );
+							contentCache.getCache().put( cacheK, cachedS );
 						}
 						response.getWriter().write( cachedS );
 							
@@ -431,7 +432,7 @@ public final class DataHolder implements Cloneable, Serializable {
 		}
 	};
 
-	public static class DataHolderItem implements Cloneable, Serializable {
+	public static class DataHolderItem implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 	
@@ -506,8 +507,7 @@ public final class DataHolder implements Cloneable, Serializable {
 			return name + ": " + value + " (" + type + ")";
 		}
 
-		@Override
-		public DataHolderItem clone() {
+		public DataHolderItem freshCopy() {
 
 			return new DataHolderItem( name, value, type, encoding, attributes, translate );
 		}
