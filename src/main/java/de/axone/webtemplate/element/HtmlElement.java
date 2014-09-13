@@ -66,8 +66,8 @@ public class HtmlElement implements Renderer {
 	}
 
 	@Override
-	public void render( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator ) throws Exception {
+	public void render( Object object , PrintWriter out , HttpServletRequest request ,
+			HttpServletResponse response , Translator translator , ContentCache cache  ) throws Exception {
 
 		out.write( '<' );
 		out.write( getTagName() );
@@ -91,7 +91,7 @@ public class HtmlElement implements Renderer {
 
 			out.write( '>' );
 
-			renderContent( getContent(), object, out, request, response, translator );
+			renderContent( getContent(), object, out, request, response, translator, cache );
 
 			out.write( "</" );
 			out.write( getTagName() );
@@ -106,7 +106,7 @@ public class HtmlElement implements Renderer {
 	}
 
 	protected void renderContent( Object content, Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator ) throws Exception {
+			HttpServletResponse response, Translator translator, ContentCache cache ) throws Exception {
 
 		if( content != null ){
 			
@@ -116,7 +116,7 @@ public class HtmlElement implements Renderer {
 	
 			} else if( content instanceof Renderer ){
 	
-				((Renderer) content).render( object, out, request, response, translator );
+				((Renderer) content).render( object, out, request, response, translator, cache );
 			} else {
 				out.write( content.toString() );
 			}

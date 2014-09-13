@@ -110,8 +110,8 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 	}
 
 	@Override
-	public void render( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator )
+	public void render( Object object , PrintWriter out , HttpServletRequest request ,
+			HttpServletResponse response , Translator translator , ContentCache cache  )
 			throws IOException, WebTemplateException, Exception {
 
 		Iterable<T> list = getList();
@@ -134,7 +134,7 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 				listableItemTemplate.setHighlight( isHighlight( t ) );
 			}
 
-			itemTemplate.render( t, out, request, response, translator );
+			itemTemplate.render( t, out, request, response, translator, cache );
 			i++;
 		}
 	}

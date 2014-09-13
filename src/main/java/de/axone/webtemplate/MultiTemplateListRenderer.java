@@ -30,8 +30,8 @@ public abstract class MultiTemplateListRenderer<D> implements Renderer {
 	public abstract void setTemplateValues( WebTemplate template, D data, int index );
 	
 	@Override
-	public void render( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator )
+	public void render( Object object , PrintWriter out , HttpServletRequest request ,
+			HttpServletResponse response , Translator translator , ContentCache cache  )
 			throws IOException, WebTemplateException, Exception {
 		
 		int i=0;
@@ -41,7 +41,7 @@ public abstract class MultiTemplateListRenderer<D> implements Renderer {
 			
 			setTemplateValues( template, data, i );
 			
-			template.render( object, out, request, response, translator );
+			template.render( object, out, request, response, translator, cache );
 			
 			i++;
 		}

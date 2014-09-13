@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import de.axone.webtemplate.AttributeMap;
 import de.axone.webtemplate.DataHolder;
+import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.Translator;
 
 /**
@@ -18,5 +19,5 @@ import de.axone.webtemplate.form.Translator;
  */
 public interface Function {
 
-	public void render( String name, DataHolder holder, PrintWriter out, HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator ) throws Exception;
+	public void render( String name , DataHolder holder , PrintWriter out , HttpServletRequest request , HttpServletResponse response , AttributeMap attributes , Object value , Translator translator , ContentCache cache  ) throws Exception;
 }

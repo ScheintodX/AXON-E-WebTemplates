@@ -80,7 +80,7 @@ public class Example {
 			// Note that this is one way of doing it. 
 			// Setting parameters or accessing it externally
 			// would be fine to by now.
-			template.render( form, response.getWriter(), request, response, null );
+			template.render( form, response.getWriter(), request, response, null, null );
 			
 			// This is only for this example to show the output
 			E.rr( ((TestHttpServletResponse)response).getContent() );
@@ -147,8 +147,8 @@ public class Example {
 		}
 
 		@Override
-		public void render( Object object, PrintWriter out, HttpServletRequest request,
-				HttpServletResponse response, Translator translator ) throws IOException,
+		public void render( Object object , PrintWriter out , HttpServletRequest request ,
+				HttpServletResponse response , Translator translator , ContentCache cache  ) throws IOException,
 				WebTemplateException, Exception {
 			
 			WebForm form = (WebForm) object;
@@ -159,7 +159,7 @@ public class Example {
 			h.setValue( "input_email", form.getHtmlInput( EMAIL ) );
 			h.setValue( "input_age", form.getHtmlInput( AGE ) );
 			
-			h.render( object, out, request, response, translator );
+			h.render( object, out, request, response, translator, cache );
 		}
 	}
 	

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.axone.webtemplate.Decorator;
+import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.Translator;
 
 public interface HtmlInput {
@@ -25,7 +26,7 @@ public interface HtmlInput {
 	public void initialize( HttpServletRequest request );
 	
 	public void setDecorator( Decorator renderer );
-	public void render( Object object, PrintWriter out, HttpServletRequest request, HttpServletResponse respone, Translator translator ) throws Exception;
-	public void renderElement( Object object, PrintWriter out, HttpServletRequest request, HttpServletResponse response, Translator translator ) throws Exception;
+	public void render( Object object , PrintWriter out , HttpServletRequest request , HttpServletResponse respone , Translator translator , ContentCache cache ) throws Exception;
+	public void renderElement( Object object, PrintWriter out, HttpServletRequest request, HttpServletResponse response, Translator translator, ContentCache cache ) throws Exception;
 	
 }

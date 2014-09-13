@@ -46,7 +46,7 @@ public class CompleteListDemo {
 			}
 			DefaultPager pager = new DefaultPager( "test", page, 100 );
 	
-			pager.render( null, out, req, resp, null );
+			pager.render( null, out, req, resp, null, null );
 	
 			out.println( "<hr/>" );
 			out.println( "<hr/>" );
@@ -63,9 +63,9 @@ public class CompleteListDemo {
 			
 			listRenderer.initPager( pager );
 	
-			listRenderer.render( null, out, req, resp, null );
+			listRenderer.render( null, out, req, resp, null, null );
 			out.println( "<hr/>" );
-			pager.render( null, out, req, resp, null );
+			pager.render( null, out, req, resp, null, null );
 		}
 	}
 
@@ -115,8 +115,8 @@ public class CompleteListDemo {
 	private static class MyItemTemplate implements Renderer {
 
 		@Override
-		public void render( Object object, PrintWriter out,
-				HttpServletRequest request, HttpServletResponse response, Translator translator )
+		public void render( Object object , PrintWriter out ,
+				HttpServletRequest request , HttpServletResponse response , Translator translator , ContentCache cache  )
 				throws IOException, WebTemplateException, Exception {
 
 			Integer i = (Integer) object;

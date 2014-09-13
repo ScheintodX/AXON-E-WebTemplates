@@ -25,7 +25,7 @@ public class DefaultPagerTest {
 		PrintWriter out = response.getWriter();
 		 
 		Pager pager = new TestDefaultPager( "pageme", 2, 5 );
-		pager.render( null, out, request, response, null );
+		pager.render( null, out, request, response, null, null );
 		
 		String content = response.getContent();
 		response.resetBuffer();
@@ -41,7 +41,7 @@ public class DefaultPagerTest {
 		PrintWriter out = response.getWriter();
 		 
 		Pager pager = new TestDefaultPager( "pageme", 0, 100 );
-		pager.render( null, out, request, response, null );
+		pager.render( null, out, request, response, null, null );
 		
 		String content = response.getContent();
 		response.resetBuffer();
@@ -57,7 +57,7 @@ public class DefaultPagerTest {
 		PrintWriter out = response.getWriter();
 		 
 		Pager pager = new TestDefaultPager( "pageme", 50, 100 );
-		pager.render( null, out, request, response, null );
+		pager.render( null, out, request, response, null, null );
 		
 		String content = response.getContent();
 		response.resetBuffer();
@@ -73,7 +73,7 @@ public class DefaultPagerTest {
 		PrintWriter out = response.getWriter();
 		 
 		Pager pager = new TestDefaultPager( "pageme", 99, 100 );
-		pager.render( null, out, request, response, null );
+		pager.render( null, out, request, response, null, null );
 		
 		String content = response.getContent();
 		response.resetBuffer();
@@ -92,7 +92,7 @@ public class DefaultPagerTest {
 		TestDefaultPager pager = new TestDefaultPager( "pageme", 0, 1 );
 		pager.setSelectedTemplate( "__no__: __link__" );
 		pager.setRenderIfOnlyOnePage( true );
-		pager.render( null, out, request, response, null );
+		pager.render( null, out, request, response, null, null );
 		
 		String content = response.getContent();
 		response.resetBuffer();

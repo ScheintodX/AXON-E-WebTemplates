@@ -28,6 +28,7 @@ import de.axone.web.encoding.Encoder_Html;
 import de.axone.web.encoding.Encoder_Text;
 import de.axone.web.encoding.Encoder_Url;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
+import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.function.Function;
@@ -239,7 +240,7 @@ public final class DataHolder implements Serializable {
 	}
 
 	public void render( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator ) throws IOException, WebTemplateException, Exception {
+			HttpServletResponse response, Translator translator, ContentCache cache ) throws IOException, WebTemplateException, Exception {
 		
 		for( DataHolderKey key : keys ) {
 
@@ -261,9 +262,9 @@ public final class DataHolder implements Serializable {
 			}
 			if( function != null ){
 				if( key.getAttributes() != null ){
-    				function.render( functionName, this, out, request, response, key.getAttributes(), object, translator );
+    				function.render( functionName, this, out, request, response, key.getAttributes(), object, translator, cache );
 				} else {
-					function.render( functionName, this, out, request, response, new AttributeMap(), object, translator );
+					function.render( functionName, this, out, request, response, new AttributeMap(), object, translator, cache );
 				}
 			} else if( value != null && rendering ) {
 
@@ -282,7 +283,7 @@ public final class DataHolder implements Serializable {
 						
 						if( cachedS == null ){
 							StringWriter s = new StringWriter();
-							renderer.render( object, new PrintWriter( s ), request, response, translator );
+							renderer.render( object, new PrintWriter( s ), request, response, translator, cache );
 							cachedS = s.toString();
 							contentCache.getCache().put( cacheK, cachedS );
 						}
@@ -290,7 +291,7 @@ public final class DataHolder implements Serializable {
 							
 					} else {
 
-						((Renderer)value).render( object, out, request, response, translator );
+						((Renderer)value).render( object, out, request, response, translator, cache );
 					}
 
 				// ==== COLLECTION  ====
@@ -301,7 +302,7 @@ public final class DataHolder implements Serializable {
 					for( Object o : collection ) {
 
 						Renderer renderer = (Renderer) o;
-						renderer.render( object, out, request, response, translator );
+						renderer.render( object, out, request, response, translator, cache );
 					}
 
 				// ==== SUPERURL  ====

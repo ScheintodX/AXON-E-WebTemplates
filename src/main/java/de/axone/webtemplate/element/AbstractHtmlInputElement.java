@@ -30,24 +30,24 @@ public abstract class AbstractHtmlInputElement extends HtmlElement implements Ht
 	}
 	
 	@Override
-	public void render( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator )
+	public void render( Object object , PrintWriter out , HttpServletRequest request ,
+			HttpServletResponse response , Translator translator , ContentCache cache  )
 			throws Exception {
 		
 		if( decorator != null ){
-			decorator.render( this, object, out, request, response, translator, isValid(), getMessages() );
+			decorator.render( this, object, out, request, response, translator, cache, isValid(), getMessages() );
 			
 		} else {
-			renderElement( object, out, request, response, translator );
+			renderElement( object, out, request, response, translator, cache );
 		}
 	}
 	
 	@Override
 	public void renderElement( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator )
+			HttpServletResponse response, Translator translator, ContentCache cache )
 			throws Exception {
 		
-		super.render( object, out, request, response, translator );
+		super.render( object, out, request, response, translator, cache );
 		
 	}
 

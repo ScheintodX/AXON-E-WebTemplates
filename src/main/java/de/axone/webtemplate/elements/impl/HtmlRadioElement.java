@@ -95,8 +95,8 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 	private class OptionRenderer implements Renderer {
 
 		@Override
-		public void render( Object object, PrintWriter out, HttpServletRequest request,
-				HttpServletResponse response, Translator translator )
+		public void render( Object object , PrintWriter out , HttpServletRequest request ,
+				HttpServletResponse response , Translator translator , ContentCache cache  )
 				throws IOException, WebTemplateException, Exception {
 
 			boolean first=true;
@@ -127,12 +127,12 @@ public class HtmlRadioElement extends AbstractHtmlInputElement {
 					inputElement.addAttribute( "checked", "checked" );
 				}
 
-				inputElement.render( object, out, request, response, translator );
+				inputElement.render( object, out, request, response, translator, cache );
 				
 				//out.write( text );
 				HtmlLabelElement label = new HtmlLabelElement( myId, text );
 				label.addAttribute( "class", "radio-label" );
-				label.render( object, out, request, response, translator );
+				label.render( object, out, request, response, translator, cache );
 			}
 		}
 	}

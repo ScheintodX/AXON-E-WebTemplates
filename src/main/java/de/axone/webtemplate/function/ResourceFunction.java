@@ -21,6 +21,7 @@ import de.axone.tools.Str;
 import de.axone.web.Tag;
 import de.axone.webtemplate.AttributeMap;
 import de.axone.webtemplate.DataHolder;
+import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.Translator;
 
 /**
@@ -146,9 +147,9 @@ public class ResourceFunction implements Function {
 	}
 	
 	@Override
-	public void render( String name, DataHolder holder, 
-			PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, AttributeMap attributes, Object value, Translator translator
+	public void render( String name , DataHolder holder , 
+			PrintWriter out , HttpServletRequest request ,
+			HttpServletResponse response , AttributeMap attributes , Object value , Translator translator , ContentCache cache 
 	) throws Exception {
 		
 		if( ! holder.isRendering() ) return;

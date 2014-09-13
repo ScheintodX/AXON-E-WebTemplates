@@ -182,8 +182,8 @@ public class DefaultPager implements Pager {
 	}
 
 	@Override
-	public void render( Object object, PrintWriter out,
-			HttpServletRequest request, HttpServletResponse response, Translator translator )
+	public void render( Object object , PrintWriter out ,
+			HttpServletRequest request , HttpServletResponse response , Translator translator , ContentCache cache  )
 			throws IOException, WebTemplateException, Exception {
 		
 		if( ! renderIfOnlyOnePage && numPages <= 1 ) return;

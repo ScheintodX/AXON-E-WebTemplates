@@ -52,8 +52,8 @@ public class DefaultSortSelector implements SortSelector {
 	}
 
 	@Override
-	public void render( Object object, PrintWriter out,
-			HttpServletRequest request, HttpServletResponse response, Translator translator )
+	public void render( Object object , PrintWriter out ,
+			HttpServletRequest request , HttpServletResponse response , Translator translator , ContentCache cache  )
 			throws IOException, WebTemplateException, Exception {
 		
 		StringBuilder options = new StringBuilder();

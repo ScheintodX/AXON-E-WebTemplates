@@ -33,8 +33,8 @@ public class AbstractMemoryListRenderer<T> implements Renderer {
 	}
 
 	@Override
-	public void render( Object object, PrintWriter out,
-			HttpServletRequest request, HttpServletResponse response, Translator translator )
+	public void render( Object object , PrintWriter out ,
+			HttpServletRequest request , HttpServletResponse response , Translator translator , ContentCache cache  )
 			throws IOException, WebTemplateException, Exception {
 
 		this.request = request;
@@ -48,7 +48,7 @@ public class AbstractMemoryListRenderer<T> implements Renderer {
 		
 		for( T t : it ){
 			
-			itemTemplate.render( t, out, request, response, translator );
+			itemTemplate.render( t, out, request, response, translator, cache );
 		}
 	}
 	

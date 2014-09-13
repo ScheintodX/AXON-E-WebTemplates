@@ -14,6 +14,7 @@ import org.testng.annotations.Test;
 
 import de.axone.web.TestHttpServletRequest;
 import de.axone.web.TestHttpServletResponse;
+import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.function.Function;
 import de.axone.webtemplate.function.MissingAttributeException;
@@ -59,15 +60,15 @@ public class DataHolderTest {
 		holder.setFunction( "func", new TestFunction() );
 		
 		TestHttpServletResponse respo = new TestHttpServletResponse();
-		holder.render( null, out, new TestHttpServletRequest(), respo, null );
+		holder.render( null, out, new TestHttpServletRequest(), respo, null, null );
 	}
 	
 	private static class TestFunction implements Function {
 
 		@Override
-		public void render( String name, DataHolder holder, 
-				PrintWriter out, HttpServletRequest request,
-				HttpServletResponse response, AttributeMap attributes, Object value, Translator translator
+		public void render( String name , DataHolder holder , 
+				PrintWriter out , HttpServletRequest request ,
+				HttpServletResponse response , AttributeMap attributes , Object value , Translator translator , ContentCache cache 
 		) throws IOException, MissingAttributeException {
 			
 			if( ! holder.isRendering() ) return;

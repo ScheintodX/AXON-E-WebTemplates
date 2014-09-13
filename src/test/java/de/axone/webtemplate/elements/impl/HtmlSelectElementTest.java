@@ -41,7 +41,7 @@ public class HtmlSelectElementTest {
 		assertEquals( element.getName(), "testname" );
 		assertEquals( element.getValue(), "key2" );
 		
-		element.render( null, response.getWriter(), request, response, null );
+		element.render( null, response.getWriter(), request, response, null, null );
 		
 		//E.rr( response.getContent() );
 		

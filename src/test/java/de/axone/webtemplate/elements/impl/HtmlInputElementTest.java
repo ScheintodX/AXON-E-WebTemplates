@@ -25,7 +25,7 @@ public class HtmlInputElementTest {
 		assertEquals( element.getName(), "testname" );
 		assertEquals( element.getValue(), "testvalue" );
 		
-		element.render( null, response.getWriter(), request, response, null );
+		element.render( null, response.getWriter(), request, response, null, null );
 		
 		assertEquals( response.getContent(), "<div class=\"valid\"><input id=\"testid\" class=\"testclass\" type=\"text\" name=\"testname\" value=\"testvalue\" /></div>" );
 	}

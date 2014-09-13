@@ -119,8 +119,8 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 	private class OptionRenderer implements Renderer {
 
 		@Override
-		public void render( Object object, PrintWriter out, HttpServletRequest request,
-				HttpServletResponse response, Translator translator )
+		public void render( Object object , PrintWriter out , HttpServletRequest request ,
+				HttpServletResponse response , Translator translator , ContentCache cache  )
 				throws IOException, WebTemplateException, Exception {
 
 			for( Option option : options ) {
@@ -146,7 +146,7 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 					optionElement.setSelected(false);
 				}
 
-				optionElement.render( object, out, request, response, translator );
+				optionElement.render( object, out, request, response, translator, cache );
 			}
 
 		}

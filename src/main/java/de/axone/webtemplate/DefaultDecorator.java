@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.axone.web.encoding.Encoder_Html;
+import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.element.HtmlInput;
 import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
@@ -14,9 +15,9 @@ import de.axone.webtemplate.form.Translator;
 public class DefaultDecorator implements Decorator {
 
 	@Override
-	public void render( HtmlInput element, Object object, PrintWriter out, 
-			HttpServletRequest request, HttpServletResponse response,
-			Translator translator, boolean isValid, List<String> messages ) throws Exception {
+	public void render( HtmlInput element , Object object , PrintWriter out , 
+			HttpServletRequest request , HttpServletResponse response ,
+			Translator translator , ContentCache cache , boolean isValid , List<String> messages  ) throws Exception {
 
 		if( isValid ){
 			out.write( "<div class=\"valid\">" );
@@ -24,7 +25,7 @@ public class DefaultDecorator implements Decorator {
 			out.write( "<div class=\"invalid\">" );
 		}
 
-		element.renderElement( object, out, request, response, translator );
+		element.renderElement( object, out, request, response, translator, cache );
 
 		if( messages != null ) for( String message : messages ){
 
