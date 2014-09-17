@@ -91,5 +91,5 @@ public interface WebTemplate extends Renderer {
 	 * <tt>reset</tt> method is called from the Factory whenever a WebTemplate
 	 * is delivered to the application.
 	 */
-	public void reset();
+	//public void reset();
 }

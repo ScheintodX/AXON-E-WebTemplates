@@ -1,5 +1,14 @@
 package de.axone.webtemplate;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import de.axone.cache.ng.CacheNG.HasCacheKey;
+import de.axone.webtemplate.form.Translator;
+
 
 /**
  * 
@@ -9,7 +18,7 @@ package de.axone.webtemplate;
  * @author flo
  *
  */
-public interface CacheableRenderer extends Renderer {
+public interface CacheableRenderer extends Renderer, HasCacheKey {
 
 	/**
 	 * Tell if this template is cachable in general
@@ -27,9 +36,22 @@ public interface CacheableRenderer extends Renderer {
 	 * For consistency this key shall be of the format aaa[.bbb[.ccc[...]]]
 	 * e.q. article.12345.picturelist
 	 * 
-	 * TODO: Invalidation is done via invalidate( "article" ) or invalidate( "article.12345" ) usw. in the frontends/backends.
-	 * 
-	 * @return a cache key
+	 * @return a cache key. For requirements {@see CacheNG.CacheKey}
 	 */
-	public String cacheKey();
+	@Override
+	public Object cacheKey();
+	
+	default public String renderToString( Object object,
+			HttpServletRequest request, HttpServletResponse response,
+			Translator translator, ContentCache cache  ) {
+		
+		StringWriter s = new StringWriter();
+		try{
+			render( object, new PrintWriter( s ), request, response, translator, cache );
+		} catch( Exception e ){
+			throw new RuntimeException( e );
+		}
+		return s.toString();
+	}
+
 }

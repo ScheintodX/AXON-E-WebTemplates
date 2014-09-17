@@ -52,12 +52,14 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 		return parameters.keySet();
 	}
 	
+	/*
 	@Override
 	public void reset() {
 
 		parameters.clear();
 		holder.clear();
 	}
+	*/
 
 	/**
 	 * Fill templates from parameters

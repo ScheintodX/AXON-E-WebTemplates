@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
-import de.axone.cache.ng.CacheProvider;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.DataHolder.DataHolderItemType;
 import de.axone.webtemplate.processor.WebTemplateProcessor;
@@ -20,7 +19,7 @@ public abstract class AbstractDataHolderFactory {
 	private static final String BEGIN_TEMPLATE = "<!--TEMPLATE: BEGIN-->";
 	private static final String END_TEMPLATE = "<!--TEMPLATE: END-->";
 
-	protected static DataHolder instantiate( String data, CacheProvider<String,String> contentCache ) throws IOException,
+	protected static DataHolder instantiate( String data ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 				
 		DataHolder holder = new DataHolder();
@@ -87,7 +86,7 @@ public abstract class AbstractDataHolderFactory {
 		data = data.trim();
 		
 		// Preprocess data
-		String processorClass = holder.getParameter( "Processor" );
+		String processorClass = holder.getParameter( DataHolder.PARAM_PROCESSOR );
 		WebTemplateProcessor processor = null;
 		if( processorClass != null ){
 			processor = webTemplateProcessor( processorClass );
@@ -134,8 +133,6 @@ public abstract class AbstractDataHolderFactory {
 			holder = processor.postProcess( holder );
 		}
 		
-		holder.setCacheProvider( contentCache );
-	
 		return holder;
 	}
 

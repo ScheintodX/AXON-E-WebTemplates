@@ -25,6 +25,6 @@ public interface Renderer {
 			HttpServletRequest request, HttpServletResponse response
 			, Translator translator , ContentCache cache  ) throws Exception;
 
-	public interface ContentCache extends CacheNG.Cache<String,String>{}
+	public interface ContentCache extends CacheNG.AutomaticClient<Object,String>{}
 	
 }

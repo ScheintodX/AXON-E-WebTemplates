@@ -44,8 +44,4 @@ public class EmptyWebTemplate implements WebTemplate {
 		return new TreeSet<String>();
 	}
 
-	@Override
-	public void reset() {}
-
-
 }

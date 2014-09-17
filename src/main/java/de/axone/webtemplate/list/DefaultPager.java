@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import de.axone.tools.Text;
 import de.axone.web.HttpLinkBuilder;
 import de.axone.web.SuperURL;
+import de.axone.web.SuperURL.FinalEncoding;
 import de.axone.web.SuperURLPrinter;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.Translator;
@@ -208,18 +209,21 @@ public class DefaultPager implements Pager {
 			}
 		}
 		
-		SuperURLPrinter printer = SuperURLPrinter.MinimalEncoded;
+		SuperURLPrinter printer = SuperURLPrinter.MinimalEncoded
+				.finishFor( FinalEncoding.Html )
+				;
 
 		// Container: left
 		if( leftContainer != null ) out.write( leftContainer );
 
 		// Arrowheads left
 		if( showArrowheads ){
+			SuperURL leftLink = makePageLink( request, selectedPage-1 );
 			if( selectedPage > 0 ){
-    			out.write( leftTemplate.toString( selectedPage-1, printer, makePageLink( request, selectedPage-1 ) ) );
+    			out.write( leftTemplate.toString( selectedPage-1, printer, leftLink ) );
     			out.write( spaceTemplate.toString( selectedPage-1 ) );
 			} else if( showSelectedArrowheads ){
-    			out.write( selectedLeftTemplate.toString( selectedPage-1, printer, makePageLink( request, selectedPage-1 ) ) );
+    			out.write( selectedLeftTemplate.toString( selectedPage-1, printer, leftLink ) );
     			out.write( spaceTemplate.toString( selectedPage-1 ) );
 			}
 		}
@@ -227,7 +231,8 @@ public class DefaultPager implements Pager {
 		if( showBoundaries ){
 		// First Page
     		if( start > 0 ){
-    			out.write( innerTemplate.toString( 0, printer, makePageLink( request, 0 ) ) );
+    			SuperURL firstLink = makePageLink( request, 0 );
+    			out.write( innerTemplate.toString( 0, printer, firstLink ) );
     			out.write( spaceTemplate.toString() );
     		}
 
@@ -244,11 +249,11 @@ public class DefaultPager implements Pager {
 			if( first ) first = false;
 			else out.write( spaceTemplate.toString() );
 
+			SuperURL nPageLink = makePageLink( request, p );
 			if( p == selectedPage ){
-
-				out.write( selectedTemplate.toString( p, printer, makePageLink( request, p ) ) );
+				out.write( selectedTemplate.toString( p, printer, nPageLink ) );
 			} else {
-				out.write( innerTemplate.toString( p, printer, makePageLink( request, p ) ) );
+				out.write( innerTemplate.toString( p, printer, nPageLink ) );
 			}
 		}
 
@@ -260,19 +265,21 @@ public class DefaultPager implements Pager {
 
     		// LastPage
     		if( end < lastPage ){
+    			SuperURL lastLink = makePageLink( request, lastPage );
     			out.write( spaceTemplate.toString() );
-    			out.write( innerTemplate.toString( lastPage, printer, makePageLink( request, lastPage ) ) );
+    			out.write( innerTemplate.toString( lastPage, printer, lastLink ) );
     		}
 		}
 
 		// Arrowhead right
 		if( showArrowheads ){
+			SuperURL rightLink = makePageLink( request, selectedPage+1 );
 			if( selectedPage < lastPage ){
     			out.write( spaceTemplate.toString() );
-    			out.write( rightTemplate.toString( selectedPage+1, printer, makePageLink( request, selectedPage+1 ) ) );
+    			out.write( rightTemplate.toString( selectedPage+1, printer, rightLink ) );
 			} else if( showSelectedArrowheads ){
     			out.write( spaceTemplate.toString() );
-    			out.write( selectedRightTemplate.toString( selectedPage+1, printer, makePageLink( request, selectedPage+1 ) ) );
+    			out.write( selectedRightTemplate.toString( selectedPage+1, printer, rightLink ) );
 			}
 		}
 

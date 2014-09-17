@@ -18,9 +18,8 @@ import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
  * 
  * @author flo
  */
+@Deprecated
 public abstract class AttributeParser {
-	
-	public static final String TAG_NAME = "TAG";
 	
 	static final String NAMECHAR = "[a-zA-Z0-9äöüÄÖÜ_]";
 	static final String TAGSTARTCHAR = "[a-zA-ZäöüÄÖÜ]";
@@ -65,17 +64,17 @@ public abstract class AttributeParser {
 				
 				String attName = attMatcher.group(1);
 				if( c == 0 ){
-					map.put( TAG_NAME, new Attribute( attName, false ) );
+					map.putString( AttributeParserByHand.TAG_NAME, attName );
 				} else {
 
 					if( attMatcher.group( 3 ) != null ){
-    					map.put( attName, new Attribute( attMatcher.group(3), true ) );
+    					map.putInt( attName, attMatcher.group(3) );
 					} else if( attMatcher.group( 4 ) != null ){
-    					map.put( attName, new Attribute( attMatcher.group(4), false ) );
+    					map.putString( attName, attMatcher.group(4) );
 					} else if( attMatcher.group( 5 ) != null ){
-    					map.put( attName, new Attribute( attMatcher.group(5), false ) );
+    					map.putString( attName, attMatcher.group(5) );
 					} else {
-						map.put( attName, null );
+						map.putString( attName, null );
 					}
 				}
 				

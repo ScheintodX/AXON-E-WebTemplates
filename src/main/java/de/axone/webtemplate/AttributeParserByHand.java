@@ -41,7 +41,7 @@ public abstract class AttributeParserByHand {
 			name.append( ch );
 		}
 		
-		result.put( AttributeParser.TAG_NAME, new Attribute( name.toString(), false ) );
+		result.putString( TAG_NAME, name.toString() );
 		
 		// Attribute Name=Value pairs
 		StringBuilder attrName=null, attrValue=null;
@@ -101,13 +101,13 @@ public abstract class AttributeParserByHand {
 					throw new ParserException( "Duplicate attribute: " + attrNameStr );
 				
     			if( attrValue == null ){
-    				result.put( attrNameStr, null );
+    				result.putString( attrNameStr, null );
     			} else {
         			String attrValueStr = attrValue.toString();
     				if( foundDel ){
-    					result.put( attrNameStr, new Attribute( attrValueStr, false ) );
+    					result.putString( attrNameStr, attrValueStr );
     				} else {
-    					result.put( attrNameStr, new Attribute( attrValueStr, true ) );
+    					result.putInt( attrNameStr, attrValueStr );
     				}
     				attrValue=null;
     			}
@@ -151,6 +151,8 @@ public abstract class AttributeParserByHand {
 	protected static boolean isValueDelimiter( char ch ){
 		return ch == '"' || ch == '\'';
 	}
+
+	public static final String TAG_NAME = "TAG";
 	
 	
 

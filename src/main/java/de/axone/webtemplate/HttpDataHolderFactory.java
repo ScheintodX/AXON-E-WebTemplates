@@ -71,7 +71,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		
 		String data = new String( response.content, encoding );
 		
-		DataHolder holder = instantiate( data, null );
+		DataHolder holder = instantiate( data );
 		holder.setParameter( "url", url.toValue() );
 		
 		log.trace( "DataHolder for " + url.toDebug() + " created" );

@@ -97,7 +97,7 @@ public class DefaultPagerTest {
 		String content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, dps+"<a class=\"active\">&lt;&lt;</a>1: /blah?test=1&test=2&pageme-page=0<a class=\"active\">&gt;&gt;</a>"+dpe );
+		assertEquals( content, dps+"<a class=\"active\">&lt;&lt;</a>1: /blah?test=1&amp;test=2&amp;pageme-page=0<a class=\"active\">&gt;&gt;</a>"+dpe );
 			
 	}
 	

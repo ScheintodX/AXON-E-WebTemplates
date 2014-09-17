@@ -26,7 +26,7 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 		this( new FileDataHolderFactory( 
 				new CacheNoCache<File, FileDataWatcher<DataHolder>>( new RealmImpl<>( "testnocache" ) ),
 				null, null
-		).holderFor( file, null ) );
+		).holderFor( file ) );
 	}
 	
 	public AbstractFileWebTemplate( DataHolder holder ) {
@@ -37,7 +37,7 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 	@Override
 	public String toString(){
 		
-		return getHolder().getParameter( DataHolder.PARAM_FILE ) + " (" + getClass().toString() + ")";
+		return getHolder().getParameter( DataHolder.P_FILE ) + " (" + getClass().toString() + ")";
 	}
 
 	public static class ParserException extends WebTemplateException {

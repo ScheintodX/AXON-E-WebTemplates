@@ -35,14 +35,14 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		this.cache = cache;
 	}
 
-	synchronized public DataHolder holderFor( File file, CacheProvider<String,String> contentCache )
+	synchronized public DataHolder holderFor( File file )
 			throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException {
 		
 		FileDataWatcher<DataHolder> watcher;
 		DataHolder result;
 		if( !cache.isCached( file ) ) {
 
-			result = instantiate( file, contentCache );
+			result = instantiate( file );
 			watcher = new FileDataWatcher<>( file, result );
 			
 			cache.put( file, watcher );
@@ -53,7 +53,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			if( !watcher.hasChanged() ) {
 				result = cache.fetch( file ).getData();
 			} else {
-				result = instantiate( file, contentCache );
+				result = instantiate( file );
 				watcher.setData( result );
 				cache.put( file, watcher );
 			}
@@ -63,7 +63,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		if( slicerFactory != null ){
 			
 			// If has source
-			String source = result.getParameter( DataHolder.PARAM_SOURCE );
+			String source = result.getParameter( DataHolder.P_SOURCE );
 			
 			if( source != null ){
 				Slicer slicer = slicerFactory.instance( source );
@@ -73,7 +73,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 				
 				// If timestamp changed
 				boolean run = false;
-				String timestampS = result.getParameter( DataHolder.PARAM_TIMESTAMP );
+				String timestampS = result.getParameter( DataHolder.P_TIMESTAMP );
 				if( timestampS != null ){
 					long timestamp = Long.parseLong( timestampS );
 					long last = master.lastModified() / 1000;
@@ -88,7 +88,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 				if( run ) slicer.run( source );
 				
 				// Store
-				result = instantiate( file, contentCache );
+				result = instantiate( file );
 				watcher.setData( result );
 				cache.put( file, watcher );
 			}
@@ -97,18 +97,18 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		return result.freshCopy();
 	}
 	
-	static DataHolder instantiate( File file, CacheProvider<String,String> contentCache ) throws IOException,
+	static DataHolder instantiate( File file ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 
 		String data = slurp( file );
 		
-		DataHolder holder = instantiate( data, contentCache );
+		DataHolder holder = instantiate( data );
 		
-		holder.setParameter( DataHolder.PARAM_FILE, file.getPath() );
-		if( holder.getParameter( DataHolder.PARAM_TIMESTAMP  ) == null ){
-			holder.setParameter( DataHolder.PARAM_TIMESTAMP, "" + file.lastModified()/1000 ); // 1s
+		holder.setParameter( DataHolder.P_FILE, file.getPath() );
+		if( holder.getParameter( DataHolder.P_TIMESTAMP  ) == null ){
+			holder.setParameter( DataHolder.P_TIMESTAMP, "" + file.lastModified()/1000 ); // 1s
 		}
 		
 		log.trace( "DataHolder for " + file + " created" );

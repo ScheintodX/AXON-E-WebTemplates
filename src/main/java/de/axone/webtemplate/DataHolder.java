@@ -3,7 +3,6 @@ package de.axone.webtemplate;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -15,7 +14,9 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.axone.cache.ng.CacheProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.axone.data.Label;
 import de.axone.tools.Text;
 import de.axone.web.SuperURL;
@@ -47,12 +48,16 @@ import de.axone.webtemplate.function.Function;
  */
 public final class DataHolder implements Serializable {
 	
+	private static final Logger log = LoggerFactory.getLogger( DataHolder.class );
+	
 	private static final long serialVersionUID = 1L;
 	
-	public static final String PARAM_FILE = "file";
-	public static final String PARAM_TIMESTAMP = "timestamp";
-	public static final String PARAM_SOURCE = "source";
-	public static final String PARAM_CUT = "Cut";
+	public static final String PARAM_CUT = "Cut",
+	                           PARAM_PROCESSOR = "Processor";
+	
+	public static final String P_FILE = "file",
+	                           P_TIMESTAMP = "timestamp",
+	                           P_SOURCE = "source";
 
 	public static final String NOVAL = "";
 	
@@ -73,9 +78,6 @@ public final class DataHolder implements Serializable {
 	// TOOD: serialization / ?
 	private FunctionFactory functions;
 	
-	// TODO: serialization / Der sollte eigentlich wo anders hin.
-	private CacheProvider<String,String> contentCache;
-	
 	DataHolder() {
 		this.keys = new LinkedList<DataHolderKey>();
 		this.values = new HashMap<String, DataHolderItem>();
@@ -85,25 +87,18 @@ public final class DataHolder implements Serializable {
 
 	private DataHolder(LinkedList<DataHolderKey> keys,
 			HashMap<String, DataHolderItem> data,
-			HashMap<String, String> parameters,
-			CacheProvider<String,String> cache ) {
+			HashMap<String, String> parameters ) {
 
 		this.keys = keys;
 		this.values = data;
 		this.parameters = parameters;
 		this.functions = new SimpleFunctionFactory();
-		this.contentCache = cache;
-	}
-
-	List<DataHolderKey> getVariables() {
-
-		return keys;
 	}
 
 	static int functionCount = 1;
 	void addValue( String key, String value, DataHolderItemType type, boolean translate )
 			throws ParserException {
-
+		
 		AttributeMap attributes = null;
 		DataHolderEncodingType encoding = null;
 		if( type == DataHolderItemType.VAR ){
@@ -112,42 +107,48 @@ public final class DataHolder implements Serializable {
 				key = key.substring( 1, key.length()-1 );
 			}
 
-    		attributes = AttributeParser.parse( key );
+    		attributes = AttributeParserByHand.parse( key );
 		}
 
 		DataHolderKey dhKey;
 
 		if( attributes != null && attributes.size() > 1 ){
-			key = attributes.get( AttributeParser.TAG_NAME ).asString();
+			key = attributes.getAsString( AttributeParserByHand.TAG_NAME );
 			dhKey = new DataHolderKey( key, attributes );
 		} else {
 			dhKey = new DataHolderKey( key, null );
 		}
+		
+		key = vKeyForAdd( key );
 
 		keys.add( dhKey );
 
-		if( !values.containsKey( key ) ) {
+		if( ! values.containsKey( key ) ) {
 
 			values.put( dhKey.getName(), new DataHolderItem( key, value, type, encoding, null, translate ) );
 		}
 	}
 
+	public void setValue( String key, ValueProvider value ) {
+		setValue( key, (Object)value );
+	}
+	
 	public void setValue( String key, Object value ) {
 		
-		key = key.toLowerCase();
+		key = vKey( key );
 
 		if( values.containsKey( key ) ) {
 			values.get( key ).setValue( value );
 		}
 	}
 
-	public void setValues( String basename, Map<String, String> values ) {
+	public void setValues( String basename, Map<String,? extends Object> values ) {
 		
-		basename = basename.toLowerCase();
+		basename = vKey( basename );
 
 		for( Map.Entry<String,? extends Object> entry : values.entrySet() ){
 			
-			String key = entry.getKey().toLowerCase();
+			String key = vKey( entry.getKey() );
 
 			String name;
 			if( basename == null ) {
@@ -163,15 +164,13 @@ public final class DataHolder implements Serializable {
 	public void setFunctionFactory( FunctionFactory factory ){
 		this.functions = factory;
 	}
-	public void setCacheProvider( CacheProvider<String,String> cache ){
-		this.contentCache = cache;
-	}
-
 	public void setFunction( String key, Function function ) {
-		functions.add( key, function );
+		functions.add( vKey( key ), function );
 	}
 
 	public DataHolderItem getItem( String key ) throws KeyException {
+		
+		key = vKey( key );
 
 		if( values.containsKey( key ) ) {
 			return values.get( key );
@@ -179,16 +178,8 @@ public final class DataHolder implements Serializable {
 			throw new KeyException( "Doesn't contain: " + key );
 	}
 
-	public void setParameter( String key, String value ) {
-		parameters.put( key.toLowerCase(), value );
-	}
-
-	public String getParameter( String key ) {
-		return parameters.get( key.toLowerCase() );
-	}
-
 	public boolean has( String key ) {
-		return values.containsKey( key );
+		return values.containsKey( vKey( key ) );
 	}
 
 	public Set<String> getKeys() {
@@ -199,6 +190,15 @@ public final class DataHolder implements Serializable {
 		return keys;
 	}
 
+	public void setParameter( String key, String value ) {
+		parameters.put( pKey( key ), value );
+	}
+
+	public String getParameter( String key ) {
+		return parameters.get( pKey( key ) );
+	}
+
+	/*
 	public void clear() {
 		for( String key : getKeys() ) {
 
@@ -213,6 +213,7 @@ public final class DataHolder implements Serializable {
 			}
 		}
 	}
+	*/
 
 	public DataHolder freshCopy() {
 		
@@ -226,12 +227,13 @@ public final class DataHolder implements Serializable {
 		HashMap<String, String> cloneParameters = new HashMap<String, String>( parameters );
 
 		DataHolder clone = new DataHolder(
-				cloneKeys, cloneData, cloneParameters, contentCache );
+				cloneKeys, cloneData, cloneParameters );
 
 		return clone;
 	}
 	
 	private boolean rendering = true;
+
 	public boolean isRendering(){
 		return rendering;
 	}
@@ -240,17 +242,15 @@ public final class DataHolder implements Serializable {
 	}
 
 	public void render( Object object, PrintWriter out, HttpServletRequest request,
-			HttpServletResponse response, Translator translator, ContentCache cache ) throws IOException, WebTemplateException, Exception {
+			HttpServletResponse response, Translator translator, ContentCache cache )
+	throws IOException, WebTemplateException, Exception {
 		
 		for( DataHolderKey key : keys ) {
-
-			DataHolderItem item = values.get( key.getName() );
-			Object value = item.getValue();
 
 			Function function = null;
 			String functionName;
 			if( key.getAttributes() != null ){
-				functionName = key.getAttributes().getAsStringRequired( AttributeParser.TAG_NAME );
+				functionName = key.getAttributes().getAsStringRequired( AttributeParserByHand.TAG_NAME );
 			} else {
 				functionName = key.getName();
 			}
@@ -264,86 +264,98 @@ public final class DataHolder implements Serializable {
 				if( key.getAttributes() != null ){
     				function.render( functionName, this, out, request, response, key.getAttributes(), object, translator, cache );
 				} else {
-					function.render( functionName, this, out, request, response, new AttributeMap(), object, translator, cache );
+					function.render( functionName, this, out, request, response, AttributeMap.EMPTY, object, translator, cache );
 				}
-			} else if( value != null && rendering ) {
-
-				// ==== RENDERER ====
-				if( value instanceof Renderer ) {
+			} else {
+				
+				DataHolderItem item = values.get( key.getName() );
+				Object value = item.getValue();
+				
+				if( rendering ){
 					
-					CacheableRenderer renderer;
-					if(
-							value instanceof CacheableRenderer 
-							&& contentCache != null
-							&& (renderer=(CacheableRenderer)value).cacheable()
-					) {
+					if( value != null && value instanceof ValueProvider ){
 						
-						String cacheK = renderer.cacheKey();
-						String cachedS = contentCache.getCache().fetch( cacheK );
-						
-						if( cachedS == null ){
-							StringWriter s = new StringWriter();
-							renderer.render( object, new PrintWriter( s ), request, response, translator, cache );
-							cachedS = s.toString();
-							contentCache.getCache().put( cacheK, cachedS );
-						}
-						response.getWriter().write( cachedS );
-							
-					} else {
-
-						((Renderer)value).render( object, out, request, response, translator, cache );
+						value = ( (ValueProvider) value ).provide();
 					}
-
-				// ==== COLLECTION  ====
-				} else if( value instanceof Collection<?> ) {
-
-					Collection<?> collection = (Collection<?>) value;
-
-					for( Object o : collection ) {
-
-						Renderer renderer = (Renderer) o;
-						renderer.render( object, out, request, response, translator, cache );
-					}
-
-				// ==== SUPERURL  ====
-				} else if( value instanceof SuperURL ){
-					
-					URL_PRINTER.write( out, (SuperURL)value );
-					
-				// === Labels are mostly enum constants implementing this
-				} else if( value instanceof Label ){
-					
-					out.write( ((Label)value).label() );
-					
-				// ==== STRING / OBJECT  ====
-					
-				} else {
-					
-					String stringValue;
-					
-					if( value instanceof Translatable ){
-						
-						if( translator != null ) {
-							stringValue = ((Translatable)value).translated( translator );
-						} else {
-							stringValue = ((Translatable)value).plain();
-						}
-						
-					} else {
-						
-						stringValue = value.toString(); // Does nothing for String anyway
-						
-						if( item.isTranslate() && translator != null ){
 	
-							stringValue = translator.translate( TKey.dynamic( stringValue ) );
+					if( value != null ) {
+		
+						// ==== RENDERER ====
+						if( value instanceof Renderer ) {
+							
+							if(
+									cache != null
+									&& value instanceof CacheableRenderer 
+									&& ((CacheableRenderer)value).cacheable()
+							) {
+								
+								CacheableRenderer renderer = (CacheableRenderer)value;
+								Object cacheK = renderer.cacheKey();
+								
+								String cachedS = cache.fetch( cacheK,
+										k -> renderer.renderToString( object, request, response, translator, cache ) );
+									
+								response.getWriter().write( cachedS );
+									
+							} else {
+		
+								Renderer renderer = (Renderer)value;
+								
+								renderer.render( object, out, request, response, translator, cache );
+							}
+		
+						// ==== COLLECTION  ====
+						} else if( value instanceof Collection<?> ) {
+		
+							Collection<?> collection = (Collection<?>) value;
+		
+							for( Object o : collection ) {
+		
+								Renderer renderer = (Renderer) o;
+								renderer.render( object, out, request, response, translator, cache );
+							}
+		
+						// ==== SUPERURL  ====
+						} else if( value instanceof SuperURL ){
+							
+							URL_PRINTER.write( out, (SuperURL)value );
+							
+						// === Labels are mostly enum constants implementing this
+						} else if( value instanceof Label ){
+							
+							out.write( ((Label)value).label() );
+							
+						// ==== STRING / OBJECT  ====
+							
+						} else {
+							
+							String stringValue;
+							
+							if( value instanceof Translatable ){
+								
+								if( translator != null ) {
+									stringValue = ((Translatable)value).translated( translator );
+								} else {
+									stringValue = ((Translatable)value).plain();
+								}
+								
+							} else {
+								
+								stringValue = value.toString(); // Does nothing for String anyway
+								
+								if( item.isTranslate() && translator != null ){
+			
+									stringValue = translator.translate( TKey.dynamic( stringValue ) );
+								}
+							}
+							
+							if( item.encoding != null && item.encoding.encoder != null ){
+				    			stringValue = item.encoding.encoder.encode( stringValue );
+				    		}
+							
+							out.write( stringValue );
 						}
 					}
-					
-					if( item.encoding != null && item.encoding.encoder != null ){
-		    			stringValue = item.encoding.encoder.encode( stringValue );
-		    		}
-					
-					out.write( stringValue );
 				}
 			}
 		}
@@ -522,7 +534,7 @@ public final class DataHolder implements Serializable {
 		AttributeMap attributes;
 
 		DataHolderKey( String name, AttributeMap attributes ){
-			this.name = name.toLowerCase();
+			this.name = vKey( name );
 			this.attributes = attributes;
 		}
 
@@ -550,6 +562,76 @@ public final class DataHolder implements Serializable {
 		public String toString() {
 			return "DataHolderKey [name=" + name + ", attributes=" + attributes + "]";
 		}
+	}
+	
+	// HELPER
+	
+	private static String vKeyForAdd( String key ){
+		
+		return key.toLowerCase();
+	}
+	
+	private static String vKey( String key ){
+		
+		if( ! hasOnlyLowerCaseAndUnderscore( key ) ){
+			
+			log.error( "wrong key format: '{}'", key );
+			key = key.toLowerCase();
+		}
+		
+		return key;
+		
+		/*
+		if( hasOnlyLowerCaseAndUnderscore( key ) ) return key;
+		
+		String newKey = key.toLowerCase();
+		
+		E.x( key );
+		log.warn( "Had to convert from '{}' to '{}'", key, newKey );
+		
+		return newKey;
+		*/
+	}
+	
+	private static String pKey( String key ){
+		
+		//return key;
+		return key.toLowerCase();
+	}
+	
+	private static boolean hasOnlyLowerCaseAndUnderscore( String value ){
+		
+		for( int i=0; i<value.length(); i++ ){
+			char c = value.charAt( i );
+			if( c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c == '_' ) continue;
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+	private static boolean hasOnlyAsciiLetterAndUnderscore( String value ){
+		
+		for( int i=0; i<value.length(); i++ ){
+			char c = value.charAt( i );
+			if( c >= 'a' && c <= 'z' || c>= 'A' && c <= 'Z' || c == '_' ) continue;
+			return false;
+		}
+		return true;
+	}
+	*/
+	
+	/**
+	 * ValueProvider can be used instead of direct value 
+	 * if the value is expensive to compute because it
+	 * is only computed lazily if needed.
+	 * 
+	 * @author flo
+	 *
+	 */
+	@FunctionalInterface
+	public interface ValueProvider {
+		public Object provide();
 	}
 
 }
