@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * </ul>
  * 
  * e.g.: <tt>getMyValue</tt> will convert to <tt>my_value</tt>
- * <tt>getTheZIPCode will be converted to <tt>get_zip_code</tt>
+ * <tt>getTheZIPCode</tt> will be converted to <tt>get_zip_code</tt>
  * 
  * @author flo
  */
@@ -63,7 +63,7 @@ public @interface Form {
 	 * Specifies the type which will be used to find matching
 	 * construction rules in FormValueFactory
 	 * 
-	 * @return
+	 * @return the type
 	 */
 	public String type() default "";
 	
@@ -72,14 +72,12 @@ public @interface Form {
 	 * 
 	 * Not that setters without getters is not possible by now
 	 * 
-	 * @return
+	 * @return true if only a getter is available
 	 */
 	public boolean ignoreMissingSetter() default false;
 	
 	/**
-	 * Option to specify in addition to type.
-	 * 
-	 * @return
+	 * @return Option to specify in addition to type.
 	 */
 	public String [] options() default "";
 	

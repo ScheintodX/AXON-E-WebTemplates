@@ -29,7 +29,7 @@ import de.axone.webtemplate.form.Translator;
  * 
  * Resources can be css or js files.
  * 
- * <h4>Parameters</h4>
+ * <em>Parameters</em>
  * 	
  * <dl>
  * 	<dt>src
@@ -56,7 +56,7 @@ import de.axone.webtemplate.form.Translator;
  *  <dd>base path to prepend to all media. Handling depends on 'combine'
  * </dl>
  * 
- * <h4>Examples</h4>
+ * <em>Examples</em>
  * 
  * <pre>
  * __resource src="main.css;print.css" media="print"__
@@ -70,12 +70,11 @@ import de.axone.webtemplate.form.Translator;
  * </pre>
  * results in:
  * <pre>
- * &lt;script type="text/javascript" src="/static/main.css?yui=no&nocache=32147981324" /&gt;
- * &lt;script type="text/javascript" src="/static/print/print.css?yui=no&nocache=32147981324" /&gt;
+ * &lt;script type="text/javascript" src="/static/main.css?yui=no&amp;nocache=32147981324" /&gt;
+ * &lt;script type="text/javascript" src="/static/print/print.css?yui=no&amp;nocache=32147981324" /&gt;
  * </pre>
  * 
  * @author flo
- *
  */
 public class ResourceFunction implements Function {
 	
@@ -109,7 +108,7 @@ public class ResourceFunction implements Function {
 	/**
 	 * @param mode
 	 * @param combine
-	 * @param type
+	 * @param cache
 	 * @param media
 	 * @param base
 	 * @param fsBase only needed for live fs ctime checks if mode==dev.

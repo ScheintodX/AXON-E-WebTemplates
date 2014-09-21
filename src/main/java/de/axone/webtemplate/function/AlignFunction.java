@@ -19,7 +19,7 @@ import de.axone.webtemplate.form.Translator;
  * The variable is not printed but formated. It has to be included
  * directly somewhere else to be printed
  * 
- * <h4>Parameters</h4>
+ * <em>Parameters</em>
  * 	
  * <dl>
  * 	<dt>align
@@ -32,7 +32,7 @@ import de.axone.webtemplate.form.Translator;
  *  <dd>the width of the variable. not truncated but expanded
  * </dl>
  * 
- * <h4>Examples</h4>
+ * <em>Examples</em>
  * 
  * <pre>
  * __align var="identifier" align="left" width="10"__

@@ -23,18 +23,16 @@ import de.axone.webtemplate.function.Function;
 public interface FunctionFactory {
 
 	/**
-	 * returns true if a function of this name is available
+	 * @return true if a function of this name is available
 	 * 
 	 * @param name
-	 * @return true if this 
 	 */
 	public boolean has( String name );
 	
 	/**
-	 * Returns the function of this name
+	 * @return the function of this name
 	 * 
 	 * @param name
-	 * @return
 	 */
 	public Function get( String name );
 	

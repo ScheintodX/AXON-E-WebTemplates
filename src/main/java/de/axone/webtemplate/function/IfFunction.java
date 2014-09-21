@@ -14,7 +14,7 @@ import de.axone.webtemplate.form.Translator;
 /**
  * Creates a condition for the rendering of following code
  * 
- * <h4>Parameters</h4>
+ * <em>Parameters</em>
  * 	
  * <dl>
  * 	<dt>condition
@@ -22,7 +22,7 @@ import de.axone.webtemplate.form.Translator;
  *  so they can be set via @Parameter in the template, too.
  * </dl>
  * 
- * <h4>Examples</h4>
+ * <em>Examples</em>
  * 
  * <pre>
  * __if condition="showList"__

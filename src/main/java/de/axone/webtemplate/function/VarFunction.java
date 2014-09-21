@@ -13,7 +13,7 @@ import de.axone.webtemplate.form.Translator;
 /**
  * Accesses a variable / value and preforms operations on it
  * 
- * <h4>Parameters</h4>
+ * <em>Parameters</em>
  * 	
  * <dl>
  * 	<dt>name
@@ -26,7 +26,7 @@ import de.axone.webtemplate.form.Translator;
  *  	</ul>
  * </dl>
  * 
- * <h4>Examples</h4>
+ * <em>Examples</em>
  * 
  * <pre>
  * __if condition="showList"__
@@ -35,7 +35,6 @@ import de.axone.webtemplate.form.Translator;
  * </pre>
  * 
  * @author flo
- *
  */
 public class VarFunction implements Function {
 	

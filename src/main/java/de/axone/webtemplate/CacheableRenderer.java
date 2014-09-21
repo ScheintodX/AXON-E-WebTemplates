@@ -26,7 +26,7 @@ public interface CacheableRenderer extends Renderer, HasCacheKey {
 	 * This is usefull for example if the template is only cacheable
 	 * in certain conditions.
 	 * 
-	 * @return
+	 * @return true if this is cachable
 	 */
 	public boolean cacheable();
 	
@@ -36,7 +36,7 @@ public interface CacheableRenderer extends Renderer, HasCacheKey {
 	 * For consistency this key shall be of the format aaa[.bbb[.ccc[...]]]
 	 * e.q. article.12345.picturelist
 	 * 
-	 * @return a cache key. For requirements {@see CacheNG.CacheKey}
+	 * @return a cache key. For requirements {@link de.axone.cache.ng.CacheNG.CacheKey}
 	 */
 	@Override
 	public Object cacheKey();

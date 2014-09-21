@@ -8,7 +8,7 @@ public interface WebTemplateProcessor {
 	 * This method is called before processing the template's data
 	 * 
 	 * @param data
-	 * @return
+	 * @return the processed data. or the original if no processing is needed
 	 */
 	public String preProcess( String data );
 	
@@ -16,7 +16,7 @@ public interface WebTemplateProcessor {
 	 * This method is called after all Processing is done
 	 * 
 	 * @param holder
-	 * @return
+	 * @return the processed DataHolder or the original one if no processing is needed
 	 */
 	public DataHolder postProcess( DataHolder holder );
 }

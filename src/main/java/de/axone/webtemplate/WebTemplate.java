@@ -78,9 +78,7 @@ public interface WebTemplate extends Renderer {
 	public Object getParameter( String name );
 	
 	/**
-	 * Return list of parameters' names
-	 * 
-	 * @return
+	 * @return list of parameters' names
 	 */
 	public Set<String> getParameterNames();
 

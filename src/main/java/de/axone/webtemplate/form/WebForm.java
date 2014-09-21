@@ -37,7 +37,7 @@ public interface WebForm {
 	 * 
 	 * In the std. implementation this is the classname
 	 * 
-	 * @return
+	 * @return the name
 	 */
 	public String getName();
 
@@ -52,9 +52,8 @@ public interface WebForm {
 		throws WebTemplateException;
 	
 	/**
-	 * Returns the FormValue for the given name
+	 * @return the FormValue for the given name
 	 * @param name
-	 * @return
 	 */
 	public FormValue<?> getFormValue( String name );
 	public void remFormValue( String name )
