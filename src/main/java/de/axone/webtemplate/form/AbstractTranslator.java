@@ -7,9 +7,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import de.axone.tools.S;
+import de.axone.tools.Str;
 
 public abstract class AbstractTranslator implements Translator {
 	
+	private static final char FS = ':';
 	private static final String NO_TEXT_FOR = "NO TEXT FOR: ";
 	
 	/**
@@ -19,7 +21,23 @@ public abstract class AbstractTranslator implements Translator {
 	 * @param text
 	 * @return
 	 */
-	protected abstract String getPlainTranslation( TranslationKey text );
+	protected abstract String getPlainTranslation( String key, String defaultValue );
+	
+	@Override
+	public boolean has( TranslationKey key ) {
+		
+		if( key == null ) return false;
+		
+		return getPlainTranslation( key.name(), null ) != null;
+	}
+	
+	@Override
+	public String translateDefault( String key, String defaultValue ) {
+	
+		if( key == null ) return defaultValue;
+		
+		return getPlainTranslation( key, defaultValue );
+	}
 
 	@Override
 	public String translate( TranslationKey key ) {
@@ -28,7 +46,10 @@ public abstract class AbstractTranslator implements Translator {
 		
 		String text = key.name();
 		
-		String [] parts = text.split( ":" );
+		// Shortcut for speed
+		if( ! Str.contains( text, FS ) ) return translate( key, (Map<String,String>)null );
+		
+		String [] parts = Str.splitFast( text, FS );
 		HashMap<String,String> params = new HashMap<String,String>();
 
 		String realText = parts[ 0 ];
@@ -58,7 +79,7 @@ public abstract class AbstractTranslator implements Translator {
 	public String translate( TranslationKey text, Map<String,String> arguments ) {
 		
 		// Let the backend translate
-		String result = getPlainTranslation( text );
+		String result = getPlainTranslation( text.name(), null );
 		
 		if( result == null ){
 			return NO_TEXT_FOR + '"' + text + '"';
@@ -66,10 +87,13 @@ public abstract class AbstractTranslator implements Translator {
 		
 		// Replace parameters
 		if( arguments != null ) {
+			
 			for( Map.Entry<String,String> entry : arguments.entrySet() ) {
+				
 				String pKey = entry.getKey();
 				String replaceMe = "###" + pKey + "###";
 				String replacement = arguments.get( pKey );
+				
 				result = result.replaceAll( replaceMe,
 						Matcher.quoteReplacement( replacement ) );
 			}
@@ -80,11 +104,13 @@ public abstract class AbstractTranslator implements Translator {
 
 	@Override
 	public String format( Number number ) {
+		
 		return number.toString();
 	}
 
 	@Override
 	public String format( int style, Date date ) {
+		
 		return DateFormat.getDateInstance( style ).format( date );
 	}
 

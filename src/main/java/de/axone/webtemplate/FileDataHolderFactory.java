@@ -50,7 +50,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		} else {
 			watcher = cache.fetch( file );
 			
-			if( !watcher.hasChanged() ) {
+			if( !watcher.haveChanged() ) {
 				result = cache.fetch( file ).getData();
 			} else {
 				result = instantiate( file );

@@ -5,9 +5,9 @@ import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 
 /**
- * Parses atribute strings
+ * Parses attribute Strings
  * 
- * Input format is <tt>tag att1="stringval" att2=intval att3</tt>
+ * Input format is <tt>tag att1="stringval" att2="intval" att3</tt>
  * 
  * This class is much faster than the Regex based one. But it contains
  * some strange errors and should be rewritten in terms of code clearity
@@ -19,23 +19,23 @@ import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
  */
 public abstract class AttributeParserByHand {
 	
-	public static AttributeMap parse( String tag ) throws ParserException {
+	public static AttributeMap parse( String term ) throws ParserException {
 		
 		//E.rr( tag );
 
 		AttributeMap result = new AttributeMap();
 		
-		int len = tag.length();
+		int len = term.length();
 
 		// Skip WS
 		int i =0;
-		for( ; i < len && isWhiteSpace( tag.charAt( i ) ); i++ );
+		for( ; i < len && isWhiteSpace( term.charAt( i ) ); i++ );
 		
 		// Tag name
 		StringBuilder name = new StringBuilder();
 		for( ; i < len ; i++ ) {
 
-			char ch = tag.charAt( i );
+			char ch = term.charAt( i );
 
 			if( ! isValidChar( ch ) ) break;
 			name.append( ch );
@@ -48,14 +48,14 @@ public abstract class AttributeParserByHand {
 		while( i < len ){ //Key-Val pair
 			
 			for( ; i < len; i++ ){ // Whitespace
-    			if( !isWhiteSpace( tag.charAt( i ) ) ) break;
+    			if( !isWhiteSpace( term.charAt( i ) ) ) break;
 			}
 			if( i == len ) break;
 			
 			attrName = new StringBuilder();
 			
 			for( ; i < len; i++ ){ // Name
-    			char ch = tag.charAt( i );
+    			char ch = term.charAt( i );
 				if( !isNameChar( ch ) ) break;
 				attrName.append( ch );
 			}
@@ -65,7 +65,7 @@ public abstract class AttributeParserByHand {
 			
 			boolean foundSep = false; // Sep+WS
 			for( ; i < len; i++ ){
-    			char ch = tag.charAt( i );
+    			char ch = term.charAt( i );
 				if( ch == '=' ) foundSep = true;
     			if( !isNameValSep( ch ) ) break;
 			}
@@ -74,22 +74,22 @@ public abstract class AttributeParserByHand {
 			char delimiterType = 'x';
 			if( foundSep ){
 				
-				if( isValueDelimiter( tag.charAt( i ) ) ){ // "
+				if( isValueDelimiter( term.charAt( i ) ) ){ // "
 					foundDel = true;
-					delimiterType = tag.charAt( i );
+					delimiterType = term.charAt( i );
 					i++;
 				}
 				
 				attrValue = new StringBuilder();
 				for( ; i < len; i++ ){ // Value
 					
-        			char ch = tag.charAt( i );
+        			char ch = term.charAt( i );
         			if( (foundDel && ch == delimiterType) || (!foundDel && !isValidInteger( ch ) ) ) break;
         			attrValue.append( ch );
 				}
 				
 				// Skip closing delimiter
-				if( foundDel && tag.charAt( i ) == delimiterType ) i++;
+				if( foundDel && term.charAt( i ) == delimiterType ) i++;
 				else if( foundDel ) throw new ParserException( "Missing closing delimiter" );
 			}
 			
@@ -107,7 +107,7 @@ public abstract class AttributeParserByHand {
     				if( foundDel ){
     					result.putString( attrNameStr, attrValueStr );
     				} else {
-    					result.putInt( attrNameStr, attrValueStr );
+    					result.putInteger( attrNameStr, attrValueStr );
     				}
     				attrValue=null;
     			}

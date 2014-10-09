@@ -100,10 +100,11 @@ public class WebFormTest {
 		}
 
 		@Override
-		protected String getPlainTranslation( TranslationKey text ) {
+		protected String getPlainTranslation( String key, String defaultValue ) {
+			
 			String result = null;
 			
-			if( VALIDATOR_IS_EMPTY.equals( text.name() ) ) result = "valisempty";
+			if( VALIDATOR_IS_EMPTY.equals( key ) ) result = "valisempty";
 			
 			return result;
 		}

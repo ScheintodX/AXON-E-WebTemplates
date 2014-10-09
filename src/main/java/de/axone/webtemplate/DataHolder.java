@@ -113,7 +113,7 @@ public final class DataHolder implements Serializable {
 		DataHolderKey dhKey;
 
 		if( attributes != null && attributes.size() > 1 ){
-			key = attributes.getAsString( AttributeParserByHand.TAG_NAME );
+			key = attributes.get( AttributeParserByHand.TAG_NAME );
 			dhKey = new DataHolderKey( key, attributes );
 		} else {
 			dhKey = new DataHolderKey( key, null );
@@ -250,7 +250,7 @@ public final class DataHolder implements Serializable {
 			Function function = null;
 			String functionName;
 			if( key.getAttributes() != null ){
-				functionName = key.getAttributes().getAsStringRequired( AttributeParserByHand.TAG_NAME );
+				functionName = key.getAttributes().getRequired( AttributeParserByHand.TAG_NAME );
 			} else {
 				functionName = key.getName();
 			}

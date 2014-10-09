@@ -73,8 +73,8 @@ public class DataHolderTest {
 			
 			if( ! holder.isRendering() ) return;
 			
-			out.write( "A:"+attributes.getAsIntRequired( "a" ) );
-			out.write( "B:"+attributes.getAsStringRequired( "b" ) );
+			out.write( "A:"+attributes.getIntegerRequired( "a" ) );
+			out.write( "B:"+attributes.getRequired( "b" ) );
 			out.write( "C:"+attributes.containsKey( "c" ) );
 		}
 		

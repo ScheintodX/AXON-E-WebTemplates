@@ -50,8 +50,8 @@ public class VarFunction implements Function {
 			HttpServletResponse response , AttributeMap attributes , Object value ,
 			Translator translator , ContentCache cache  ) throws Exception {
 		
-		String varName = attributes.getAsStringRequired( ATTRIBUTE_NAME ).trim();
-		String opStr = attributes.getAsStringRequired( ATTRIBUTE_OP ).trim();
+		String varName = attributes.getRequired( ATTRIBUTE_NAME ).trim();
+		String opStr = attributes.getRequired( ATTRIBUTE_OP ).trim();
 		
 		String var = holder.getParameter( varName );
 		

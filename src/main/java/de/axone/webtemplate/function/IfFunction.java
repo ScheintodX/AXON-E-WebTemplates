@@ -50,7 +50,7 @@ public class IfFunction implements Function {
 		if( "if".equals( name ) ){
 			
 			boolean not=true;
-			String conditionName = attributes.getAsStringRequired( ATTRIBUTE_CONDITION ).trim();
+			String conditionName = attributes.getRequired( ATTRIBUTE_CONDITION ).trim();
 			if( conditionName.length() > 0 && conditionName.charAt( 0 ) == '!' ){
 				not=false;
 				conditionName = conditionName.substring( 1 ).trim();

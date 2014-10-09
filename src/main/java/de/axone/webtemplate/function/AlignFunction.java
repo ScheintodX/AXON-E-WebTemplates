@@ -61,12 +61,12 @@ public class AlignFunction implements Function {
 			HttpServletResponse response , AttributeMap attributes , Object value , Translator translator , ContentCache cache 
 	) throws Exception {
 		
-		String varName = attributes.getAsStringRequired( ATTRIBUTE_VAR ).trim();
+		String varName = attributes.getRequired( ATTRIBUTE_VAR ).trim();
 		
-		String typeName = attributes.getAsString( ATTRIBUTE_ALIGN, "left" ).trim().toUpperCase();
+		String typeName = attributes.get( ATTRIBUTE_ALIGN, "left" ).trim().toUpperCase();
 		Align type = Align.valueOf( typeName );
 		
-		String widthName = attributes.getAsStringRequired( ATTRIBUTE_WIDTH ).trim();
+		String widthName = attributes.getRequired( ATTRIBUTE_WIDTH ).trim();
 		int width = Integer.parseInt( widthName );
 		
 		DataHolderItem item = holder.getItem( varName );

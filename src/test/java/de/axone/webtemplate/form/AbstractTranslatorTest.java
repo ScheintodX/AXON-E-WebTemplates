@@ -48,13 +48,14 @@ public class AbstractTranslatorTest {
 			Mapper.hashMap( "a", "A", "b", "B ###0###/###1###", "p", "P###0###P" );
 
 		@Override
-		protected String getPlainTranslation( TranslationKey text ) {
-			return translations.get( text.name() );
+		protected String getPlainTranslation( String key, String defaultValue ) {
+			String result = translations.get( key );
+			return result != null ? result : defaultValue;
 		}
 
 		@Override
 		public boolean has( TranslationKey text ) {
-			return getPlainTranslation( text ) != null;
+			return getPlainTranslation( text.name(), null ) != null;
 		}
 
 		@Override
@@ -66,6 +67,6 @@ public class AbstractTranslatorTest {
 		public String format( int style, Date date ) {
 			return ""+date.getTime();
 		}
-		
 	}
+	
 }

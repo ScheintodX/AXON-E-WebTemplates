@@ -154,29 +154,29 @@ public class ResourceFunction implements Function {
 		if( ! holder.isRendering() ) return;
 		
 		String tmp;
-		String pSrc = attributes.getAsStringRequired( ATTRIBUTE_SRC ).trim();
+		String pSrc = attributes.getRequired( ATTRIBUTE_SRC ).trim();
 		
-		String pId = attributes.getAsString( ATTRIBUTE_ID );
+		String pId = attributes.get( ATTRIBUTE_ID );
 		
 		Runmode pMode = this.mode;
-		tmp = attributes.getAsString( ATTRIBUTE_MODE );
+		tmp = attributes.get( ATTRIBUTE_MODE );
 		if( tmp != null ) pMode = Runmode.valueOf( tmp.trim() );
 		
 		boolean pCombine = this.combine;
-		tmp = attributes.getAsString( ATTRIBUTE_COMBINE );
+		tmp = attributes.get( ATTRIBUTE_COMBINE );
 		if( tmp != null ) pCombine = EasyParser.isYes( tmp );
 		
-		Type pType = Type.valueOf( attributes.getAsStringRequired( ATTRIBUTE_TYPE ) );
+		Type pType = Type.valueOf( attributes.getRequired( ATTRIBUTE_TYPE ) );
 		
 		Cache pCache = this.cache;
-		tmp = attributes.getAsString( ATTRIBUTE_CACHE );
+		tmp = attributes.get( ATTRIBUTE_CACHE );
 		if( tmp != null ) pCache = Cache.valueOf( tmp.trim() );
 		
-		String pMedia = attributes.getAsString( ATTRIBUTE_MEDIA, this.media );
+		String pMedia = attributes.get( ATTRIBUTE_MEDIA, this.media );
 		
 		String pBase = base;
 		if( pBase.endsWith( "/" ) ) pBase = pBase.substring( 0, pBase.length()-2 );
-		String pAddBase = attributes.getAsString( ATTRIBUTE_BASE );
+		String pAddBase = attributes.get( ATTRIBUTE_BASE );
 		if( pAddBase != null ){
 			if( pAddBase.startsWith( "/" ) ){
 				pBase = pAddBase;
