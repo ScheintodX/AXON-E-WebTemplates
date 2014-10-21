@@ -9,6 +9,7 @@ import java.io.Writer;
 
 import jodd.io.FileUtil;
 import jodd.lagarto.dom.jerry.Jerry;
+import de.axone.data.Charsets;
 import de.axone.tools.Text;
 
 
@@ -210,7 +211,7 @@ public abstract class JerrySlicer extends Slicer {
     	   
     public void save( File file ) throws IOException{
     	
-    	Writer f = new OutputStreamWriter( new FileOutputStream( file ), "utf-8" );
+    	Writer f = new OutputStreamWriter( new FileOutputStream( file ), Charsets.UTF8 );
     	f.write( out.toString() );
     	f.close();
     }

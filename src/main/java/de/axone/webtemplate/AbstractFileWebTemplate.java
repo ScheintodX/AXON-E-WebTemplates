@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.axone.cache.ng.CacheNoCache;
 import de.axone.cache.ng.RealmImpl;
-import de.axone.tools.FileDataWatcher;
+import de.axone.tools.watcher.FileDataWatcher;
 
 /**
  * Abstract Base Template for file based WebTemplates
@@ -16,7 +16,7 @@ import de.axone.tools.FileDataWatcher;
  * @author flo
  */
 public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
-
+	
 	public static final Logger log = LoggerFactory.getLogger( AbstractFileWebTemplate.class );
 
 	public AbstractFileWebTemplate() {}
@@ -42,9 +42,6 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 
 	public static class ParserException extends WebTemplateException {
 		
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 6465629139521270586L;
 		public ParserException( String message, Throwable t ){ super( message, t ); }
 		public ParserException( Throwable t ){ super( t ); }

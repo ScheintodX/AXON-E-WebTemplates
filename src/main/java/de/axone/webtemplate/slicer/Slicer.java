@@ -10,6 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.axone.data.Charsets;
 import de.axone.exception.Assert;
 import de.axone.tools.Mapper;
 import de.axone.webtemplate.WebTemplateException;
@@ -77,7 +78,7 @@ public abstract class Slicer {
 				try (
 					PrintWriter fOut = new PrintWriter(
 							new OutputStreamWriter(
-									new FileOutputStream( outFile ), "utf-8" ) );
+									new FileOutputStream( outFile ), Charsets.UTF8 ) );
 				) {
 					fOut.println( "@Class: " + clazz.getName() );
 					fOut.println( "@Source: " + master );

@@ -15,8 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import de.axone.cache.ng.CacheNG;
 import de.axone.cache.ng.CacheProvider;
-import de.axone.tools.FileDataWatcher;
+import de.axone.data.Charsets;
 import de.axone.tools.Slurper;
+import de.axone.tools.watcher.FileDataWatcher;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.slicer.Slicer;
 import de.axone.webtemplate.slicer.SlicerFactory;
@@ -119,7 +120,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 
 	private static String slurp( File file ) throws IOException {
 
-		Charset charset = Charset.forName( "UTF-8" );
+		Charset charset = Charsets.UTF8;
 		CharsetDecoder decoder = charset.newDecoder();
 		
 		try (

@@ -198,23 +198,6 @@ public final class DataHolder implements Serializable {
 		return parameters.get( pKey( key ) );
 	}
 
-	/*
-	public void clear() {
-		for( String key : getKeys() ) {
-
-			try {
-				DataHolderItem item = getItem( key );
-
-				if( item.getType() == DataHolderItemType.VAR )
-					item.setValue( null );
-
-			} catch( KeyException e ) {
-				e.printStackTrace(); // Never happens
-			}
-		}
-	}
-	*/
-
 	public DataHolder freshCopy() {
 		
 		LinkedList<DataHolderKey> cloneKeys = new LinkedList<DataHolderKey>( keys );

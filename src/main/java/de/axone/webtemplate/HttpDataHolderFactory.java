@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.axone.cache.ng.CacheNG;
-import de.axone.tools.HttpDataWatcher;
 import de.axone.tools.HttpUtil.HttpUtilResponse;
+import de.axone.tools.watcher.HttpDataWatcher;
 import de.axone.web.SuperURL;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 

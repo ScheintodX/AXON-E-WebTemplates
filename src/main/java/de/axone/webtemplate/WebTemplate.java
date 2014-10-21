@@ -2,6 +2,8 @@ package de.axone.webtemplate;
 
 import java.util.Set;
 
+import de.axone.webtemplate.converter.ConverterException;
+
 
 /**
  * Base class for generic WebTemplates.
@@ -58,6 +60,14 @@ import java.util.Set;
  *
  */
 public interface WebTemplate extends Renderer {
+	
+	/**
+	 * Set value in holder directly
+	 * 
+	 * @param name
+	 * @param object
+	 */
+	public void setValue( String name, Object object );
 
 	/**
 	 * Set a named parameter
@@ -68,7 +78,7 @@ public interface WebTemplate extends Renderer {
 	 * @param object The value
 	 */
 	public void setParameter( String name, Object object );
-
+	
 	/**
 	 * Get a named parameter
 	 *
@@ -81,13 +91,34 @@ public interface WebTemplate extends Renderer {
 	 * @return list of parameters' names
 	 */
 	public Set<String> getParameterNames();
+	
+	/**
+	 * @return an info for this template
+	 */
+	public WebTemplateInfo getInfo();
+	
 
 	/**
-	 * Reset the WebTemplate
-	 *
-	 * Since WebTemplates are cached and exist only once in the application the
-	 * <tt>reset</tt> method is called from the Factory whenever a WebTemplate
-	 * is delivered to the application.
+	 * Cast template to that class
+	 * 
+	 * This is a replacement for casting by parenteses which
+	 * does additional error reporting if it fails
+	 * 
+	 * @param clazz
+	 * @return the ca
 	 */
-	//public void reset();
+	public default <T extends WebTemplate> T expectIsInstanceOf( Class<T> clazz ){
+		try {
+			return clazz.cast( this );
+		} catch( ClassCastException e ){
+			ConverterException w = new ConverterException( e );
+			w.setInfo( getInfo() );
+			throw w;
+		}
+	}
+	
+	public interface WebTemplateInfo {
+		
+		public String getPath();
+	}
 }

@@ -10,8 +10,8 @@ import de.axone.cache.ng.CacheNG;
 import de.axone.cache.ng.CacheNoCache;
 import de.axone.cache.ng.RealmImpl;
 import de.axone.refactor.Refactor;
-import de.axone.tools.FileDataWatcher;
-import de.axone.tools.HttpDataWatcher;
+import de.axone.tools.watcher.FileDataWatcher;
+import de.axone.tools.watcher.HttpDataWatcher;
 import de.axone.web.SuperURL;
 import de.axone.webtemplate.slicer.SlicerFactory;
 

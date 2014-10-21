@@ -9,6 +9,8 @@ import de.axone.webtemplate.DataHolder.DataHolderItemType;
 
 public abstract class AbstractWebTemplate implements WebTemplate {
 	
+	private WebTemplateInfo info;
+	
 	protected DataHolder holder;
 	
 	protected Map<String,Object> parameters = new HashMap<String,Object>();
@@ -33,10 +35,17 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 	}
 
 	/* Parameters */
+	
+	@Override
+	public void setValue( String name, Object object ){
+		
+		holder.setValue( name, object );
+	}
 
 	@Override
 	public void setParameter( String name, Object object ) {
 		
+		//holder.setValue( name, object );
 		parameters.put( name, object );
 	}
 
@@ -52,20 +61,40 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 		return parameters.keySet();
 	}
 	
-	/*
+	
 	@Override
-	public void reset() {
-
-		parameters.clear();
-		holder.clear();
+	public WebTemplateInfo getInfo() {
+		return info;
 	}
-	*/
+	
+	public void setInfo( WebTemplateInfo info ){
+		this.info = info;
+	}
 
 	/**
 	 * Fill templates from parameters
 	 */
 	protected void autofill() {
+		
+		Set<String> hKeys = holder.getKeys();
+		
+		for( Map.Entry<String,Object> parameter : parameters.entrySet() ){
+			
+			String key = parameter.getKey();
+			
+			if( hKeys.contains( key ) ){
+				
+				DataHolderItem item = holder.getItem( key );
+				
+				if( item.getType() == DataHolderItemType.VAR ) {
+				
+					item.setValue( parameter.getValue() );
+				}
+			}
+			
+		}
 
+		/*
 		for( String key : holder.getKeys() ) {
 
 			try {
@@ -83,6 +112,7 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 				e.printStackTrace(); // Never happens
 			}
 		}
+		*/
 		
 	}
 
