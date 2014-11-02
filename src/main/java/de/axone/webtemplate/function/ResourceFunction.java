@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -132,7 +131,7 @@ public class ResourceFunction implements Function {
 		this( mode, combine, Cache.file, null, base, fsBase, rand );
 	}
 	
-	private static final Pattern SEPARATOR = Pattern.compile( "\\s*;\\s*" );
+	private static final char FS = ';';
 	
 	private long filetime( String path, String base ) throws IOException{
 		
@@ -152,6 +151,8 @@ public class ResourceFunction implements Function {
 	) throws Exception {
 		
 		if( ! holder.isRendering() ) return;
+		
+		// Parse Attributes
 		
 		String tmp;
 		String pSrc = attributes.getRequired( ATTRIBUTE_SRC ).trim();
@@ -187,13 +188,21 @@ public class ResourceFunction implements Function {
 		
 		pBase += "/";
 		
+		// Split src and build complete paths of it
 		
-		List<String> srcs = Arrays.asList( SEPARATOR.split( pSrc ) );
+		String [] srcs = Str.splitFastAndTrim( pSrc, FS );
 		
+		List<ResourceHolder> resources = new ArrayList<>( srcs.length );
+		
+		for( String src : srcs ){
+			
+			
+		}
 		
 		long newest = 0;
 		List<String> paths = new LinkedList<>();
 		if( pCombine ){
+			// find latest change
 			for( String src : srcs ){
 				long ft = filetime( pBase + src, base );
 				if( ft > newest ) newest = ft;
@@ -231,6 +240,8 @@ public class ResourceFunction implements Function {
 				break;
 			}
 			
+			// build tags according to type
+			
 			String tag;
 			switch( pType ){
 			case css: {
@@ -261,6 +272,18 @@ public class ResourceFunction implements Function {
 			out.write( tag );
 			out.write( S.NL );
 		}
+	}
+	
+	private class ResourceHolder {
+		
+		final String base;
+		final String path;
+		
+		ResourceHolder( String base, String path ){
+			this.base = base;
+			this.path = path;
+		}
+		
 	}
 
 }
