@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import de.axone.tools.EasyParser;
 import de.axone.webtemplate.AttributeMap;
 import de.axone.webtemplate.DataHolder;
+import de.axone.webtemplate.DataHolder.DataHolderItem;
 import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.Translator;
 
@@ -35,7 +36,8 @@ import de.axone.webtemplate.form.Translator;
  */
 public class IfFunction implements Function {
 	
-	public static final String ATTRIBUTE_CONDITION = "condition";
+	public static final String ATTRIBUTE_CONDITION = "condition",
+	                          ATTRIBUTE_HAS = "has";
 	
 	private IfFunction(){}
 	private static IfFunction instance = new IfFunction();
@@ -50,22 +52,53 @@ public class IfFunction implements Function {
 		if( "if".equals( name ) ){
 			
 			boolean not=true;
-			String conditionName = attributes.getRequired( ATTRIBUTE_CONDITION ).trim();
-			if( conditionName.length() > 0 && conditionName.charAt( 0 ) == '!' ){
-				not=false;
-				conditionName = conditionName.substring( 1 ).trim();
-			}
-			String condition = holder.getParameter( conditionName );
 			
-			if( EasyParser.isYes( condition ) ){
-				holder.setRendering( not );
+			// TODO: check if this is working
+			String hasName = attributes.get( ATTRIBUTE_HAS );
+			if( hasName != null ) {
+				
+				if( hasName.length() > 0 && hasName.charAt( 0 ) == '!' ){
+					not=false;
+					hasName = hasName.substring( 1 ).trim();
+				}
+				
+				DataHolderItem item = holder.getItem( hasName );
+				Object iVal = null;
+				String iStr = null;
+				if( item != null ) iVal = item.getValue();
+				if( iVal != null && iVal instanceof String ) iStr = (String)iVal;
+				
+				if( iVal != null && iVal != DataHolder.NOVAL && ( iStr == null || iStr.length() > 0 ) ){
+					holder.pushRendering( not );
+				} else {
+					holder.pushRendering( !not );
+				}
+			
 			} else {
-				holder.setRendering( !not );
+			
+				String conditionName = attributes.getRequired( ATTRIBUTE_CONDITION ).trim();
+				
+				if( conditionName.length() > 0 && conditionName.charAt( 0 ) == '!' ){
+					not=false;
+					conditionName = conditionName.substring( 1 ).trim();
+				}
+				
+				String condition = holder.getParameter( conditionName );
+				
+				if( EasyParser.isYes( condition ) ){
+					holder.pushRendering( not );
+				} else {
+					holder.pushRendering( !not );
+				}
 			}
+			
 		} else if( "endif".equals( name ) ){
-			holder.setRendering( true );
+			
+			holder.popRendering();
+			
 		} else if( "else".equals( name ) ){
-			holder.setRendering( ! holder.isRendering() );
+			
+			holder.toggleRendering();
 		}
 	}
 

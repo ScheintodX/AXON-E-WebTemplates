@@ -23,7 +23,7 @@ public abstract class AbstractListRenderer<T> implements Renderer {
 	
 	protected abstract Renderer itemTemplate( T item );
 
-	public AbstractListRenderer(HttpServletRequest request, String name, String defaultSort,
+	public AbstractListRenderer( HttpServletRequest request, String name, String defaultSort,
 			int itemsPerPage, ListProvider<T> listProvider ) {
 		
 		this( 

@@ -1,6 +1,7 @@
 package de.axone.webtemplate.form;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -37,6 +38,8 @@ public interface Translator {
 	
 	public String format( int style , Date date );
 	
+	public Locale locale();
+	
 	public static final Translator NO_TRANSLATOR = new AbstractTranslator(){
 
 		@Override
@@ -52,6 +55,11 @@ public interface Translator {
 		@Override
 		public String format( int style, Date date ) {
 			return ""+date.getTime();
+		}
+
+		@Override
+		public Locale locale() {
+			return Locale.US;
 		}
 		
 	};

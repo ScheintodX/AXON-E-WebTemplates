@@ -31,6 +31,8 @@ import de.axone.webtemplate.form.Translator;
  * &lt;&lt; 20 21 22 23 [24] 25 26 27 28 &gt;&gt;
  * &lt;&lt; 90 91 92 93 94 [95] 96 97 98 99 100 &gt;&gt;
  * &lt;&lt; 92 93 94 95 96 97 98 99 [100]
+ * 
+ * TODO: rel=first
  *
  * @author flo
  */
@@ -65,9 +67,11 @@ public class DefaultPager implements Pager {
 	/* Templates */
 	protected String leftContainer = "<div class=\"pager\">";
 	protected String rightContainer = "</div>";
-	protected Template leftTemplate = new Template( "<a href=\"__link__\">&lt;&lt;</a>" );
+	protected Template leftTemplate = new Template( "<a href=\"__link__\" rel=\"prev\">&lt;&lt;</a>" );
+	protected Template leftOfSelectedTemplate = new Template( "<a rel=\"prev\" href=\"__link__\">__no__</a>" );
 	protected Template selectedLeftTemplate = new Template( "<a class=\"active\">&lt;&lt;</a>" );
-	protected Template rightTemplate = new Template( "<a href=\"__link__\">&gt;&gt;</a>" );
+	protected Template rightTemplate = new Template( "<a href=\"__link__\" rel=\"next\">&gt;&gt;</a>" );
+	protected Template rightOfSelectedTemplate = new Template( "<a rel=\"next\" href=\"__link__\">__no__</a>" );
 	protected Template selectedRightTemplate = new Template( "<a class=\"active\">&gt;&gt;</a>" );
 	protected Template innerTemplate = new Template( "<a href=\"__link__\">__no__</a>" );
 	protected Template selectedTemplate = new Template( "<a class=\"active\">[__no__]</a>" );
@@ -159,9 +163,17 @@ public class DefaultPager implements Pager {
 
 		this.selectedLeftTemplate = new Template( selectedLeftTemplate );
 	}
+	public void setLeftOfSelectedTemplate( String leftOfSelectedTemplate ){
+
+		this.leftOfSelectedTemplate = new Template( leftOfSelectedTemplate );
+	}
 	public void setSelectedRightTemplate( String selectedRightTemplate ){
 
 		this.selectedRightTemplate = new Template( selectedRightTemplate );
+	}
+	public void setRightOfSelectedTemplate( String rightOfSelectedTemplate ){
+
+		this.rightOfSelectedTemplate = new Template( rightOfSelectedTemplate );
 	}
 	public void setInnerTemplate( String innerTemplate ){
 
@@ -171,7 +183,7 @@ public class DefaultPager implements Pager {
 
 		this.selectedTemplate = new Template( selectedTemplate );
 	}
-	public void setSkippedTemplalte( String skippedTemplate ){
+	public void setSkippedTemplate( String skippedTemplate ){
 
 		this.skippedTemplate = new Template( skippedTemplate );
 	}
@@ -250,6 +262,10 @@ public class DefaultPager implements Pager {
 			SuperURL nPageLink = makePageLink( request, p );
 			if( p == selectedPage ){
 				out.write( selectedTemplate.toString( p, printer, nPageLink ) );
+			} else if( p == selectedPage-1 ){
+				out.write( leftOfSelectedTemplate.toString( p, printer, nPageLink ) );
+			} else if( p == selectedPage+1 ){
+				out.write( rightOfSelectedTemplate.toString( p, printer, nPageLink ) );
 			} else {
 				out.write( innerTemplate.toString( p, printer, nPageLink ) );
 			}

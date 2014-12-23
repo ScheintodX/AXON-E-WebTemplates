@@ -118,6 +118,11 @@ public class WebFormTest {
 		public String format( int style, Date date ) {
 			return ""+date.getTime();
 		}
+
+		@Override
+		public Locale locale() {
+			return Locale.US;
+		}
 	}
 
 }

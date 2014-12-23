@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import de.axone.tools.EasyParser;
 import de.axone.tools.Mapper;
 import de.axone.tools.S;
 import de.axone.tools.Str;
@@ -85,6 +83,7 @@ public class ResourceFunction implements Function {
 	public static final String ATTRIBUTE_CACHE = "cache";
 	public static final String ATTRIBUTE_MEDIA = "media";
 	public static final String ATTRIBUTE_BASE = "base";
+	public static final String ATTRIBUTE_SYNC = "sync";
 	
 	public enum Runmode {
 		dev, live;
@@ -94,6 +93,9 @@ public class ResourceFunction implements Function {
 	}
 	public enum Cache {
 		yes, rand, file;
+	}
+	public enum Sync {
+		sync, defer, async
 	}
 	
 	private final Runmode mode;
@@ -154,24 +156,19 @@ public class ResourceFunction implements Function {
 		
 		// Parse Attributes
 		
-		String tmp;
 		String pSrc = attributes.getRequired( ATTRIBUTE_SRC ).trim();
 		
 		String pId = attributes.get( ATTRIBUTE_ID );
 		
-		Runmode pMode = this.mode;
-		tmp = attributes.get( ATTRIBUTE_MODE );
-		if( tmp != null ) pMode = Runmode.valueOf( tmp.trim() );
+		Runmode pMode = attributes.getEnum( Runmode.class, ATTRIBUTE_MODE, this.mode );
 		
-		boolean pCombine = this.combine;
-		tmp = attributes.get( ATTRIBUTE_COMBINE );
-		if( tmp != null ) pCombine = EasyParser.isYes( tmp );
+		boolean pCombine = attributes.getBoolean( ATTRIBUTE_COMBINE, this.combine );
 		
-		Type pType = Type.valueOf( attributes.getRequired( ATTRIBUTE_TYPE ) );
+		Type pType = attributes.getEnumRequired( Type.class, ATTRIBUTE_TYPE );
 		
-		Cache pCache = this.cache;
-		tmp = attributes.get( ATTRIBUTE_CACHE );
-		if( tmp != null ) pCache = Cache.valueOf( tmp.trim() );
+		Cache pCache = attributes.getEnum( Cache.class, ATTRIBUTE_CACHE, this.cache );
+		
+		Sync sync = attributes.getEnum( Sync.class, ATTRIBUTE_SYNC, Sync.sync );
 		
 		String pMedia = attributes.get( ATTRIBUTE_MEDIA, this.media );
 		
@@ -191,13 +188,6 @@ public class ResourceFunction implements Function {
 		// Split src and build complete paths of it
 		
 		String [] srcs = Str.splitFastAndTrim( pSrc, FS );
-		
-		List<ResourceHolder> resources = new ArrayList<>( srcs.length );
-		
-		for( String src : srcs ){
-			
-			
-		}
 		
 		long newest = 0;
 		List<String> paths = new LinkedList<>();
@@ -264,6 +254,7 @@ public class ResourceFunction implements Function {
 						"type", "text/javascript",
 						"src", path+ext
 				);
+				if( sync != Sync.sync ) args.put( sync.name(), sync.name() );
 				if( pId != null ) args.put( "id", pId.trim() );
 				tag = Tag.simple( "script", "", args );
 			} break;
@@ -274,6 +265,7 @@ public class ResourceFunction implements Function {
 		}
 	}
 	
+	/*
 	private class ResourceHolder {
 		
 		final String base;
@@ -285,5 +277,6 @@ public class ResourceFunction implements Function {
 		}
 		
 	}
+	*/
 
 }

@@ -4,6 +4,7 @@ import static org.testng.Assert.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.testng.annotations.Test;
@@ -66,6 +67,11 @@ public class AbstractTranslatorTest {
 		@Override
 		public String format( int style, Date date ) {
 			return ""+date.getTime();
+		}
+
+		@Override
+		public Locale locale() {
+			return Locale.US;
 		}
 	}
 	

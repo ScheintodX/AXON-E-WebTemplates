@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import de.axone.data.Label;
 import de.axone.tools.Text;
 import de.axone.web.SuperURL;
-import de.axone.web.SuperURL.FinalEncoding;
 import de.axone.web.SuperURLPrinter;
 import de.axone.web.encoding.Encoder;
 import de.axone.web.encoding.Encoder_Amp;
@@ -61,8 +60,7 @@ public final class DataHolder implements Serializable {
 
 	public static final String NOVAL = "";
 	
-	public static final SuperURLPrinter URL_PRINTER = SuperURLPrinter.MinimalEncoded
-			.finishFor( FinalEncoding.Attribute );
+	public static final SuperURLPrinter URL_PRINTER = SuperURLPrinter.ForAttribute;
 	
 	// List in proper order
 	private LinkedList<DataHolderKey> keys;
@@ -215,13 +213,21 @@ public final class DataHolder implements Serializable {
 		return clone;
 	}
 	
-	private boolean rendering = true;
+	private LinkedList<Boolean> renderingQueue = new LinkedList<>();
 
 	public boolean isRendering(){
-		return rendering;
+		return renderingQueue.size() == 0 || renderingQueue.getLast();
 	}
-	public void setRendering( boolean render ){
-		this.rendering = render;
+	public void pushRendering( boolean render ){
+		renderingQueue.addLast( render );
+	}
+	public void toggleRendering(){
+		if( renderingQueue.size() > 0 )
+				renderingQueue.addLast( ! renderingQueue.removeLast() );
+	}
+	public void popRendering(){
+		if( renderingQueue.size() > 0 )
+				renderingQueue.removeLast();
 	}
 
 	public void render( Object object, PrintWriter out, HttpServletRequest request,
@@ -254,7 +260,7 @@ public final class DataHolder implements Serializable {
 				DataHolderItem item = values.get( key.getName() );
 				Object value = item.getValue();
 				
-				if( rendering ){
+				if( isRendering() ){
 					
 					if( value != null && value instanceof ValueProvider ){
 						
@@ -563,22 +569,10 @@ public final class DataHolder implements Serializable {
 		}
 		
 		return key;
-		
-		/*
-		if( hasOnlyLowerCaseAndUnderscore( key ) ) return key;
-		
-		String newKey = key.toLowerCase();
-		
-		E.x( key );
-		log.warn( "Had to convert from '{}' to '{}'", key, newKey );
-		
-		return newKey;
-		*/
 	}
 	
 	private static String pKey( String key ){
 		
-		//return key;
 		return key.toLowerCase();
 	}
 	
