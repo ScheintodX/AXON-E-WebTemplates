@@ -55,8 +55,7 @@ public class WebTemplateFactory {
 	public WebTemplateFactory( 
 			CacheNG.Cache<File,FileDataWatcher<DataHolder>> fileCache, 
 			CacheNG.Cache<SuperURL,HttpDataWatcher<DataHolder>> httpCache,
-			SlicerFactory slicerFactory
-	){
+			SlicerFactory slicerFactory ){
 		
 		assert fileCache != null;
 		assert httpCache != null;

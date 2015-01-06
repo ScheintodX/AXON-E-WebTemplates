@@ -20,7 +20,7 @@ import de.axone.webtemplate.converter.impl.FloatConverter;
 import de.axone.webtemplate.converter.impl.IntegerConverter;
 import de.axone.webtemplate.converter.impl.LongConverter;
 import de.axone.webtemplate.converter.impl.ShortConverter;
-import de.axone.webtemplate.element.FormValueFactory;
+import de.axone.webtemplate.element.FormValueFactoryHeadshop;
 import de.axone.webtemplate.elements.impl.HtmlInputElement;
 import de.axone.webtemplate.form.Form.On;
 import de.axone.webtemplate.form.FormParser.FormField;
@@ -451,7 +451,7 @@ public class FormParserTest {
 		static final String MY_PUBLIC_CHAR_FIELD = "my_public_char_field";
 		static final String MY_PUBLIC_BOOLEAN_FIELD = "my_public_boolean_field";
 		
-		static FormValueFactory fvf = new FormValueFactory();
+		static FormValueFactoryHeadshop fvf = new FormValueFactoryHeadshop();
 		
 		TestWebForm() throws WebTemplateException{
 			

@@ -1,6 +1,7 @@
 package de.axone.webtemplate.form;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,6 +13,7 @@ import de.axone.webtemplate.validator.Validator;
 public interface FormValue<T> {
 
 	public void readValue( HttpServletRequest request );
+	public void readValue( Map<String, String> map );
 	
 	public void setHtmlInput( HtmlInput element );
 	public HtmlInput getHtmlInput();
@@ -25,5 +27,6 @@ public interface FormValue<T> {
 	public void addValidator( Validator<? super T> validator );
 	public boolean isValid();
 	public List<String> validate();
+
 	
 }

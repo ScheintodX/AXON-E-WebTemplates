@@ -1,10 +1,15 @@
 package de.axone.webtemplate.form;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import de.axone.web.rest.RestRequest;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.element.HtmlInput;
 
@@ -30,6 +35,19 @@ public interface WebForm {
 	 * @param request
 	 */
 	public void readFromRequest( HttpServletRequest request );
+	
+	/**
+	 * Initialize the WebForm with the values read from an http request
+	 * in json format.
+	 * 
+	 * The json has to be passed as paramter 'data'
+	 * 
+	 * @param request
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
+	 */
+	public void readFromJsonRequest( RestRequest request ) throws JsonParseException, JsonMappingException, IOException;
 
 	
 	/**

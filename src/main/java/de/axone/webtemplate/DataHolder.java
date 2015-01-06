@@ -60,7 +60,8 @@ public final class DataHolder implements Serializable {
 
 	public static final String NOVAL = "";
 	
-	public static final SuperURLPrinter URL_PRINTER = SuperURLPrinter.ForAttribute;
+	public static final SuperURLPrinter URL_PRINTER =
+			SuperURLPrinter.ForAttribute;
 	
 	// List in proper order
 	private LinkedList<DataHolderKey> keys;

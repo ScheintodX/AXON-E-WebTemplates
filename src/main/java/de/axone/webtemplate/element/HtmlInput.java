@@ -2,6 +2,7 @@ package de.axone.webtemplate.element;
 
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,7 @@ public interface HtmlInput {
 	public List<String> getMessages();
 	
 	public void initialize( HttpServletRequest request );
+	public void initialize( Map<String, String> map );
 	
 	public void setDecorator( Decorator renderer );
 	public void render( Object object , PrintWriter out , HttpServletRequest request , HttpServletResponse respone , Translator translator , ContentCache cache ) throws Exception;

@@ -1,5 +1,6 @@
 package de.axone.webtemplate.form;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,6 +8,12 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import de.axone.web.rest.RestRequest;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.element.HtmlInput;
 
@@ -36,6 +43,21 @@ public class WebFormImpl implements WebForm {
 		for( FormValue<?> value : connectorValues.values() ){
 
 			value.readValue( request );
+		}
+	}
+
+	@Override
+	public void readFromJsonRequest( RestRequest request ) throws JsonParseException, JsonMappingException, IOException {
+		
+		String data = request.getParameter( "data" );
+		
+		MapType type = TypeFactory.defaultInstance().constructMapType( HashMap.class, String.class, String.class );
+		
+		HashMap<String,String> map = request.mapper().readValue( data, type );
+		
+		for( FormValue<?> value : connectorValues.values() ){
+
+			value.readValue( map );
 		}
 	}
 

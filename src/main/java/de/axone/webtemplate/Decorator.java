@@ -12,9 +12,9 @@ import de.axone.webtemplate.form.Translator;
 
 public interface Decorator {
 
-	public void render( HtmlInput element , Object object , PrintWriter out , HttpServletRequest request ,
-			HttpServletResponse response , Translator translator ,
-			ContentCache cache , boolean isValid , List<String> messages  ) throws Exception;
+	public void render( HtmlInput element, Object object, PrintWriter out, HttpServletRequest request,
+			HttpServletResponse response, Translator translator,
+			ContentCache cache, boolean isValid, List<String> messages  ) throws Exception;
 
 	public String getStandardClass();
 }

@@ -76,6 +76,7 @@ import de.axone.webtemplate.form.Translator;
 public class ResourceFunction implements Function {
 	
 	public static final String ATTRIBUTE_SRC = "src";
+	public static final String ATTRIBUTE_RESOURCE = "resource";
 	public static final String ATTRIBUTE_ID = "id";
 	public static final String ATTRIBUTE_MODE = "mode";
 	public static final String ATTRIBUTE_COMBINE = "combine";
@@ -98,6 +99,7 @@ public class ResourceFunction implements Function {
 		sync, defer, async
 	}
 	
+	private final ResourceProvider provider;
 	private final Runmode mode;
 	private final boolean combine;
 	private final Cache cache;
@@ -107,6 +109,7 @@ public class ResourceFunction implements Function {
 	private final int rand;
 	
 	/**
+	 * @param provider
 	 * @param mode
 	 * @param combine
 	 * @param cache
@@ -115,9 +118,10 @@ public class ResourceFunction implements Function {
 	 * @param fsBase only needed for live fs ctime checks if mode==dev.
 	 * @param rand a random number used for nocache
 	 */
-	public ResourceFunction( Runmode mode, boolean combine,
+	public ResourceFunction( ResourceProvider provider, Runmode mode, boolean combine,
 			Cache cache, String media, String base, File fsBase, int rand ){
 		
+		this.provider = provider;
 		this.mode = mode;
 		this.combine = combine;
 		this.cache = cache;
@@ -127,20 +131,23 @@ public class ResourceFunction implements Function {
 		this.rand = rand;
 	}
 	
-	public ResourceFunction( Runmode mode, boolean combine,
+	public ResourceFunction( ResourceProvider provider, Runmode mode, boolean combine,
 			String base, File fsBase, int rand ){
 		
-		this( mode, combine, Cache.file, null, base, fsBase, rand );
+		this( provider, mode, combine, Cache.file, null, base, fsBase, rand );
 	}
 	
 	private static final char FS = ';';
 	
 	private long filetime( String path, String base ) throws IOException{
 		
+		if( path.startsWith( "//" ) ) return -1;
+		
 		String myPath = path;
 		if( myPath.startsWith( base ) ) {
 			myPath = myPath.substring( base.length() );
 		}
+		
 		File file = new File( fsBase, myPath );
 		FileTime ctime = Files.getLastModifiedTime( ( file.toPath() ) );
 		return ctime.toMillis()/1000;
@@ -156,7 +163,11 @@ public class ResourceFunction implements Function {
 		
 		// Parse Attributes
 		
-		String pSrc = attributes.getRequired( ATTRIBUTE_SRC ).trim();
+		String pSrc = attributes.get( ATTRIBUTE_SRC ),
+		       pResource = attributes.get( ATTRIBUTE_RESOURCE );
+		
+		if( pSrc == null && pResource == null )
+				throw new IllegalArgumentException( "Either 'src' or 'resource' must be set" );
 		
 		String pId = attributes.get( ATTRIBUTE_ID );
 		
@@ -186,6 +197,10 @@ public class ResourceFunction implements Function {
 		pBase += "/";
 		
 		// Split src and build complete paths of it
+		
+		if( pResource != null ){
+			pSrc = provider.get( pResource ) + ( pSrc != null ? ";"+pSrc : "" );
+		}
 		
 		String [] srcs = Str.splitFastAndTrim( pSrc, FS );
 		
@@ -265,18 +280,10 @@ public class ResourceFunction implements Function {
 		}
 	}
 	
-	/*
-	private class ResourceHolder {
+	@FunctionalInterface
+	public interface ResourceProvider {
 		
-		final String base;
-		final String path;
-		
-		ResourceHolder( String base, String path ){
-			this.base = base;
-			this.path = path;
-		}
-		
+		public String get( String name );
 	}
-	*/
 
 }

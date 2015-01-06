@@ -19,11 +19,13 @@ import de.axone.webtemplate.form.Translator;
 
 public class HtmlSelectElement extends AbstractHtmlInputElement {
 
-	private static String TAGNAME = "select";
+	private static final String TAGNAME = "select";
 
-	private static String ATTRIBUTE_NAME = "name";
-	private static String ATTRIBUTE_SIZE = "size";
-	private static String ATTRIBUTE_MULTIPLE = "multiple";
+	private static final String ATTRIBUTE_NAME = "name",
+	                            ATTRIBUTE_SIZE = "size",
+	                            ATTRIBUTE_MULTIPLE = "multiple";
+	
+	private static final String NOVAL = "";
 
 	private static List<String> ATTRIBUTES = Arrays.asList(ATTRIBUTE_NAME,
 			ATTRIBUTE_SIZE, ATTRIBUTE_MULTIPLE);
@@ -117,14 +119,14 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 	/*  ************** OptionRenderer *************** */
 
 	private class OptionRenderer implements Renderer {
-
+		
 		@Override
 		public void render( Object object , PrintWriter out , HttpServletRequest request ,
 				HttpServletResponse response , Translator translator , ContentCache cache  )
 				throws IOException, WebTemplateException, Exception {
 
 			for( Option option : options ) {
-
+				
 				String value = option.getValue();
 				String text = option.getText();
 				
@@ -138,9 +140,11 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 					text = translator.translate( TKey.dynamic( text.substring( 3, text.length()-3 ) ) );
 				}
 
+				if( value == null ) value = NOVAL;
+				
 				HtmlOptionElement optionElement = new HtmlOptionElement( value, text );
 				
-				if( value != null && value.equals(selected) ) {
+				if( value != NOVAL && value.equals(selected) ) {
 					optionElement.setSelected(true);
 				}else{
 					optionElement.setSelected(false);

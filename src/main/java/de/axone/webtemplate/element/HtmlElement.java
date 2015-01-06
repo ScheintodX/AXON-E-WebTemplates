@@ -3,6 +3,7 @@ package de.axone.webtemplate.element;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,9 +74,11 @@ public class HtmlElement implements Renderer {
 		out.write( getTagName() );
 
 		// Render attributes
-		for( String attributeName : attributes.keySet() ) {
+		for( Map.Entry<String,String> entry: attributes.entrySet() ){
 
-			String value = attributes.get( attributeName );
+			String attributeName = entry.getKey();
+			String value = entry.getValue();
+			
 			if( value != null ) {
 
 				out.write( ' ' );

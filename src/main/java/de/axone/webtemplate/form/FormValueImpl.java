@@ -2,6 +2,7 @@ package de.axone.webtemplate.form;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,6 +59,11 @@ public class FormValueImpl<T> implements FormValue<T> {
 	@Override
 	public void readValue( HttpServletRequest request ) {
 		htmlInput.initialize( request );
+	}
+	
+	@Override
+	public void readValue( Map<String,String> map ) {
+		htmlInput.initialize( map );
 	}
 
 	@Override

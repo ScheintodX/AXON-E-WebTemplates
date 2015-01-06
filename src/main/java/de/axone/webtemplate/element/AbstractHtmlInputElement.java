@@ -2,6 +2,7 @@ package de.axone.webtemplate.element;
 
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,16 @@ public abstract class AbstractHtmlInputElement extends HtmlElement implements Ht
 	public void initialize( HttpServletRequest request ) {
 		
 		String value = request.getParameter( getName() );
+
+		if( value != null ){
+			setValue( value );
+		}
+	}
+	
+	@Override
+	public void initialize( Map<String,String> map ) {
+		
+		String value = map.get( getName() );
 
 		if( value != null ){
 			setValue( value );

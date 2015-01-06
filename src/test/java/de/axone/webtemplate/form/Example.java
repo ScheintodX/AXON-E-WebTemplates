@@ -18,6 +18,7 @@ import de.axone.webtemplate.DataHolder;
 import de.axone.webtemplate.WebTemplate;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.converter.ConverterException;
+import de.axone.webtemplate.element.FormValueFactoryHeadshop;
 import de.axone.webtemplate.element.FormValueFactory;
 
 public class Example {
@@ -107,7 +108,7 @@ public class Example {
 		
 		public ExampleForm() throws WebTemplateException {
 			
-			FormValueFactory fvf = new FormValueFactory();
+			FormValueFactory fvf = new FormValueFactoryHeadshop();
 			
 			username = fvf.createInputTextValue( USERNAME, 16, false );
 			this.addFormValue( USERNAME, username );
