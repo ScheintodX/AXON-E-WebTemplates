@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,8 +18,6 @@ import de.axone.cache.ng.CacheHashMap;
 import de.axone.cache.ng.RealmImpl;
 import de.axone.web.TestHttpServletRequest;
 import de.axone.web.TestHttpServletResponse;
-import de.axone.webtemplate.DataHolder.DataHolderItem;
-import de.axone.webtemplate.DataHolder.DataHolderItemType;
 import de.axone.webtemplate.form.Translator;
 
 @Test( groups="webtemplate.webtemplate" )
@@ -35,7 +35,7 @@ public class WebTemplateTest {
 		StringWriter s = new StringWriter();
 		holder.render( null, new PrintWriter( s ), null, null, null, null );
 		
-		AutomatedFileWebTemplate template = new AutomatedFileWebTemplate( holder );
+		TestFileWebTemplate template = new TestFileWebTemplate( holder );
 		
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		request.setParameter( "name", "Hugo" );
@@ -66,9 +66,9 @@ public class WebTemplateTest {
 	
 	// Moved here because it is in no use but in this test
 	// And this test is good because it tests more WT functionality
-	private static final class AutomatedFileWebTemplate extends AbstractFileWebTemplate {
+	private static final class TestFileWebTemplate extends AbstractFileWebTemplate {
 		
-		public AutomatedFileWebTemplate( DataHolder holder ) {
+		public TestFileWebTemplate( DataHolder holder ) {
 			super( holder );
 		}
 		
@@ -77,22 +77,24 @@ public class WebTemplateTest {
 				HttpServletRequest request , HttpServletResponse response ,
 				Translator translator , ContentCache cache  ) throws WebTemplateException, IOException, Exception {
 			
-			for( String key : getHolder().getKeys() ){
+			DataHolder h = getHolder();
+			
+			// reduce from String->String[] to String->String bcause DataHolder can't handle Arrays.
+			Map<String,String[]> parameters = request.getParameterMap();
+			Map<String,String> flatParameters = new HashMap<>();
+			for( Map.Entry<String,String[]> entry : parameters.entrySet() ) {
 				
-				DataHolderItem value = getHolder().getItem( key );
-				
-				if( value.getType() == DataHolderItemType.VAR ){
-					
-					String parameter = request.getParameter( value.getName() );
-	    			if( parameter != null ){
-				
-	    				getHolder().setValue( key, parameter );
-	    			}
+				String key = entry.getKey();
+				String [] value = entry.getValue();
+				if( value.length > 0 ) {
+					flatParameters.put( key, value[ 0 ] );
 				}
 			}
 			
+			h.setValues( null, flatParameters );
+			
 			//response.getWriter().write( getHolder().render().toString() );
-			getHolder().render( object, out, request, response, translator, cache );
+			h.render( object, out, request, response, translator, cache );
 			
 		}
 		

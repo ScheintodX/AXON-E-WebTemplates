@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import de.axone.tools.EasyParser;
 import de.axone.webtemplate.AttributeMap;
 import de.axone.webtemplate.DataHolder;
-import de.axone.webtemplate.DataHolder.DataHolderItem;
 import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.Translator;
 
@@ -37,12 +36,12 @@ import de.axone.webtemplate.form.Translator;
 public class IfFunction implements Function {
 	
 	public static final String ATTRIBUTE_CONDITION = "condition",
-	                          ATTRIBUTE_HAS = "has";
+	                           ATTRIBUTE_HAS = "has";
 	
 	private IfFunction(){}
 	private static IfFunction instance = new IfFunction();
 	public static IfFunction instance(){ return instance; }
-
+	
 	@Override
 	public void render( String name , DataHolder holder , 
 			PrintWriter out , HttpServletRequest request ,
@@ -52,6 +51,7 @@ public class IfFunction implements Function {
 		if( "if".equals( name ) ){
 			
 			boolean not=true;
+			boolean render;
 			
 			// TODO: check if this is working
 			String hasName = attributes.get( ATTRIBUTE_HAS );
@@ -62,16 +62,12 @@ public class IfFunction implements Function {
 					hasName = hasName.substring( 1 ).trim();
 				}
 				
-				DataHolderItem item = holder.getItem( hasName );
-				Object iVal = null;
-				String iStr = null;
-				if( item != null ) iVal = item.getValue();
-				if( iVal != null && iVal instanceof String ) iStr = (String)iVal;
-				
-				if( iVal != null && iVal != DataHolder.NOVAL && ( iStr == null || iStr.length() > 0 ) ){
-					holder.pushRendering( not );
+				if( holder.hasValue( hasName ) ) {
+					
+					render = not;
+					
 				} else {
-					holder.pushRendering( !not );
+					render = !not;
 				}
 			
 			} else {
@@ -86,10 +82,16 @@ public class IfFunction implements Function {
 				String condition = holder.getParameter( conditionName );
 				
 				if( EasyParser.isYes( condition ) ){
-					holder.pushRendering( not );
+					render = not;
 				} else {
-					holder.pushRendering( !not );
+					render = !not;
 				}
+			}
+			
+			if( holder.isRendering() ) {
+				holder.pushRendering( render );
+			} else {
+				holder.pushRendering( false );
 			}
 			
 		} else if( "endif".equals( name ) ){

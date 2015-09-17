@@ -19,5 +19,9 @@ import de.axone.webtemplate.form.Translator;
  */
 public interface Function {
 
-	public void render( String name , DataHolder holder , PrintWriter out , HttpServletRequest request , HttpServletResponse response , AttributeMap attributes , Object value , Translator translator , ContentCache cache  ) throws Exception;
+	public void render( String name, DataHolder holder, PrintWriter out, HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator, ContentCache cache ) throws Exception;
+	
+	default boolean has(){
+		return true;
+	}
 }

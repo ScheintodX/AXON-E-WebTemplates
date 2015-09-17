@@ -7,6 +7,7 @@ public class PostalcodeValidator extends AbstractAlphaNumValidator {
 			="VALIDATOR_NO_VALID_POSTAL_CODE";
 	
 	public PostalcodeValidator( String pattern ){
+		
 		super( pattern, false );
 	}
 		

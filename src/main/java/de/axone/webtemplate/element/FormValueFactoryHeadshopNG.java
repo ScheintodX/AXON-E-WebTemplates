@@ -284,7 +284,7 @@ public class FormValueFactoryHeadshopNG extends AbstractFormValueFactory impleme
 		AjaxValidate ajaxValidate = new AjaxValidate();
 		ajaxValidate.email();
 		
-		FormValue<String> result = createInputTextValue( name, length, nullable, ajaxValidate );
+		FormValue<String> result = createInputTextValue( HtmlInputElement.InputType.EMAIL, name, length, nullable, ajaxValidate );
 		result.addValidator( new EMailValidator() );
 		return result;
 	}
@@ -293,6 +293,14 @@ public class FormValueFactoryHeadshopNG extends AbstractFormValueFactory impleme
 			boolean nullable, FormValue<?> other ) {
 		
 		FormValue<String> result = createInputTextValue( name, length, nullable );
+		result.addValidator( new EqualsValidator( other ) );
+		return result;
+	}
+	@Override
+	public FormValue<String> createInputRepeatEMailValue( String name, int length,
+			boolean nullable, FormValue<?> other ) {
+		
+		FormValue<String> result = createInputEMailValue( name, length, nullable );
 		result.addValidator( new EqualsValidator( other ) );
 		return result;
 	}
@@ -316,7 +324,7 @@ public class FormValueFactoryHeadshopNG extends AbstractFormValueFactory impleme
 		AjaxValidate ajaxValidate = new AjaxValidate();
 		ajaxValidate.phone();
 
-		FormValue<String> result = createInputTextValue( name, length,
+		FormValue<String> result = createInputTextValue( HtmlInputElement.InputType.TEL, name, length,
 				nullable, ajaxValidate );
 		
 		result.addValidator( new PhoneValidator() );
@@ -522,8 +530,6 @@ public class FormValueFactoryHeadshopNG extends AbstractFormValueFactory impleme
 		if( defaultAjaxValidate != null )
 			ajaxValidate.add( defaultAjaxValidate );
 		
-		//element.addClassAttribute( ajaxValidate.text() );
-
 		return result;
 	}
 
@@ -725,7 +731,8 @@ public class FormValueFactoryHeadshopNG extends AbstractFormValueFactory impleme
 	@Override
 	public FormValue<String> createTextareaTextValue( String name,
 			int length, int cols, int rows, boolean nullable ) {
-		return createTextareaTextValue( name, length, 60, 5, nullable, new AjaxValidate() );
+		
+		return createTextareaTextValue( name, length, cols, rows, nullable, new AjaxValidate() );
 	}
 	
 	@Override

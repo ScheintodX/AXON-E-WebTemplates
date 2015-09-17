@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.axone.webtemplate.DataHolder.DataHolderItem;
-import de.axone.webtemplate.DataHolder.DataHolderItemType;
+import de.axone.tools.E;
 
 public abstract class AbstractWebTemplate implements WebTemplate {
 	
@@ -45,7 +44,6 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 	@Override
 	public void setParameter( String name, Object object ) {
 		
-		//holder.setValue( name, object );
 		parameters.put( name, object );
 	}
 
@@ -67,53 +65,18 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 		return info;
 	}
 	
+	@Override
+	public WebTemplate print() {
+		E.x();
+		E.rr( info );
+		return this;
+	}
+	
 	public void setInfo( WebTemplateInfo info ){
 		this.info = info;
 	}
 
-	/**
-	 * Fill templates from parameters
-	 */
-	protected void autofill() {
-		
-		Set<String> hKeys = holder.getKeys();
-		
-		for( Map.Entry<String,Object> parameter : parameters.entrySet() ){
-			
-			String key = parameter.getKey();
-			
-			if( hKeys.contains( key ) ){
-				
-				DataHolderItem item = holder.getItem( key );
-				
-				if( item.getType() == DataHolderItemType.VAR ) {
-				
-					item.setValue( parameter.getValue() );
-				}
-			}
-			
-		}
-
-		/*
-		for( String key : holder.getKeys() ) {
-
-			try {
-				DataHolderItem item = holder.getItem( key );
-
-				if( item.getType() == DataHolderItemType.VAR ) {
-
-					if( parameters.containsKey( key ) ) {
-
-						item.setValue( parameters.get( key ) );
-					}
-				}
-
-			} catch( KeyException e ) {
-				e.printStackTrace(); // Never happens
-			}
-		}
-		*/
-		
+	public void autofill() {
+		getHolder().autofill( parameters );
 	}
-
 }

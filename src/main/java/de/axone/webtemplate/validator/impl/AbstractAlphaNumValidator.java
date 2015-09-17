@@ -29,6 +29,7 @@ public abstract class AbstractAlphaNumValidator extends AbstractValidator<String
 		
 		pattern = pattern.replaceAll( "a", "[a-zA-Z]" );
 		pattern = pattern.replaceAll( "n", "[0-9]" );
+		pattern = pattern.replaceAll( "x", "[a-zA-Z0-9]" );
 		if( ignoreWhitespace ){
 			pattern = pattern.replaceAll( " ", "\\\\s?" );
 		}

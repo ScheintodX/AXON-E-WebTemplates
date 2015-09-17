@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.tools.E;
 import de.axone.webtemplate.form.Translator;
 
 /**
@@ -47,6 +48,12 @@ public class EmptyWebTemplate implements WebTemplate {
 	@Override
 	public WebTemplateInfo getInfo() {
 		return () -> "EMPTY";
+	}
+
+	@Override
+	public WebTemplate print() {
+		E.rr( EmptyWebTemplate.class );
+		return this;
 	}
 
 }

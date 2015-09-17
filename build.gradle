@@ -44,6 +44,13 @@ compileJava {
 	options.forkOptions.executable = "javac"  
 }
 
+task setup {
+	dependsOn ':cleanEclipse'
+	dependsOn ':cleanEclipseWtp'
+	dependsOn ':eclipse'
+	dependsOn ':eclipseWtp'
+}
+
 dependencies {
 
 	compile project(':Tools')

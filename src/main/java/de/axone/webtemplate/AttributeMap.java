@@ -18,7 +18,8 @@ public class AttributeMap implements StringValueAccessor {
 	
 	private final Map<String,Object> m;
 	
-	public static final AttributeMap EMPTY = new AttributeMap( Collections.emptyMap() );
+	public static final AttributeMap EMPTY = new AttributeMap( 
+			Collections.unmodifiableMap( Collections.emptyMap() ) );
 	
 	AttributeMap(){
 		this( new HashMap<>() );
@@ -51,11 +52,19 @@ public class AttributeMap implements StringValueAccessor {
 	public void putInteger( String key, String value ){
 		m.put( key, Integer.valueOf( value ) );
 	}
+	public void putInt( String key, int value ){
+		m.put( key, value );
+	}
 	public boolean containsKey( String key ){
 		return m.containsKey( key );
 	}
 	
 	int size(){
 		return m.size();
+	}
+	
+	@Override
+	public String toString() {
+		return m.toString();
 	}
 }

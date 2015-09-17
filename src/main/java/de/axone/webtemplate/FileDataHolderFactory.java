@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import de.axone.cache.ng.CacheNG;
 import de.axone.cache.ng.CacheProvider;
 import de.axone.data.Charsets;
-import de.axone.tools.Slurper;
+import de.axone.file.Slurper;
 import de.axone.tools.watcher.FileDataWatcher;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.slicer.Slicer;
@@ -41,6 +41,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		
 		FileDataWatcher<DataHolder> watcher;
 		DataHolder result;
+		
 		if( !cache.isCached( file ) ) {
 
 			result = instantiate( file );
@@ -60,7 +61,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			}
 		}
 		
-		// Sliceer
+		// Slicer
 		if( slicerFactory != null ){
 			
 			// If has source
@@ -76,6 +77,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 				boolean run = false;
 				String timestampS = result.getParameter( DataHolder.P_TIMESTAMP );
 				if( timestampS != null ){
+					
 					long timestamp = Long.parseLong( timestampS );
 					long last = master.lastModified() / 1000;
 					if( last > timestamp ) run = true;
@@ -98,21 +100,30 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		return result.freshCopy();
 	}
 	
+	private static String fileInfo( File file ) {
+		
+		return file.getParentFile().getName().toUpperCase() + ": " + file.getName();
+	}
+	
 	static DataHolder instantiate( File file ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
-
+		
 		String data = slurp( file );
 		
-		DataHolder holder = instantiate( data );
+		DataHolder holder = instantiate( file.getPath(), data );
 		
-		holder.setParameter( DataHolder.P_FILE, file.getPath() );
-		if( holder.getParameter( DataHolder.P_TIMESTAMP  ) == null ){
-			holder.setParameter( DataHolder.P_TIMESTAMP, "" + file.lastModified()/1000 ); // 1s
+		holder.setSystemParameter( DataHolder.P_FILE, fileInfo( file ) );
+		holder.setSystemParameter( DataHolder.P_REAL_FILE, file.getAbsolutePath() );
+		
+		if( holder.getSystemParameter( DataHolder.P_TIMESTAMP ) == null ){
+			holder.setSystemParameter( DataHolder.P_TIMESTAMP, "" + file.lastModified()/1000 ); // 1s
 		}
 		
 		log.trace( "DataHolder for " + file + " created" );
+		
+		holder.fixValues();
 
 		return holder;
 

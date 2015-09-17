@@ -3,9 +3,12 @@ package de.axone.webtemplate;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.axone.data.Label;
+import de.axone.tools.Stack;
 import de.axone.tools.Text;
 import de.axone.web.SuperURL;
 import de.axone.web.SuperURLPrinter;
@@ -43,7 +47,6 @@ import de.axone.webtemplate.function.Function;
  * make stuff complicated
  *
  * @author flo
- * TODO: Die Sache mit dem HolderKey umbauen so dass die Attribute im DataHoderItem landen.
  */
 public final class DataHolder implements Serializable {
 	
@@ -55,99 +58,173 @@ public final class DataHolder implements Serializable {
 	                           PARAM_PROCESSOR = "Processor";
 	
 	public static final String P_FILE = "file",
+	                           P_REAL_FILE = "realfile",
 	                           P_TIMESTAMP = "timestamp",
-	                           P_SOURCE = "source";
+	                           P_SOURCE = "source",
+	                           P_TRUE = "true",
+	                           P_FALSE = "false";
+	
+	public static final String NOT_FOUND = "||";
 
 	public static final String NOVAL = "";
 	
 	public static final SuperURLPrinter URL_PRINTER =
 			SuperURLPrinter.ForAttribute;
-	
-	// List in proper order
-	private LinkedList<DataHolderKey> keys;
 
+	
+	// Source
+	private final String source;
+	
+	// Keys in use
+	// (needed for 'has')
+	private final Set<String> keys;
+	
+	// Items
+	private final List<DataHolderItem> items;
+
+	
 	// Values
-	private HashMap<String, DataHolderItem> values;
+	private Map<String, Object> values
+			= new HashMap<>();
 
-	// Parameters
-	private HashMap<String, String> parameters;
-
-	// Functions
-	//private HashMap<String, Function> functions;
-	// TOOD: serialization / ?
-	private FunctionFactory functions;
 	
-	DataHolder() {
-		this.keys = new LinkedList<DataHolderKey>();
-		this.values = new HashMap<String, DataHolderItem>();
-		this.parameters = new HashMap<String, String>();
-		this.functions = new SimpleFunctionFactory();
+	// Parameters from Template
+	private final Map<String, String> systemParameters;
+	
+	
+	// Parameters from User
+	private Map<String, String> parameters
+			= new HashMap<>();
+
+	
+	// Functions
+	// TOOD: serialization / ?
+	private FunctionFactory functions
+			= new SimpleFunctionFactory();
+	
+	
+	// isRendering Stack
+	private LinkedList<Boolean> isRenderingStack
+			= new LinkedList<>();
+	
+	
+	private boolean fixed = false;
+	
+	private final Throwable creator;
+	
+	public Throwable creator(){ return creator; }
+
+	
+	DataHolder( String source ) {
+		
+		this.creator = new Throwable();
+		
+		this.source= source;
+		this.keys = new HashSet<>();
+		this.items = new ArrayList<>();
+		this.systemParameters = new HashMap<>();
 	}
 
-	private DataHolder(LinkedList<DataHolderKey> keys,
-			HashMap<String, DataHolderItem> data,
-			HashMap<String, String> parameters ) {
-
+	
+	private DataHolder( String source,
+			Set<String> keys,
+			List<DataHolderItem> items,
+			Map<String, String> systemParameters ) {
+		
+		this.creator = new Throwable();
+		
 		this.keys = keys;
-		this.values = data;
-		this.parameters = parameters;
-		this.functions = new SimpleFunctionFactory();
+		this.source = source;
+		this.items = items;
+		this.systemParameters = systemParameters;
+		this.fixed = true;
 	}
 
+	
 	static int functionCount = 1;
 	void addValue( String key, String value, DataHolderItemType type, boolean translate )
 			throws ParserException {
 		
-		AttributeMap attributes = null;
+		if( fixed ) throw new IllegalStateException( "try to add to fixed collection" );
+		
+		AttributeMap attributes = AttributeMap.EMPTY;
 		DataHolderEncodingType encoding = null;
 		if( type == DataHolderItemType.VAR ){
 			encoding = DataHolderEncodingType.matching( key );
 			if( encoding.mustBeTrimmed() ){
 				key = key.substring( 1, key.length()-1 );
 			}
-
     		attributes = AttributeParserByHand.parse( key );
 		}
 
-		DataHolderKey dhKey;
-
-		if( attributes != null && attributes.size() > 1 ){
+		if( attributes.size() > 1 ){
+			
 			key = attributes.get( AttributeParserByHand.TAG_NAME );
-			dhKey = new DataHolderKey( key, attributes );
-		} else {
-			dhKey = new DataHolderKey( key, null );
 		}
 		
 		key = vKeyForAdd( key );
-
-		keys.add( dhKey );
-
-		if( ! values.containsKey( key ) ) {
-
-			values.put( dhKey.getName(), new DataHolderItem( key, value, type, encoding, null, translate ) );
-		}
-	}
-
-	public void setValue( String key, ValueProvider value ) {
-		setValue( key, (Object)value );
+		
+		DataHolderItem item = new DataHolderItem( key, type, encoding, translate, attributes, value );
+		
+		keys.add( key );
+		items.add( item );
 	}
 	
-	public void setValue( String key, Object value ) {
+	
+	public void fixValues(){
+		fixed = true;
+	}
+	
+	/**
+	 * set value using an value provider
+	 * 
+	 * This method is sugar in order to make closures work naturally
+	 * 
+	 * @param key
+	 * @param value
+	 * @return self
+	 */
+	public DataHolder setValue( String key, ValueProvider value ) {
+		
+		setValue( key, (Object)value );
+		
+		return this;
+	}
+	
+	
+	/**
+	 * Set value
+	 * 
+	 * @param key
+	 * @param value
+	 * @return self
+	 */
+	public DataHolder setValue( String key, Object value ) {
 		
 		key = vKey( key );
-
-		if( values.containsKey( key ) ) {
-			values.get( key ).setValue( value );
-		}
+		
+		if( value == null ) value = NOVAL;
+		
+		values.put( key, value );
+		
+		return this;
 	}
 
-	public void setValues( String basename, Map<String,? extends Object> values ) {
+	
+	/**
+	 * Set more than one value
+	 * 
+	 * @param basename
+	 * @param values
+	 * @return self
+	 */
+	public DataHolder setValues( String basename, Map<String,? extends Object> values ) {
 		
-		basename = vKey( basename );
+		basename = basename == null ? null: vKey( basename );
 
 		for( Map.Entry<String,? extends Object> entry : values.entrySet() ){
 			
-			String key = vKey( entry.getKey() );
+			String key = entry.getKey();
 
 			String name;
 			if( basename == null ) {
@@ -158,108 +235,189 @@ public final class DataHolder implements Serializable {
 			}
 			setValue( name, entry.getValue() );
 		}
+		
+		return this;
 	}
 	
-	public void setFunctionFactory( FunctionFactory factory ){
-		this.functions = factory;
-	}
-	public void setFunction( String key, Function function ) {
-		functions.add( vKey( key ), function );
-	}
-
-	public DataHolderItem getItem( String key ) throws KeyException {
+	/**
+	 * Fill from templates parameters
+	 * @param parameters 
+	 * @Deprecated --> Remove this shit
+	 */
+	public void autofill( Map<String,? extends Object> parameters ) {
 		
-		key = vKey( key );
-
-		if( values.containsKey( key ) ) {
-			return values.get( key );
-		} else
-			throw new KeyException( "Doesn't contain: " + key );
-	}
-
-	public boolean has( String key ) {
-		return values.containsKey( vKey( key ) );
-	}
-
-	public Set<String> getKeys() {
-		return values.keySet();
-	}
-
-	public List<DataHolderKey> getFullKeys(){
-		return keys;
-	}
-
-	public void setParameter( String key, String value ) {
-		parameters.put( pKey( key ), value );
-	}
-
-	public String getParameter( String key ) {
-		return parameters.get( pKey( key ) );
-	}
-
-	public DataHolder freshCopy() {
-		
-		LinkedList<DataHolderKey> cloneKeys = new LinkedList<DataHolderKey>( keys );
-		
-		HashMap<String, DataHolderItem> cloneData = new HashMap<String, DataHolderItem>();
-		for( String key : values.keySet() ) {
-			cloneData.put( key, values.get( key ).freshCopy() );
+		for( Map.Entry<String,? extends Object> entry : parameters.entrySet() ){
+			
+			String key = entry.getKey();
+			
+			setValue( key, entry.getValue() );
 		}
 		
-		HashMap<String, String> cloneParameters = new HashMap<String, String>( parameters );
+	}
 
-		DataHolder clone = new DataHolder(
-				cloneKeys, cloneData, cloneParameters );
-
-		return clone;
+	
+	public DataHolder setFunctionFactory( FunctionFactory factory ){
+		this.functions = factory;
+		return this;
 	}
 	
-	private LinkedList<Boolean> renderingQueue = new LinkedList<>();
+	
+	public DataHolder setFunction( String key, Function function ) {
+		functions.add( vKey( key ), function );
+		return this;
+	}
+	
+	
+	public boolean hasValue( String key ){
+		
+		// Value
+		Object value = values.get( vKey( key ) );
+		
+		if( value != null && value != NOVAL ) {
+			
+			if( value instanceof String ){
+				return ((String)value).length() > 0;
+			}
+			
+			return true;
+		}
+		return functions.has( vKey( key ) );
+	}
 
+	
+	@Deprecated
+	public DataHolderItem getItem( String key ) throws KeyException {
+		
+		String vKey = vKey( key );
+		
+		return items.stream()
+				.filter( item -> item.getName().equals( vKey ) )
+				.findFirst()
+				.get();
+	}
+
+	
+	public boolean has( String key ) {
+		
+		return keys.contains( vKey( key ) );
+	}
+	
+	
+	public Object getValue( String key ) {
+		
+		return values.get( vKey( key ) );
+	}
+
+
+	// For tests
+	Set<String> getKeys() {
+		
+		return Collections.unmodifiableSet( keys );
+	}
+	
+	protected String getSystemParameter( String key ){
+		
+		return systemParameters.get( pKey( key ) );
+	}
+	
+	protected void setSystemParameter( String key, String value ){
+		
+		if( fixed ) throw new IllegalStateException( "try to add to fixed collection" );
+
+		systemParameters.put( pKey( key ), value );
+	}
+
+	
+	public DataHolder setParameter( String key, String value ) {
+		
+		parameters.put( pKey( key ), value );
+		
+		return this;
+	}
+
+	
+	public String getParameter( String key ) {
+		
+		String result = parameters.get( pKey( key ) );
+		
+		if( result == null ) result = systemParameters.get( pKey( key ) );
+		
+		return result;
+	}
+
+	
+	public DataHolder freshCopy() {
+		
+		return new DataHolder( source, keys, items, systemParameters );
+	}
+	
+	
 	public boolean isRendering(){
-		return renderingQueue.size() == 0 || renderingQueue.getLast();
+		
+		return isRenderingStack.size() == 0 || isRenderingStack.getLast();
 	}
+	
 	public void pushRendering( boolean render ){
-		renderingQueue.addLast( render );
+		
+		isRenderingStack.addLast( render );
 	}
+	
 	public void toggleRendering(){
-		if( renderingQueue.size() > 0 )
-				renderingQueue.addLast( ! renderingQueue.removeLast() );
+		
+		if( isRenderingStack.size() == 0 ) throw new IllegalStateException( "No rendering stack" );
+		
+		isRenderingStack.addLast( ! isRenderingStack.removeLast() );
 	}
+	
 	public void popRendering(){
-		if( renderingQueue.size() > 0 )
-				renderingQueue.removeLast();
+		
+		if( isRenderingStack.size() == 0 ) throw new IllegalStateException( "No rendering stack" );
+		
+		isRenderingStack.removeLast();
 	}
-
+	
 	public void render( Object object, PrintWriter out, HttpServletRequest request,
 			HttpServletResponse response, Translator translator, ContentCache cache )
 	throws IOException, WebTemplateException, Exception {
 		
-		for( DataHolderKey key : keys ) {
-
+		for( DataHolderItem item : items ) {
+			
+			String key = item.getName();
+			
+			if( key == "creator" ) {
+				
+				Stack.print( out, creator );
+			}
+			
 			Function function = null;
-			String functionName;
-			if( key.getAttributes() != null ){
-				functionName = key.getAttributes().getRequired( AttributeParserByHand.TAG_NAME );
-			} else {
-				functionName = key.getName();
-			}
-			if( functions.has( functionName ) ){
-				function = functions.get( functionName );
-			}
-			if( key.getAttributes() != null ){
-    			function = functions.get( functionName );
-			}
-			if( function != null ){
-				if( key.getAttributes() != null ){
-    				function.render( functionName, this, out, request, response, key.getAttributes(), object, translator, cache );
-				} else {
-					function.render( functionName, this, out, request, response, AttributeMap.EMPTY, object, translator, cache );
+			
+			if( item.getAttributes().size() > 1 || functions.has( key ) ){
+				
+				try {
+					function = functions.get( key );
+				} catch( Throwable t ) {
+					throw new RenderException( "Problem rendering in key: " + key, t );
 				}
+			}
+			
+			if( function != null ){
+				
+				try {
+					function.render( key, this, out, request, response, item.getAttributes(), object, translator, cache );
+				} catch( Throwable t ) {
+					throw new RenderException( "Problem rendering in function: " + function.getClass() + " in key: " + key, t );
+				}
+				
 			} else {
 				
-				DataHolderItem item = values.get( key.getName() );
-				Object value = item.getValue();
+				Object value;
+				if( item.getType() == DataHolderItemType.VAR ){
+					value = values.get( key );
+					if( value == null ) value = systemParameters.get( key );
+					if( value == null ) value = NOT_FOUND + key + NOT_FOUND;
+				} else {
+					value = item.getValue();
+				}
 				
 				if( isRendering() ){
 					
@@ -267,7 +425,7 @@ public final class DataHolder implements Serializable {
 						
 						value = ( (ValueProvider) value ).provide();
 					}
-	
+					
 					if( value != null ) {
 		
 						// ==== RENDERER ====
@@ -316,7 +474,6 @@ public final class DataHolder implements Serializable {
 							out.write( ((Label)value).label() );
 							
 						// ==== STRING / OBJECT  ====
-							
 						} else {
 							
 							String stringValue;
@@ -351,34 +508,37 @@ public final class DataHolder implements Serializable {
 		}
 	}
 
+	
 	@Override
 	public String toString() {
 
 		StringBuilder builder = new StringBuilder();
+		
 		@SuppressWarnings( "resource" )
 		Formatter formatter = new Formatter( builder );
 
-		builder.append( "KEYS:\n" );
+		builder.append( "ITEMS:\n" );
 		builder.append( Text.line( 79 ) + "\n" );
-		for( DataHolderKey key : keys ) {
+		for( DataHolderItem item : items ) {
 
-			formatter.format( "%s\n", key );
+			formatter.format( "%s: %s (%s)\n",
+					item.getName(), values.get( item.getName() ), item.toString() );
 		}
 
 		builder.append( "\nPARAMETERS:\n" );
+		builder.append( Text.line( 79 ) + "\n" );
+		for( String key : systemParameters.keySet() ) {
+			
+			String name = systemParameters.get( key );
+			formatter.format( "%s: %s\n", key, name );
+		}
+		
+		builder.append( "\nUSER PARAMETERS:\n" );
 		builder.append( Text.line( 79 ) + "\n" );
 		for( String key : parameters.keySet() ) {
 			
 			String name = parameters.get( key );
 			formatter.format( "%s: %s\n", key, name );
-		}
-		
-		builder.append( "\nVALUES:\n" );
-		builder.append( Text.line( 79 ) + "\n" );
-		for( String key : values.keySet() ){
-			
-			DataHolderItem item = values.get( key );
-			formatter.format( "%s: %s\n", key, item );
 		}
 		
 		builder.append( "\nFUNCTIONS:\n" );
@@ -388,11 +548,13 @@ public final class DataHolder implements Serializable {
 		return builder.toString();
 	}
 
+	
 	enum DataHolderItemType implements Serializable {
 
 		TEXT, VAR;
 	}
 
+	
 	static enum DataHolderEncodingType {
 
 		none('(',')', null ),
@@ -435,124 +597,64 @@ public final class DataHolder implements Serializable {
 		}
 	};
 
+	
 	public static class DataHolderItem implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 	
-		private String name;
-		private Object value;
-		private DataHolderItemType type;
-		private boolean translate;
-		private DataHolderEncodingType encoding;
-		private HashMap<String,Object> attributes;
+		private final String name;
+		private final DataHolderItemType type;
+		private final boolean translate;
+		private final DataHolderEncodingType encoding;
+		private final AttributeMap attributes;
+		private final String value;
 
-		public DataHolderItem(String name, Object value,
-				DataHolderItemType type, DataHolderEncodingType encoding, HashMap<String,Object> attributes , boolean translate) {
-
-			setEncoding( encoding );
-			setName( name );
-			setValue( value );
-			setType( type );
-			setAttributes( attributes );
-			setTranslate( translate );
+		public DataHolderItem(
+				String name,
+				DataHolderItemType type,
+				DataHolderEncodingType encoding,
+				boolean translate,
+				AttributeMap attributes,
+				String value
+		) {
+			this.encoding = encoding;
+			this.name = name;
+			this.type = type;
+			this.translate = translate;
+			this.attributes = attributes;
+			this.value = value;
 		}
 
 		public String getName() {
 			return name;
-		}
-
-		public void setName( String name ) {
-			this.name = name;
-		}
-
-		public Object getValue() {
-			return value;
-		}
-
-		public void setValue( Object value ) {
-			this.value = value;
 		}
 
 		public DataHolderItemType getType() {
 			return type;
 		}
 
-		public void setType( DataHolderItemType type ) {
-			this.type = type;
-		}
-
 		public DataHolderEncodingType getEncoding() {
 			return encoding;
-		}
-
-		public void setEncoding( DataHolderEncodingType encoding ) {
-			this.encoding = encoding;
-		}
-
-		public HashMap<String, Object> getAttributes() {
-			return attributes;
-		}
-
-		public void setAttributes( HashMap<String, Object> attributes ) {
-			this.attributes = attributes;
-		}
-
-		public boolean isTranslate() {
-			return translate;
-		}
-
-		public void setTranslate( boolean translate ) {
-			this.translate = translate;
-		}
-
-		@Override
-		public String toString() {
-			return name + ": " + value + " (" + type + ")";
-		}
-
-		public DataHolderItem freshCopy() {
-
-			return new DataHolderItem( name, value, type, encoding, attributes, translate );
-		}
-	}
-
-	public static class DataHolderKey implements Serializable {
-
-		private static final long serialVersionUID = 1L;
-		
-		String name;
-		AttributeMap attributes;
-
-		DataHolderKey( String name, AttributeMap attributes ){
-			this.name = vKey( name );
-			this.attributes = attributes;
-		}
-
-		@Override
-		public int hashCode(){
-
-			int hashCode = name.hashCode();
-
-			if( attributes != null ){
-				hashCode ^= attributes.hashCode();
-			}
-
-			return hashCode;
-		}
-
-		public String getName() {
-			return name;
 		}
 
 		public AttributeMap getAttributes() {
 			return attributes;
 		}
+		
+		public boolean isTranslate() {
+			return translate;
+		}
+		
+		public String getValue() {
+			return value;
+		}
 
 		@Override
 		public String toString() {
-			return "DataHolderKey [name=" + name + ", attributes=" + attributes + "]";
+			return name + " " + " (" + type + ")";
 		}
 	}
+
 	
 	// HELPER
 	
@@ -560,6 +662,7 @@ public final class DataHolder implements Serializable {
 		
 		return key.toLowerCase();
 	}
+	
 	
 	private static String vKey( String key ){
 		
@@ -572,10 +675,12 @@ public final class DataHolder implements Serializable {
 		return key;
 	}
 	
+	
 	private static String pKey( String key ){
 		
 		return key.toLowerCase();
 	}
+	
 	
 	private static boolean hasOnlyLowerCaseAndUnderscore( String value ){
 		
@@ -587,29 +692,30 @@ public final class DataHolder implements Serializable {
 		return true;
 	}
 	
-	/*
-	private static boolean hasOnlyAsciiLetterAndUnderscore( String value ){
-		
-		for( int i=0; i<value.length(); i++ ){
-			char c = value.charAt( i );
-			if( c >= 'a' && c <= 'z' || c>= 'A' && c <= 'Z' || c == '_' ) continue;
-			return false;
-		}
-		return true;
-	}
-	*/
-	
 	/**
 	 * ValueProvider can be used instead of direct value 
 	 * if the value is expensive to compute because it
 	 * is only computed lazily if needed.
 	 * 
 	 * @author flo
-	 *
 	 */
 	@FunctionalInterface
 	public interface ValueProvider {
+		
 		public Object provide();
+	}
+	
+	public class RenderException extends RuntimeException {
+		
+		public RenderException( String message, Throwable cause ) {
+			super( message, cause );
+		}
+		
+		@Override
+		public String getMessage() {
+			return super.getMessage() + " in: " + source;
+		}
+		
 	}
 
 }

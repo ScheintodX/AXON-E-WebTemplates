@@ -107,7 +107,7 @@ public class FormParser<T> {
 			
 			if( isFormable( formable, event ) ){
 				
-				if( err != null ) throw new FormParserException( err + ": " + cls.getSimpleName() + "." + method.getName() );
+				if( err != null ) throw new FormParserException( err + ": " + cls.getSimpleName() + '.' + method.getName() );
 				
 				return true;
 			} else {

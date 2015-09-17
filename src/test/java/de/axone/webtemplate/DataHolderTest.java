@@ -1,11 +1,13 @@
 package de.axone.webtemplate;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.testng.Assert.*;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,15 +27,15 @@ public class DataHolderTest {
 	public void testFactory() throws Exception {
 		
 		File tmp = File.createTempFile( "template", ".xhtml" );
-		PrintWriter out = new PrintWriter( new FileWriter( tmp ) );
+		try( PrintWriter out = new PrintWriter( new FileWriter( tmp ) ); ) {
 		
-		out.println();
-		out.println( "@Name: TestTemplate" );
-		out.println( "@Class: de.axon.shop.webtemplate.TestWebTemplate" );
-		out.println();
-		out.println( "__var1__x__var2__-__func a=123 b='abc' c__!=__func a=456 b=\"def\" d__" );
-		
-		out.close();
+			out.println();
+			out.println( "@Name: TestTemplate" );
+			out.println( "@Class: de.axon.shop.webtemplate.TestWebTemplate" );
+			out.println( "@var3: V3" );
+			out.println();
+			out.println( "__var1__x__var2__x__var3__-__func a=123 <!==b \ncomment==>b='abc' c__!=__func a=456 b=\"def\" d__" );
+		}
 		
 		DataHolder holder = FileDataHolderFactory.instantiate( tmp );
 		
@@ -41,26 +43,33 @@ public class DataHolderTest {
 		
 		assertEquals( holder.getParameter( "name" ), "TestTemplate" );
 		assertEquals( holder.getParameter( "cLass" ), "de.axon.shop.webtemplate.TestWebTemplate" );
-		assertEquals( holder.getKeys().size(), 6 );
-		assertTrue( holder.getKeys().contains( "var1" ) );
-		assertTrue( holder.getKeys().contains( "var2" ) );
-		assertTrue( holder.getKeys().contains( "func" ) );
-		assertTrue( holder.getKeys().contains( "text1" ) );
-		assertTrue( holder.getKeys().contains( "text2" ) );
-		assertTrue( holder.getKeys().contains( "text3" ) );
-		assertEquals( holder.getItem( "var1" ).getValue(), "__var1__" );
-		assertEquals( holder.getItem( "var2" ).getValue(), "__var2__" );
-		assertEquals( holder.getItem( "text1" ).getValue(), "x" );
-		assertEquals( holder.getItem( "text2" ).getValue(), "-" );
-		assertEquals( holder.getItem( "text3" ).getValue(), "!=" );
-		//E.rr( holder.getItem( "func_1" ) );
+		assertThat( holder.getKeys() )
+				.contains( "var1", "var2", "var3", "func", "text1", "text2", "text3", "text4" )
+				.hasSize( 8 )
+				;
+		/*
+		assertNull( holder.getValue( "var1" ) );
+		assertNull( holder.getValue( "var2" ) );
+		assertEquals( holder.getValue( "text1" ), "x" );
+		assertEquals( holder.getValue( "text2" ), "-" );
+		assertEquals( holder.getValue( "text3" ), "!=" );
+		*/
 		
 		// -- functions
 		
 		holder.setFunction( "func", new TestFunction() );
+		holder.setValue( "var1", "V1" );
+		holder.setValue( "var2", () -> "V2" );
 		
-		TestHttpServletResponse respo = new TestHttpServletResponse();
-		holder.render( null, out, new TestHttpServletRequest(), respo, null, null );
+		StringWriter sOut = new StringWriter();
+		try( PrintWriter out = new PrintWriter( sOut ) ) {
+		
+			TestHttpServletResponse respo = new TestHttpServletResponse();
+			holder.render( null, out, new TestHttpServletRequest(), respo, null, null );
+		}
+		String rendered = sOut.toString();
+		
+		assertEquals( rendered, "V1xV2xV3-A:123B:abcC:true!=A:456B:defC:false" );
 	}
 	
 	private static class TestFunction implements Function {

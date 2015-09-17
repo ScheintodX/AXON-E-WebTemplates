@@ -92,6 +92,9 @@ public interface FormValueFactory {
 
 	public abstract FormValue<String> createInputRepeatValue( String name,
 			int length, boolean nullable, FormValue<?> other );
+	
+	public abstract FormValue<String> createInputRepeatEMailValue( String name,
+			int length, boolean nullable, FormValue<?> other );
 
 	public abstract FormValue<String> createInputUrlValue( String name,
 			int length, boolean nullable );

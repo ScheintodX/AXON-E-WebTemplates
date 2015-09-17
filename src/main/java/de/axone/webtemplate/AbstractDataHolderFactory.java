@@ -3,6 +3,7 @@ package de.axone.webtemplate;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.regex.Pattern;
 
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.DataHolder.DataHolderItemType;
@@ -11,23 +12,37 @@ import de.axone.webtemplate.processor.WebTemplateProcessor;
 public abstract class AbstractDataHolderFactory {
 	
 	private static final char PARAMETER_SEP = ':';
-	private static final String PARAMETER_PREFIX = "@";
-	private static final String VARIABLE_SEP = "__";
-	private static final String VARIABLE_ESC = "_\\_";
-	private static final String TRANSLATION_SEP = "@@@";
 	
-	private static final String BEGIN_TEMPLATE = "<!--TEMPLATE: BEGIN-->";
-	private static final String END_TEMPLATE = "<!--TEMPLATE: END-->";
+	private static final String PARAMETER_PREFIX = "@",
+	                            VARIABLE_SEP = "__",
+	                            VARIABLE_ESC = "_\\_",
+	                            TRANSLATION_SEP = "@@@"
+	                            ;
+	
+	private static final String BEGIN_TEMPLATE = "<!--TEMPLATE: BEGIN-->",
+	                            END_TEMPLATE = "<!--TEMPLATE: END-->"
+	                            ;
+	
+	private static final String COMMENT_START = "<!==",
+	                            COMMENT_END = "==>"
+	                            ;
+	
+	private static final Pattern COMMENT_PATTERN = Pattern.compile( 
+			COMMENT_START + ".*?" + COMMENT_END, Pattern.DOTALL );
+	
 
-	protected static DataHolder instantiate( String data ) throws IOException,
+	protected static DataHolder instantiate( String source, String data ) throws IOException,
 			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 				
-		DataHolder holder = new DataHolder();
+		DataHolder holder = new DataHolder( source );
 		
 		// Cut Markers.
 		data = removeMarker( data, BEGIN_TEMPLATE, END_TEMPLATE );
 	
-		// Replace fucking dos newlines with unix ones
+		// Remove special removable comments
+		data = COMMENT_PATTERN.matcher( data ).replaceAll( "" );
+		
+		// Replace fucking DOS newlines with UNIX ones
 		data = data.replace( "\r\n", "\n" );
 		
 		// Header
@@ -66,7 +81,7 @@ public abstract class AbstractDataHolderFactory {
 			String value = trimmed.substring( indexOfSep+1 ).trim();
 	
 			// Store
-			holder.setParameter( key, value );
+			holder.setSystemParameter( key, value );
 	
 			// Count header chars
 			count += line.length() +1; // +1 for NL
@@ -133,11 +148,15 @@ public abstract class AbstractDataHolderFactory {
 			holder = processor.postProcess( holder );
 		}
 		
+		holder.setSystemParameter( DataHolder.P_TRUE, Boolean.TRUE.toString() );
+		holder.setSystemParameter( DataHolder.P_FALSE, Boolean.FALSE.toString() );
+		
 		return holder;
 	}
 
+	
 	private static WebTemplateProcessor webTemplateProcessor( String className )
-			throws ClassNotFoundException, InstantiationException, IllegalAccessException{
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 	
 		Class<?> clazz = Class.forName( className );
 
@@ -146,7 +165,8 @@ public abstract class AbstractDataHolderFactory {
 		return (WebTemplateProcessor) object;
 	}
 	
-	private static String removeMarker( String data, String startCut, String endCut ){
+	
+	private static String removeMarker( String data, String startCut, String endCut ) {
 		
 		int begin = data.indexOf( startCut );
 		int end = data.indexOf( endCut, begin );

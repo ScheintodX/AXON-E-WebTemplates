@@ -9,7 +9,6 @@ import de.axone.tools.Text;
 import de.axone.tools.Text.Align;
 import de.axone.webtemplate.AttributeMap;
 import de.axone.webtemplate.DataHolder;
-import de.axone.webtemplate.DataHolder.DataHolderItem;
 import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.Translator;
 
@@ -69,9 +68,7 @@ public class AlignFunction implements Function {
 		String widthName = attributes.getRequired( ATTRIBUTE_WIDTH ).trim();
 		int width = Integer.parseInt( widthName );
 		
-		DataHolderItem item = holder.getItem( varName );
-		if( item == null ) return;
-		Object v = item.getValue();
+		Object v = holder.getValue( varName );
 		if( v == null ) return;
 		
 		String s = Text.align( type, v.toString(), width, ' ' );

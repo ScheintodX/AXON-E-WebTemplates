@@ -29,5 +29,22 @@ public class ConverterException extends WebTemplateException implements Informat
 	public WebTemplateInfo getInfo() {
 		return info;
 	}
+	
+	/*
+	@Override
+	public String getMessage() {
+		String result = super.getMessage();
+		if( info != null ) {
+			result += " in: [" + info.toString() + ']';
+		}
+		return result;
+	}
+	
+	@Override
+	public void printStackTrace() {
+		System.err.print( info );
+		super.printStackTrace();
+	}
+	*/
 
 }

@@ -1,5 +1,11 @@
 package de.axone.webtemplate;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import de.axone.web.SuperURL;
+import de.axone.web.SuperURLBuilders;
 import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 
@@ -13,22 +19,50 @@ import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
  * some strange errors and should be rewritten in terms of code clearity
  * before use.
  * 
- * TODO: Check. evtl. mit JavaCC nochmal probieren?
+ * TODO: delim ist unnötig. Müssen aber die Templates auch alle überarbeitet werden.
  * 
  * @author flo
  */
 public abstract class AttributeParserByHand {
 	
+	public static AttributeMap empty() {
+		
+		return new AttributeMap();
+	}
+	
+	public static AttributeMap from( HttpServletRequest req ) {
+		
+		return from( SuperURLBuilders.fromRequest().build( req ) );
+	}
+	
+	public static AttributeMap from( SuperURL url ) {
+		
+		SuperURL.Query query = url.getQuery();
+		
+		Map<String,String[]> parts = query.toParameterMap();
+		AttributeMap result = new AttributeMap();
+		
+		// throw away additional parameters with same name
+		for( Map.Entry<String,String[]> entry : parts.entrySet() ) {
+			
+			String name = entry.getKey();
+			String [] values = entry.getValue();
+			
+			if( values.length > 0 )
+					result.putString( name, values[ 0 ] );
+		}
+		
+		return result;
+	}
+	
 	public static AttributeMap parse( String term ) throws ParserException {
 		
-		//E.rr( tag );
-
 		AttributeMap result = new AttributeMap();
 		
 		int len = term.length();
 
 		// Skip WS
-		int i =0;
+		int i = 0;
 		for( ; i < len && isWhiteSpace( term.charAt( i ) ); i++ );
 		
 		// Tag name
@@ -44,7 +78,7 @@ public abstract class AttributeParserByHand {
 		result.putString( TAG_NAME, name.toString() );
 		
 		// Attribute Name=Value pairs
-		StringBuilder attrName=null, attrValue=null;
+		StringBuilder attrName = null, attrValue = null;
 		while( i < len ){ //Key-Val pair
 			
 			for( ; i < len; i++ ){ // Whitespace
@@ -125,7 +159,8 @@ public abstract class AttributeParserByHand {
 			ch >= 'a' && ch <= 'z' ||
 			ch >= 'A' && ch <= 'Z' ||
 			ch >= '0' && ch <= '9' ||
-			ch == '_' || ch == '.'
+			ch == '_' || ch == '.' ||
+			ch == '@' 
 			;
 	}
 	protected static boolean isValidInteger( char ch ){

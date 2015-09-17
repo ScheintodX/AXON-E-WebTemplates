@@ -12,9 +12,6 @@ import de.axone.web.TestHttpServletResponse;
 @Test( groups="webtemplate.pager" )
 public class DefaultPagerTest {
 
-	private static final String dps = "<div class=\"pager\">";
-	private static final String dpe = "</div>";
-		
 	SuperURLHttpServletRequest request =
 			new SuperURLHttpServletRequest("https://www.axon-e.de/blah?test=1&test=2&pageme-page=22");
 		
@@ -30,7 +27,7 @@ public class DefaultPagerTest {
 		String content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, dps+"<<1-01[2]34-3>>"+dpe );
+		assertEquals( content, "{<<1-0(1][2][3)4-3>>}" );
 		
 	}
 		
@@ -46,7 +43,7 @@ public class DefaultPagerTest {
 		String content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, dps+"<a class=\"active\">&lt;&lt;</a>[0]12345678910...99-1>>"+dpe );
+		assertEquals( content, "{[<<-1]-[0][1)2345678910...99-1>>}" );
 		
 	}
 		
@@ -62,7 +59,7 @@ public class DefaultPagerTest {
 		String content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, dps+"<<49-0...4546474849[50]5152535455...99-51>>"+dpe );
+		assertEquals( content, "{<<49-0...45464748(49][50][51)52535455...99-51>>}" );
 		
 	}
 		
@@ -78,7 +75,7 @@ public class DefaultPagerTest {
 		String content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, dps+"<<98-0...89909192939495969798[99]<a class=\"active\">&gt;&gt;</a>"+dpe );
+		assertEquals( content, "{<<98-0...899091929394959697(98][99]-[100>>]}" );
 	}
 		
 		//--LinkBuilding--
@@ -97,7 +94,7 @@ public class DefaultPagerTest {
 		String content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, dps+"<a class=\"active\">&lt;&lt;</a>1: /blah?test=1&amp;test=2&amp;pageme-page=0<a class=\"active\">&gt;&gt;</a>"+dpe );
+		assertEquals( content, "{[<<-1]-1: /blah?test=1&amp;test=2&amp;pageme-page=0-[1>>]}" );
 			
 	}
 	
@@ -109,11 +106,18 @@ public class DefaultPagerTest {
 			
     		setNoHost( true );
     		setLeftTemplate( "<<__index__-" );
+    		setSelectedLeftTemplate( "[<<__index__]-" );
     		setInnerTemplate( "__index__" );
     		setSelectedTemplate( "[__index__]" );
+    		setLeftOfSelectedTemplate( "(__index__]" );
+    		setRightOfSelectedTemplate( "[__index__)" );
     		setRightTemplate( "-__index__>>" );
+    		setSelectedRightTemplate( "-[__index__>>]" );
     		setSkippedTemplate( "..." );
     		setSpaceTemplalte( "" );
+    		
+    		setLeftContainer( "{" );
+    		setRightContainer( "}" );
 		}
 		
 	}

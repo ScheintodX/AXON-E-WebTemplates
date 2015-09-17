@@ -279,7 +279,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 		AjaxValidate ajaxValidate = new AjaxValidate();
 		ajaxValidate.email();
 		
-		FormValue<String> result = createInputTextValue( name, length, nullable, ajaxValidate );
+		FormValue<String> result = createInputTextValue( HtmlInputElement.InputType.EMAIL, name, length, nullable, ajaxValidate );
 		result.addValidator( new EMailValidator() );
 		return result;
 	}
@@ -288,6 +288,14 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 			boolean nullable, FormValue<?> other ) {
 		
 		FormValue<String> result = createInputTextValue( name, length, nullable );
+		result.addValidator( new EqualsValidator( other ) );
+		return result;
+	}
+	@Override
+	public FormValue<String> createInputRepeatEMailValue( String name, int length,
+			boolean nullable, FormValue<?> other ) {
+		
+		FormValue<String> result = createInputEMailValue( name, length, nullable );
 		result.addValidator( new EqualsValidator( other ) );
 		return result;
 	}

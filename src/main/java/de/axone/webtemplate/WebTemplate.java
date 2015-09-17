@@ -2,6 +2,7 @@ package de.axone.webtemplate;
 
 import java.util.Set;
 
+import de.axone.exception.Ex;
 import de.axone.webtemplate.converter.ConverterException;
 
 
@@ -97,6 +98,11 @@ public interface WebTemplate extends Renderer {
 	 */
 	public WebTemplateInfo getInfo();
 	
+	/**
+	 * Print info
+	 * @return this
+	 */
+	public WebTemplate print();
 
 	/**
 	 * Cast template to that class
@@ -111,7 +117,7 @@ public interface WebTemplate extends Renderer {
 		try {
 			return clazz.cast( this );
 		} catch( ClassCastException e ){
-			ConverterException w = new ConverterException( e );
+			ConverterException w = Ex.up( new ConverterException( e ) );
 			w.setInfo( getInfo() );
 			throw w;
 		}
