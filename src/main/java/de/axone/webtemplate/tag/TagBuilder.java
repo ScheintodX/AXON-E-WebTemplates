@@ -1,0 +1,104 @@
+package de.axone.webtemplate.tag;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+import de.axone.webtemplate.Renderer;
+
+@SuppressWarnings( "unchecked" )
+public class TagBuilder<X extends TagBuilder<X>> {
+
+	protected TagRenderer target;
+	
+	public TagBuilder() {
+		this.target = new TagRenderer();
+	}
+	
+	public X cssClass( String cssClass ) {
+		target.attr( "class", cssClass );
+		return (X)this;
+	}
+	
+	public X cssId( String cssId ) {
+		target.attr( "id", cssId );
+		return (X)this;
+	}
+	
+	public X content( String content ) {
+		target.content( content );
+		return (X)this;
+	}
+	
+	public void append( String appendix ) {
+		target.content( target.content() + appendix );
+	}
+	
+	public X target( TagRenderer target ) {
+		this.target = target;
+		return (X)this;
+	}
+	
+	public X dup() {
+		return dup( target );
+	}
+	
+	public X dup( TagRenderer target ) {
+		return instance()
+				.target( target.dup() )
+				;
+	}
+	private X instance(){
+		return (X) new TagBuilder<>();
+	}
+	
+	public void write( Appendable a ) throws IOException {
+		target.write( a );
+	}
+	
+	public Renderer renderer() {
+		return target;
+	}
+	
+	@Override
+	public String toString() {
+		return target.toString();
+	}
+	
+	
+	public static class TagBuilderA extends TagBuilder<TagBuilderA> {
+		
+		{ target.name( "a" ); }
+		
+		public TagBuilderA href( String href ) {
+			target.attr( "href", href );
+			return this;
+		}
+		
+		public TagBuilderA hrefPlain( String href ) {
+			target.attrPlain( "href", href );
+			return this;
+		}
+
+	}
+	
+	public static class TagBuilderMeta extends TagBuilder<TagBuilderMeta> {
+		
+		{ target.name( "meta" ); }
+		
+		public TagBuilderMeta name( String name ) {
+			target.attr( "name", name );
+			return this;
+		}
+		
+		public TagBuilderMeta http_equiv( String equiv ) {
+			target.attr( "http-equiv", equiv );
+			return this;
+		}
+		
+		public TagBuilderMeta charset( Charset charset ) {
+			target.attr( "charset", charset.toString() );
+			return this;
+		}
+		
+	}
+}
