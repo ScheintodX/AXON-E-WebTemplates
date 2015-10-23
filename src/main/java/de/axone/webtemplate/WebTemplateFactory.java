@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.axone.cache.ng.CacheNG;
 import de.axone.cache.ng.CacheNoCache;
 import de.axone.cache.ng.RealmImpl;
+import de.axone.exception.Assert;
 import de.axone.refactor.Refactor;
 import de.axone.tools.watcher.FileDataWatcher;
 import de.axone.tools.watcher.HttpDataWatcher;
@@ -85,7 +86,7 @@ public class WebTemplateFactory {
 	 */
 	public WebTemplate templateFor( String className ) throws WebTemplateException {
 		
-		if( className == null ) throw new IllegalArgumentException( "'className' is null" );
+		Assert.notNull( className, "className" );
 
 		try {
 			return instantiateClassByName( className );
@@ -113,8 +114,8 @@ public class WebTemplateFactory {
 
 	public WebTemplate templateFor( File file, String className ) throws WebTemplateException {
 		
-		if( file == null ) throw new IllegalArgumentException( "'file' is null" );
-
+		Assert.notNull( file, "file" );
+		
 		try {
 			WebTemplate result = instantiateFile( file, className );
 			return result;
@@ -136,7 +137,7 @@ public class WebTemplateFactory {
 	
 	public WebTemplate templateFor( SuperURL url, String className ) throws WebTemplateException {
 
-		if( url == null ) throw new IllegalArgumentException( "'url' is null" );
+		Assert.notNull( url, "url" );
 		
 		try {
 			WebTemplate result = instantiateURL( url, className );

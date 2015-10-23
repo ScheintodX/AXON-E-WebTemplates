@@ -6,18 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import de.axone.web.SuperURL;
 import de.axone.web.SuperURLBuilders;
-import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
-
-
 
 /**
  * Parses attribute Strings
  * 
  * Input format is <tt>tag att1="stringval" att2="intval" att3</tt>
- * 
- * This class is much faster than the Regex based one. But it contains
- * some strange errors and should be rewritten in terms of code clearity
- * before use.
  * 
  * TODO: delim ist unnötig. Müssen aber die Templates auch alle überarbeitet werden.
  * 
@@ -25,6 +18,14 @@ import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
  */
 public abstract class AttributeParserByHand {
 	
+	public static class ParserException extends WebTemplateException {
+		
+		private static final long serialVersionUID = 6465629139521270586L;
+		public ParserException( String message, Throwable t ){ super( message, t ); }
+		public ParserException( Throwable t ){ super( t ); }
+		public ParserException( String message ){ super( message ); }
+	}
+
 	public static AttributeMap empty() {
 		
 		return new AttributeMap();
@@ -55,7 +56,7 @@ public abstract class AttributeParserByHand {
 		return result;
 	}
 	
-	public static AttributeMap parse( String term ) throws ParserException {
+	public static AttributeMap parse( String term ) throws AttributeParserByHand.ParserException {
 		
 		AttributeMap result = new AttributeMap();
 		
@@ -95,7 +96,7 @@ public abstract class AttributeParserByHand {
 			}
 			
 			if( attrName.length() < 1 )
-				throw new ParserException( "Wrong name: \"" + attrName.toString() + "\" last char was: " );
+				throw new AttributeParserByHand.ParserException( "Wrong name: \"" + attrName.toString() + "\" last char was: " );
 			
 			boolean foundSep = false; // Sep+WS
 			for( ; i < len; i++ ){
@@ -124,7 +125,7 @@ public abstract class AttributeParserByHand {
 				
 				// Skip closing delimiter
 				if( foundDel && term.charAt( i ) == delimiterType ) i++;
-				else if( foundDel ) throw new ParserException( "Missing closing delimiter" );
+				else if( foundDel ) throw new AttributeParserByHand.ParserException( "Missing closing delimiter" );
 			}
 			
 			String attrNameStr = attrName.toString();
@@ -132,7 +133,7 @@ public abstract class AttributeParserByHand {
 			if( attrNameStr.length() > 0 ){
 				
 				if( result.containsKey( attrNameStr ) )
-					throw new ParserException( "Duplicate attribute: " + attrNameStr );
+					throw new AttributeParserByHand.ParserException( "Duplicate attribute: " + attrNameStr );
 				
     			if( attrValue == null ){
     				result.putString( attrNameStr, null );
@@ -188,7 +189,5 @@ public abstract class AttributeParserByHand {
 	}
 
 	public static final String TAG_NAME = "TAG";
-	
-	
 
 }

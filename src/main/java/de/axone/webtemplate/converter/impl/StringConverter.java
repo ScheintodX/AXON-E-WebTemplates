@@ -14,7 +14,8 @@ public class StringConverter extends AbstractConverter<String> {
 
 	@Override
 	public String convertFromString( String value ) throws ConverterException {
-		return value;
+		if( value == null ) return null;
+		return value.trim();
 	}
 
 	@Override

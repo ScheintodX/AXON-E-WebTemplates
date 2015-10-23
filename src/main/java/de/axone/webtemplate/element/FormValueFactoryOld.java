@@ -43,9 +43,9 @@ import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic;
 import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic.CountryProvider;
 import de.axone.webtemplate.validator.impl.UrlValidator;
 
-public class FormValueFactoryHeadshop extends AbstractFormValueFactory implements FormValueFactory {
+public class FormValueFactoryOld extends AbstractFormValueFactory implements FormValueFactory {
 
-	public FormValueFactoryHeadshop(){
+	public FormValueFactoryOld(){
 		setUseHtml5Input( false );
 	}
 
@@ -106,7 +106,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 			HtmlCheckboxElement.InputType type, Locale locale, String name,
 			Integer min, Integer max ) {
 
-		FormValueImpl<Integer> result = new FormValueImpl<Integer>();
+		FormValueImpl<Integer> result = FormValueImpl.create( Integer.class );
 		
 		HtmlCheckboxElement element = new HtmlCheckboxElement( name );
 		element.setDecorator( decorator );
@@ -140,7 +140,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 	public FormValue<Boolean> createCheckboxBooleanValue( 
 			HtmlCheckboxElement.InputType type, String name ) {
 
-		FormValueImpl<Boolean> result = new FormValueImpl<Boolean>();
+		FormValueImpl<Boolean> result = FormValueImpl.create( Boolean.class );
 		
 		HtmlCheckboxElement element = new HtmlCheckboxElement( name );
 		element.setDecorator( decorator );
@@ -159,12 +159,13 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 	}
 	
 	@Override
-	public <T> FormValue<T> createInputTextValue(
+	public <T> FormValue<T> createInputValue(
+			Class<T> dataType,
 			Converter<T> converter,
 			HtmlInputElement.InputType type,
 			String name, int length,
 			boolean nullable ){
-				FormValueImpl<T> result = new FormValueImpl<T>();
+				FormValueImpl<T> result = FormValueImpl.create( dataType );
 
 		// HtmlInputElement
 		HtmlInputElement element = new HtmlInputElement( type, name );
@@ -186,7 +187,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 			HtmlInputElement.InputType type, String name, int length,
 			boolean nullable, AjaxValidate validate ) {
 
-		FormValueImpl<String> result = new FormValueImpl<String>();
+		FormValueImpl<String> result = FormValueImpl.create( String.class );
 
 		// HtmlInputElement
 		HtmlInputElement element = new HtmlInputElement( type, name );
@@ -351,7 +352,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 			DateConverter converter, boolean nullable,
 			AjaxValidate ajaxValidate, String validateString ){
 		
-		FormValueImpl<Date> result = new FormValueImpl<Date>();
+		FormValueImpl<Date> result = FormValueImpl.create( Date.class );
 		
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
@@ -441,7 +442,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 			BigDecimal min, BigDecimal max, boolean nullable, boolean readonly,
 			AjaxValidate ajaxValidate ){
 		
-		FormValueImpl<BigDecimal> result = new FormValueImpl<BigDecimal>();
+		FormValueImpl<BigDecimal> result = FormValueImpl.create( BigDecimal.class );
 		
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		
@@ -507,7 +508,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 			Integer min, Integer max, boolean useThousandsSeparator, boolean nullable,
 			AjaxValidate ajaxValidate ) {
 		
-		FormValueImpl<Integer> result = new FormValueImpl<Integer>();
+		FormValueImpl<Integer> result = FormValueImpl.create( Integer.class );
 		HtmlInputElement element = new HtmlInputElement( type, name );
 		element.setDecorator( decorator );
 		if( getStandardClass() != null ) element.addClassAttribute( getStandardClass() );
@@ -583,7 +584,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 	@Override
 	public FormValue<String> createInputHiddenValue( String name ) {
 
-		FormValueImpl<String> result = new FormValueImpl<String>();
+		FormValueImpl<String> result = FormValueImpl.create( String.class );
 		HtmlInputElement element = new HtmlInputElement(
 				HtmlInputElement.InputType.HIDDEN, name );
 		StringConverter converter = new StringConverter();
@@ -596,7 +597,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 	@Override
 	public FormValue<Long> createInputHiddenLongValue( String name, Locale locale ) {
 
-		FormValueImpl<Long> result = new FormValueImpl<Long>();
+		FormValueImpl<Long> result = FormValueImpl.create( Long.class );
 		HtmlInputElement element = new HtmlInputElement(
 				HtmlInputElement.InputType.HIDDEN, name );
 		result.setHtmlInput( element );
@@ -620,7 +621,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 		options.addLast( trueOption );
 		options.addLast( falseOption );
 		
-		FormValue<Boolean> result = new FormValueImpl<Boolean>();
+		FormValue<Boolean> result = FormValueImpl.create( Boolean.class );
 		
 		AjaxValidate ajaxValidate = new AjaxValidate();
 		
@@ -652,7 +653,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 	public FormValue<String> createRadioValue( String name,
 			List<Option> options, boolean nullable ) {
 		
-		FormValue<String> result = new FormValueImpl<String>();
+		FormValue<String> result = FormValueImpl.create( String.class );
 		
 		HtmlRadioElement element = new HtmlRadioElement( name, options );
 		element.setDecorator( decorator );
@@ -683,7 +684,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 	public FormValue<String> createSelectValue( String name,
 			List<Option> options, boolean nullable ) {
 
-		FormValue<String> result = new FormValueImpl<String>();
+		FormValue<String> result = FormValueImpl.create( String.class );
 
 		// Element
 		HtmlSelectElement element = new HtmlSelectElement( name, options );
@@ -737,7 +738,7 @@ public class FormValueFactoryHeadshop extends AbstractFormValueFactory implement
 	public FormValue<String> createTextareaTextValue( String name, int length,
 			int cols, int rows, boolean nullable, AjaxValidate ajaxValidate ) {
 
-		FormValueImpl<String> result = new FormValueImpl<String>();
+		FormValueImpl<String> result = FormValueImpl.create( String.class );
 
 		HtmlTextAreaElement element = new HtmlTextAreaElement( name );
 		element.setDecorator( decorator );

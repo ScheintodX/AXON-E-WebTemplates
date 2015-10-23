@@ -57,7 +57,7 @@ public interface FormValueFactory {
 
 	public abstract FormValue<Boolean> createCheckboxBooleanValue( String name );
 
-	public abstract <T> FormValue<T> createInputTextValue(
+	public abstract <T> FormValue<T> createInputValue( Class<T> typeClass,
 			Converter<T> converter, HtmlInputElement.InputType type,
 			String name, int length, boolean nullable );
 

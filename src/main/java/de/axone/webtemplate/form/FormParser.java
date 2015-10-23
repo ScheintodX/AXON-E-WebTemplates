@@ -429,7 +429,7 @@ public class FormParser<T> {
 		for( FormField field : parsed ){
 			
 			String formName = field.formName;
-			FormValue<?> formValue = form.getFormValue( formName );
+			FormValue<?> formValue = form.getFormValue( null, formName );
 			if( formValue != null ){
 				Object value = formValue.getValue();
 				
@@ -464,7 +464,7 @@ public class FormParser<T> {
 				value = getFromPojoByField( pojo, field.field );
 			}
 			
-			FormValue<?> fVal = form.getFormValue( field.formName );
+			FormValue<?> fVal = form.getFormValue( null, field.formName );
 			
 			if( fVal == null ){
 				log.debug( "Cannot find: {}", field.formName );
@@ -526,7 +526,7 @@ public class FormParser<T> {
 		
 		for( String name : form.getFormValueNames() ){
 			
-			holder.setValue( prefix+name, form.getFormValue( name ).getPlainValue() );
+			holder.setValue( prefix+name, form.getFormValue( null, name ).getPlainValue() );
 		}
 	}
 	
@@ -587,7 +587,7 @@ public class FormParser<T> {
 			
 			FormValue<?> formValue = fvf.byType( type, fieldName, field.form() );
 			
-			FormValue<?> oldFormValue = form.getFormValue( name );
+			FormValue<?> oldFormValue = form.getFormValue( Object.class, name );
 			
 			if( oldFormValue == null ){
 				// Skip silently already defined Values

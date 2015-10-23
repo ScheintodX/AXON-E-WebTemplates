@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.regex.Pattern;
 
-import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.DataHolder.DataHolderItemType;
 import de.axone.webtemplate.processor.WebTemplateProcessor;
 
@@ -32,7 +31,7 @@ public abstract class AbstractDataHolderFactory {
 	
 
 	protected static DataHolder instantiate( String source, String data ) throws IOException,
-			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			AttributeParserByHand.ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 				
 		DataHolder holder = new DataHolder( source );
 		

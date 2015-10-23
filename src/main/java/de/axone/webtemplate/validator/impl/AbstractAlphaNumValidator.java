@@ -27,6 +27,8 @@ public abstract class AbstractAlphaNumValidator extends AbstractValidator<String
 			return;
 		}
 		
+		pattern = pattern.trim();
+		pattern = pattern.replaceAll( " ", " ?" );
 		pattern = pattern.replaceAll( "a", "[a-zA-Z]" );
 		pattern = pattern.replaceAll( "n", "[0-9]" );
 		pattern = pattern.replaceAll( "x", "[a-zA-Z0-9]" );
@@ -69,6 +71,11 @@ public abstract class AbstractAlphaNumValidator extends AbstractValidator<String
 		
 		
 		return result.toString();
+	}
+
+	@Override
+	public String toString() {
+		return originalPattern + "->" + pattern.toString();
 	}
 
 }

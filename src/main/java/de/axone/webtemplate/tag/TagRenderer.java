@@ -81,9 +81,8 @@ public class TagRenderer implements Renderer {
 
     		out.append( " />" );
 		} else {
-			out
-				.append( ">" )
-    			.append( encodeContent ? Encoder_Xml.ENCODE( content ) : content )
+			out.append( ">" )
+    			.append( encodeContent ? Encoder_Xml.ENCODE( (String)content ) : (String)content )
     			.append( "</" )
     			.append( name )
     			.append( ">" )

@@ -27,14 +27,14 @@ public class WebFormTest {
 
 		WebForm webForm = new WebFormImpl();
 
-		FormValue<String> valueHidden1 = new FormValueImpl<String>();
+		FormValue<String> valueHidden1 = FormValueImpl.create( String.class );
 		HtmlInputElement inputHidden1 = new HtmlInputElement( InputType.HIDDEN, "name1", "value1" );
 		Converter<String> converterHidden1 = new StringConverter();
 		valueHidden1.setHtmlInput( inputHidden1 );
 		valueHidden1.setConverter( converterHidden1 );
 		webForm.addFormValue( "name1", valueHidden1 );
 
-		FormValue<String> valueText2 = new FormValueImpl<String>();
+		FormValue<String> valueText2 = FormValueImpl.create( String.class );
 		HtmlInputElement inputText2 = new HtmlInputElement( InputType.TEXT, "name2", "vlaue2" );
 		Converter<String> converterText2 = new StringConverter();
 		Validator<Object> notNullValidator = new NotNullValidator();
@@ -79,7 +79,7 @@ public class WebFormTest {
 
 	public void testConverters() throws Exception {
 
-		FormValue<Integer> intValue = new FormValueImpl<Integer>();
+		FormValue<Integer> intValue = FormValueImpl.create( Integer.class );
 		HtmlInputElement input = new HtmlInputElement( InputType.TEXT, "name", "1.234" );
 		intValue.setHtmlInput( input );
 		Validator<Object> notNullValidator = new NotNullValidator();

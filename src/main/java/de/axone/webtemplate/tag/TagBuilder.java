@@ -29,8 +29,9 @@ public class TagBuilder<X extends TagBuilder<X>> {
 		return (X)this;
 	}
 	
-	public void append( String appendix ) {
+	public X append( String appendix ) {
 		target.content( target.content() + appendix );
+		return (X)this;
 	}
 	
 	public X target( TagRenderer target ) {
@@ -63,7 +64,6 @@ public class TagBuilder<X extends TagBuilder<X>> {
 	public String toString() {
 		return target.toString();
 	}
-	
 	
 	public static class TagBuilderA extends TagBuilder<TagBuilderA> {
 		
@@ -99,6 +99,26 @@ public class TagBuilder<X extends TagBuilder<X>> {
 			target.attr( "charset", charset.toString() );
 			return this;
 		}
-		
 	}
+	
+	public static class TagBuilderSpan extends TagBuilder<TagBuilderSpan> {
+		
+		{ target.name( "span" ); }
+		
+		public TagBuilderSpan(){}
+		public TagBuilderSpan( String content ){
+			content( content );
+		}
+	}
+	
+	public static class TagBuilderDiv extends TagBuilder<TagBuilderSpan> {
+		
+		{ target.name( "div" ); }
+		
+		public TagBuilderDiv(){}
+		public TagBuilderDiv( String content ){
+			content( content );
+		}
+	}
+	
 }

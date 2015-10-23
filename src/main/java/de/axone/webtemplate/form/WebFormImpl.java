@@ -100,9 +100,17 @@ public class WebFormImpl implements WebForm {
 	}
 
 	@Override
-	public FormValue<?> getFormValue( String name ) {
+	public <T> FormValue<T> getFormValue( Class<T> type, String name ) {
 
-		return connectorValues.get( name );
+		FormValue<?> result = connectorValues.get( name );
+		
+		if( type != null && ! type.isAssignableFrom( result.type() ) )
+				throw new IllegalArgumentException( "Requested " + type + " for FormValue '" + name + "' but was: " + result.type() );
+		
+		@SuppressWarnings( "unchecked" )
+		FormValue<T> theResult = (FormValue<T>) result;
+		
+		return theResult;
 	}
 	@Override
 	public void remFormValue( String name ) {
@@ -176,7 +184,7 @@ public class WebFormImpl implements WebForm {
 	@Override
 	public HtmlInput getHtmlInput( String name ) throws WebTemplateException {
 
-		FormValue<?> value = this.getFormValue( name );
+		FormValue<?> value = this.getFormValue( null, name );
 		
 		if( value == null )
 			throw new WebTemplateException( "Cannot find " + getName() + "'s value: " + name );

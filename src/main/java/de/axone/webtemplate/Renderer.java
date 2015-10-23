@@ -18,6 +18,8 @@ import de.axone.webtemplate.form.Translator;
  * @author flo
  */
 public interface Renderer {
+	
+	public static class NoType extends Object {};
 
 	/**
 	 * Render this WebTemplates content to the given HttpServletResponse

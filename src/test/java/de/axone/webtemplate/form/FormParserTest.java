@@ -20,7 +20,7 @@ import de.axone.webtemplate.converter.impl.FloatConverter;
 import de.axone.webtemplate.converter.impl.IntegerConverter;
 import de.axone.webtemplate.converter.impl.LongConverter;
 import de.axone.webtemplate.converter.impl.ShortConverter;
-import de.axone.webtemplate.element.FormValueFactoryHeadshop;
+import de.axone.webtemplate.element.FormValueFactoryImpl;
 import de.axone.webtemplate.elements.impl.HtmlInputElement;
 import de.axone.webtemplate.form.Form.On;
 import de.axone.webtemplate.form.FormParser.FormField;
@@ -451,7 +451,7 @@ public class FormParserTest {
 		static final String MY_PUBLIC_CHAR_FIELD = "my_public_char_field";
 		static final String MY_PUBLIC_BOOLEAN_FIELD = "my_public_boolean_field";
 		
-		static FormValueFactoryHeadshop fvf = new FormValueFactoryHeadshop();
+		static FormValueFactoryImpl fvf = new FormValueFactoryImpl();
 		
 		TestWebForm() throws WebTemplateException{
 			
@@ -485,37 +485,43 @@ public class FormParserTest {
 		}
 		
 		void addCharValue( String name ) throws WebTemplateException {
-			addFormValue( name, fvf.createInputTextValue(
+			addFormValue( name, fvf.createInputValue(
+					Character.class,
 					new CharacterConverter(),
 					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
 		}
 		
 		void addShortValue( String name ) throws WebTemplateException {
-			addFormValue( name, fvf.createInputTextValue(
+			addFormValue( name, fvf.createInputValue(
+					Short.class,
 					new ShortConverter( Locale.GERMANY ),
 					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
 		}
 		
 		void addIntegerValue( String name ) throws WebTemplateException {
-			addFormValue( name, fvf.createInputTextValue(
+			addFormValue( name, fvf.createInputValue(
+					Integer.class,
 					new IntegerConverter( Locale.GERMANY ),
 					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
 		}
 		
 		void addLongValue( String name ) throws WebTemplateException {
-			addFormValue( name, fvf.createInputTextValue(
+			addFormValue( name, fvf.createInputValue(
+					Long.class,
 					new LongConverter( Locale.GERMANY),
 					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
 		}
 		
 		void addFloatValue( String name ) throws WebTemplateException {
-			addFormValue( name, fvf.createInputTextValue(
+			addFormValue( name, fvf.createInputValue(
+					Float.class,
 					new FloatConverter( Locale.GERMANY),
 					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
 		}
 		
 		void addDoubleValue( String name ) throws WebTemplateException {
-			addFormValue( name, fvf.createInputTextValue(
+			addFormValue( name, fvf.createInputValue(
+					Double.class,
 					new DoubleConverter( Locale.GERMANY),
 					HtmlInputElement.InputType.NUMBER, name, 16, false ) );
 		}

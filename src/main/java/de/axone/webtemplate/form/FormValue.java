@@ -11,6 +11,8 @@ import de.axone.webtemplate.element.HtmlInput;
 import de.axone.webtemplate.validator.Validator;
 
 public interface FormValue<T> {
+	
+	public Class<T> type();
 
 	public void readValue( HttpServletRequest request );
 	public void readValue( Map<String, String> map );
@@ -28,5 +30,4 @@ public interface FormValue<T> {
 	public boolean isValid();
 	public List<String> validate();
 
-	
 }

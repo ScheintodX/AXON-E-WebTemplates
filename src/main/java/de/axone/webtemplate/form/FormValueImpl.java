@@ -14,11 +14,29 @@ import de.axone.webtemplate.validator.Validator;
 public class FormValueImpl<T> implements FormValue<T> {
 	
 	protected HtmlInput htmlInput;
+	
 	protected Converter<T> converter;
+	
 	protected LinkedList<Validator<? super T>> validators = new LinkedList<>();
 	
+	private final Class<T> type;
+	
+	public static <X> FormValueImpl<X> create( Class<X> type ) {
+		return new FormValueImpl<>( type );
+	}
+	
+	protected FormValueImpl( Class<T> type ) {
+		
+		this.type = type;
+	}
+	
 	@Override
-	public String toString(){
+	public Class<T> type() {
+		return type;
+	}
+	
+	@Override
+	public String toString() {
 		
 		StringBuilder result = new StringBuilder();
 		
@@ -27,7 +45,7 @@ public class FormValueImpl<T> implements FormValue<T> {
 				.append( htmlInput.getClass().getSimpleName() )
 				.append( " : " )
 				.append( converter.getClass().getSimpleName() )
-		;
+				;
 		
 		for( Validator<? super T> validator : validators ){
 			
@@ -41,10 +59,12 @@ public class FormValueImpl<T> implements FormValue<T> {
 		return result.toString();
 	}
 
+	
 	@Override
 	public void addValidator( Validator<? super T> validator ) {
 		validators.addLast( validator );
 	}
+	
 
 	@Override
 	public HtmlInput getHtmlInput() {
@@ -56,6 +76,8 @@ public class FormValueImpl<T> implements FormValue<T> {
 		this.htmlInput = htmlElement;
 		
 	}
+	
+	
 	@Override
 	public void readValue( HttpServletRequest request ) {
 		htmlInput.initialize( request );
@@ -65,6 +87,7 @@ public class FormValueImpl<T> implements FormValue<T> {
 	public void readValue( Map<String,String> map ) {
 		htmlInput.initialize( map );
 	}
+	
 
 	@Override
 	public boolean isValid() {
@@ -80,7 +103,9 @@ public class FormValueImpl<T> implements FormValue<T> {
 		T value = null;
 		try {
 			value = converter.convertFromString( htmlInput.getValue() );
+			
 		} catch( ConverterException e ) {
+			
 			result.add( e.getMessage() );
 			htmlInput.setValid( false );
 			return result;
@@ -94,37 +119,36 @@ public class FormValueImpl<T> implements FormValue<T> {
 				result.addLast( text );
 			}
 		}
+		
 		if( result.size() > 0 ){
+			
 			htmlInput.setValid( false );
 		}
+		
 		return result;
 	}
+	
 
 	@Override
-	public T getValue() 
-		throws ConverterException {
-		return converter.convertFromString( htmlInput.getValue() );
+	public T getValue() throws ConverterException {
+		
+		return converter.convertFromString( getPlainValue() );
+		
 	}
 	
 	@Override
-	public void setValue( T value )
-		throws ConverterException {
-		
-		/*
-		E.rr( value.getClass() );
-		E.rr( converter.getClass() );
-		E.rr( htmlInput.getClass() );
-		E.rr( converter.getClass() );
-		*/
+	public void setValue( T value ) throws ConverterException {
 		
 		htmlInput.setValue( converter.convertToString( value ) );
 	}
 	
+	
 	@Override
-	public String getPlainValue(){
+	public String getPlainValue() {
 		
 		return htmlInput.getValue();
 	}
+	
 
 	@Override
 	public void setConverter( Converter<T> converter ) {

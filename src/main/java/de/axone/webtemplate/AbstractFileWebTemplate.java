@@ -39,12 +39,4 @@ public abstract class AbstractFileWebTemplate extends AbstractWebTemplate {
 		
 		return getHolder().getParameter( DataHolder.P_FILE ) + " (" + getClass().toString() + ")";
 	}
-
-	public static class ParserException extends WebTemplateException {
-		
-		private static final long serialVersionUID = 6465629139521270586L;
-		public ParserException( String message, Throwable t ){ super( message, t ); }
-		public ParserException( Throwable t ){ super( t ); }
-		public ParserException( String message ){ super( message ); }
-	}
 }

@@ -31,7 +31,6 @@ import de.axone.web.encoding.Encoder_Attribute;
 import de.axone.web.encoding.Encoder_Html;
 import de.axone.web.encoding.Encoder_Text;
 import de.axone.web.encoding.Encoder_Url;
-import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
@@ -143,7 +142,7 @@ public final class DataHolder implements Serializable {
 	
 	static int functionCount = 1;
 	void addValue( String key, String value, DataHolderItemType type, boolean translate )
-			throws ParserException {
+			throws AttributeParserByHand.ParserException {
 		
 		if( fixed ) throw new IllegalStateException( "try to add to fixed collection" );
 		
@@ -491,7 +490,7 @@ public final class DataHolder implements Serializable {
 								stringValue = value.toString(); // Does nothing for String anyway
 								
 								if( item.isTranslate() && translator != null ){
-			
+									
 									stringValue = translator.translate( TKey.dynamic( stringValue ) );
 								}
 							}

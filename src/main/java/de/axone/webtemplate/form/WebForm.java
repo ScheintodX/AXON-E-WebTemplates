@@ -72,8 +72,9 @@ public interface WebForm {
 	/**
 	 * @return the FormValue for the given name
 	 * @param name
+	 * @param type 
 	 */
-	public FormValue<?> getFormValue( String name );
+	public <T> FormValue<T> getFormValue( Class<T> type, String name );
 	public void remFormValue( String name )
 		throws WebTemplateException;
 

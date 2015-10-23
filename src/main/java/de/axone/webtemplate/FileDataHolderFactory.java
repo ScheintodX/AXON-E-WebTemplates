@@ -1,14 +1,7 @@
 package de.axone.webtemplate;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.MalformedInputException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +11,6 @@ import de.axone.cache.ng.CacheProvider;
 import de.axone.data.Charsets;
 import de.axone.file.Slurper;
 import de.axone.tools.watcher.FileDataWatcher;
-import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 import de.axone.webtemplate.slicer.Slicer;
 import de.axone.webtemplate.slicer.SlicerFactory;
 
@@ -50,6 +42,7 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 			cache.put( file, watcher );
 			
 		} else {
+			
 			watcher = cache.fetch( file );
 			
 			if( !watcher.haveChanged() ) {
@@ -106,11 +99,11 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 	}
 	
 	static DataHolder instantiate( File file ) throws IOException,
-			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			AttributeParserByHand.ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 		
-		String data = slurp( file );
+		String data = Slurper.slurpString( file, Charsets.UTF8 );
 		
 		DataHolder holder = instantiate( file.getPath(), data );
 		
@@ -128,32 +121,4 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 		return holder;
 
 	}
-
-	private static String slurp( File file ) throws IOException {
-
-		Charset charset = Charsets.UTF8;
-		CharsetDecoder decoder = charset.newDecoder();
-		
-		try (
-			FileInputStream fin = new FileInputStream( file );
-			FileChannel cIn = fin.getChannel();
-		) {
-		
-			int size = (int)file.length();
-			ByteBuffer buf;
-			
-				buf = Slurper.slurp( cIn, size );
-				if( buf.limit() != size ) throw new IOException( 
-						"Filesize (" + size + ") doesn't match read size (" + buf.limit() + ")" );
-			
-			try {
-				CharBuffer cBuf = decoder.decode( buf );
-				return cBuf.toString();
-			} catch( MalformedInputException e ){
-				throw new IOException( "Perhaps not UFT-8?", e );
-			}
-		}
-		
-	}
-
 }

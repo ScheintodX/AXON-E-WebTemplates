@@ -9,7 +9,6 @@ import de.axone.cache.ng.CacheNG;
 import de.axone.tools.HttpUtil.HttpUtilResponse;
 import de.axone.tools.watcher.HttpDataWatcher;
 import de.axone.web.SuperURL;
-import de.axone.webtemplate.AbstractFileWebTemplate.ParserException;
 
 public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 
@@ -24,7 +23,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	}
 
 	synchronized public DataHolder holderFor( SuperURL url )
-			throws IOException, ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			throws IOException, AttributeParserByHand.ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
 		log.debug( url.toDebug() );
 		
@@ -62,7 +61,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	}
 	
 	static DataHolder instantiate( SuperURL url, HttpUtilResponse response ) throws IOException,
-			ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+			AttributeParserByHand.ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		
 		reloadCount++;
 

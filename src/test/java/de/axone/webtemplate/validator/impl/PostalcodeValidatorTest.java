@@ -31,6 +31,10 @@ public class PostalcodeValidatorTest {
 		 "cr2 6xh", "dn55 1pt", "ec1a 1bb",
 	};
 	
+	static final String[] exsIe = new String[]{
+		"A94 PD74", "X1X XXXX", "x1x xxxx", "111 1111"
+	};
+	
 	public void testValidation(){
 		
 		PostalcodeValidator validatorDe 
@@ -51,6 +55,10 @@ public class PostalcodeValidatorTest {
 		// Jersey (in uk postcode system but specific prefix)
 		PostalcodeValidator validatorJe 
 				= PostalcodeValidatorFactory.validatorFor( "je" );
+		
+		// Eircode
+		PostalcodeValidator validatorIe
+				= PostalcodeValidatorFactory.validatorFor( "ie" );
 		
 		assertTrue( validatorJe instanceof PostalcodeValidator_Uk );
 		
@@ -76,6 +84,10 @@ public class PostalcodeValidatorTest {
 		
 		for( String exJe : exsJeErr ){
 			assertNotNull( validatorJe.validate( exJe ), exJe );
+		}
+		
+		for( String exIe : exsIe ) {
+			assertNull( validatorIe.validate( exIe ), exIe );
 		}
 	}
 	
