@@ -7,9 +7,12 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.Writer;
 
-import jodd.io.FileUtil;
-import jodd.lagarto.dom.jerry.Jerry;
+import jodd.jerry.Jerry;
+import jodd.jerry.Jerry.JerryParser;
+import jodd.lagarto.dom.LagartoDOMBuilder;
 import de.axone.data.Charsets;
+import de.axone.file.Slurper;
+import de.axone.tools.E;
 import de.axone.tools.Text;
 
 
@@ -21,6 +24,15 @@ public abstract class JerrySlicer extends Slicer {
 			out = new StringBuilder(),
 			prepend = new StringBuilder(),
 			append = new StringBuilder();
+	
+	protected LagartoDOMBuilder domBuilder;
+	{
+		domBuilder = new LagartoDOMBuilder();
+		domBuilder.enableXhtmlMode();
+		domBuilder.enableDebug();
+	}
+        
+	
 	
 	protected Jerry selected;
 	protected Jerry view;
@@ -55,22 +67,22 @@ public abstract class JerrySlicer extends Slicer {
 	// Todo: $(">") instead of outer/inner
 	public Jerry selectOuter( String css ){
 		
+    	JerryParser parser = new JerryParser( domBuilder );
+    	
 		view();
-		selected = Jerry.jerry( outerHtml( doc.$( css ) ) ).children();
+		selected = parser.parse( outerHtml( doc.$( css ) ) ).children();
 		
 		return selected;
 	}
 	
 	public Jerry select( String css ){
 		
+    	JerryParser parser = new JerryParser( domBuilder );
+    	
 		view();
-		selected = Jerry.jerry( html( doc.$( css ) ) );
+		selected = parser.parse( html( doc.$( css ) ) );
 		
 		return selected;
-	}
-	
-	public static Jerry clone( Jerry other ){
-		return Jerry.jerry( outerHtml( other ) ).$( ">" );
 	}
 	
 	public void view(){
@@ -145,6 +157,9 @@ public abstract class JerrySlicer extends Slicer {
 		out = new StringBuilder();
 		return result;
 	}
+	public String peek(){
+		return out.toString();
+	}
 	
 	public void print(){
 		System.out.println( html( selected ) );
@@ -203,9 +218,24 @@ public abstract class JerrySlicer extends Slicer {
     @Override
 	public void load( String master ) throws IOException{
     	
+    	E.rr( "LOAD", master );
+    	
     	File masterFile = new File( getMasterBase(), master );
-		doc = Jerry.jerry( FileUtil.readString( masterFile ) );
-		
+    	String content = Slurper.slurpString( masterFile );
+    	
+        /*
+        Inspector.inspect( domBuilder );
+        Inspector.inspect( domBuilder.getConfig() );
+        Inspector.inspect( domBuilder.getConfig().getLagartoHtmlRenderer() );
+        */
+        
+        /* -> debug */
+        //Document d = domBuilder.parse( content );
+        /* <- debug */
+    	
+    	JerryParser parser = new JerryParser( domBuilder );
+    	doc = parser.parse( content );
+    	
 		log.debug( "    Read: {}", masterFile );
     }
     	   

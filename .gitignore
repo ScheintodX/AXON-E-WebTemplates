@@ -3,3 +3,4 @@
 /build.eclipse
 /test-output
 *.swp
+/bin

@@ -587,7 +587,7 @@ public class FormParser<T> {
 			
 			FormValue<?> formValue = fvf.byType( type, fieldName, field.form() );
 			
-			FormValue<?> oldFormValue = form.getFormValue( Object.class, name );
+			FormValue<?> oldFormValue = form.getFormValue( null, name );
 			
 			if( oldFormValue == null ){
 				// Skip silently already defined Values

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.axone.data.Charsets;
 import de.axone.exception.Assert;
+import de.axone.tools.E;
 import de.axone.tools.Mapper;
 import de.axone.webtemplate.WebTemplateException;
 
@@ -55,6 +56,7 @@ public abstract class Slicer {
 	public void parse( String master, String ... names ) throws WebTemplateException{
 		parse( master, Mapper.hashSet( names ) );
 	}
+	
 	public void parse( String master, Collection<String> names ) throws WebTemplateException{
 		
 		Assert.notNull( master, "master" );
@@ -99,6 +101,8 @@ public abstract class Slicer {
 		run( master, Mapper.treeSet( names ) );
 	}
 	public void run( String master, Collection<String> names ) throws WebTemplateException, IOException {
+		
+		E.rr( "RUN" ,master, names );
 		
 		init();
 		

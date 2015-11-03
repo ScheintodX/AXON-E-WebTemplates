@@ -2,11 +2,8 @@ package de.axone.webtemplate.slicer;
 
 import static org.testng.Assert.*;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.List;
@@ -38,6 +35,7 @@ public class JerrySlicerTest {
 "<html>\n" +
 "	<head>\n" +
 "		<title>Master</title>\n" +
+"		<link rel=\"stylesheet\" href=\"blah.css\"/>\n" +
 "	</head>\n" +
 "	<body>\n" +
 "		<div class=\"cA\" id=\"a\">\n" +
@@ -104,21 +102,6 @@ public class JerrySlicerTest {
 		slicer.parse( masterName, "c" );
 	}
 	
-	@SuppressWarnings( "unused" )
-	private String slurp( File f ) throws IOException{
-		
-		StringBuilder b = new StringBuilder();
-		try( BufferedReader in = new BufferedReader( new FileReader( f ) ) ){
-			
-			String line;
-			while( ( line = in.readLine() ) != null ){
-				
-				b.append( line ).append( "\n" );
-			}
-		}
-		return b.toString();
-	}
-	
 	private static class TestSlicer extends JerrySlicer {
 
 		@Override
@@ -158,7 +141,7 @@ public class JerrySlicerTest {
 			assertEquals( outerHtml(), inner );
 					
 			selectOuter( "#content" );
-			assertEquals( html(), outer );
+			assertEquals( html(), inner );
 			assertEquals( outerHtml(), outer );
 			
 			use( "#c" );
@@ -169,12 +152,23 @@ public class JerrySlicerTest {
 		
 		private void sliceB(){
 			
-			// TODO: More tests
+			use( "head" );
+			view( "link" )
+					.attr( "class", "blahclass" );
+			
+			// The broken indention doesn't matter
+			// But NOTE the SLASH at the end. We need it to be there!
+			assertEquals( outerHtml(), "" +
+"<head>\n" +
+"		<title>Master</title>\n" +
+"		<link rel=\"stylesheet\" href=\"blah.css\" class=\"blahclass\"/>\n" +
+"	</head>" 
+			);
 		}
 		
 		private void sliceC(){
 			
-			// More tests
+			// TODO: More tests
 		}
 
 		@Override

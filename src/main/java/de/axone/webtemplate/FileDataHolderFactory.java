@@ -80,7 +80,6 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 				}
 				
 				// Slice: Allways slice all
-				//if( run ) slicer.run( source, name );
 				if( run ) slicer.run( source );
 				
 				// Store
