@@ -9,9 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.tools.KeyValueAccessor.ValueProvider;
 import de.axone.tools.Mapper;
 import de.axone.tools.S;
 import de.axone.tools.Str;
@@ -85,6 +88,7 @@ public class ResourceFunction implements Function {
 	public static final String ATTRIBUTE_MEDIA = "media";
 	public static final String ATTRIBUTE_BASE = "base";
 	public static final String ATTRIBUTE_SYNC = "sync";
+	public static final String ATTRIBUTE_CDN = "cdn";
 	
 	public enum Runmode {
 		dev, live;
@@ -105,6 +109,7 @@ public class ResourceFunction implements Function {
 	private final Cache cache;
 	private final String media;
 	private final String base;
+	private final CDNProvider cdn;
 	private final File fsBase;
 	private final int rand;
 	
@@ -114,27 +119,29 @@ public class ResourceFunction implements Function {
 	 * @param combine
 	 * @param cache
 	 * @param media
+	 * @param cdn CDN Url to use (e.g. "//cdn.blah.com") or null
 	 * @param base
 	 * @param fsBase only needed for live fs ctime checks if mode==dev.
 	 * @param rand a random number used for nocache
 	 */
 	public ResourceFunction( ResourceProvider provider, Runmode mode, boolean combine,
-			Cache cache, String media, String base, File fsBase, int rand ){
+			Cache cache, String media, CDNProvider cdn, String base, File fsBase, int rand ){
 		
 		this.provider = provider;
 		this.mode = mode;
 		this.combine = combine;
 		this.cache = cache;
 		this.media = media;
+		this.cdn = cdn;
 		this.base = base;
 		this.fsBase = fsBase;
 		this.rand = rand;
 	}
 	
-	public ResourceFunction( ResourceProvider provider, Runmode mode, boolean combine,
-			String base, File fsBase, int rand ){
+	public ResourceFunction( @Nonnull ResourceProvider provider, @Nonnull Runmode mode, boolean combine,
+			@Nullable CDNProvider cdn, @Nonnull String base, @Nonnull File fsBase, int rand ){
 		
-		this( provider, mode, combine, Cache.file, null, base, fsBase, rand );
+		this( provider, mode, combine, Cache.file, null, cdn, base, fsBase, rand );
 	}
 	
 	private static final char FS = ';';
@@ -192,6 +199,11 @@ public class ResourceFunction implements Function {
 			} else {
 				pBase += "/" + pAddBase;
 			}
+		}
+		
+		if( pMode != Runmode.dev && ( pBase.length() < 2 || ! ( pBase.startsWith( "//" ) || pBase.startsWith( "http" ) ) ) ) {
+			String lCdn = attributes.get( ATTRIBUTE_CDN, this.cdn );
+			if( lCdn != null ) pBase = lCdn + pBase;
 		}
 		
 		pBase += "/";
@@ -284,6 +296,13 @@ public class ResourceFunction implements Function {
 	public interface ResourceProvider {
 		
 		public String get( String name );
+	}
+	
+	@FunctionalInterface
+	public interface CDNProvider extends ValueProvider<String> {
+		
+		@Override
+		public String get();
 	}
 
 }

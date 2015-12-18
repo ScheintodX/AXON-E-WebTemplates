@@ -14,7 +14,7 @@ import de.axone.tools.StringValueAccessor;
  * @author flo
  */
 
-public class AttributeMap implements StringValueAccessor {
+public class AttributeMap implements StringValueAccessor<String> {
 	
 	private final Map<String,Object> m;
 	
