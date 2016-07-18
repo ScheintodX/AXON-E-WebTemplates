@@ -30,7 +30,7 @@ public class WebTemplateTest {
 		
 		@SuppressWarnings( { "unchecked", "rawtypes" } )
 		DataHolder holder = new FileDataHolderFactory( new CacheHashMap(
-				new RealmImpl( "TestCache" ) ), null, null ).holderFor( file );
+				new RealmImpl( "TestCache" ), true ), null, null ).holderFor( file );
 		
 		StringWriter s = new StringWriter();
 		holder.render( null, new PrintWriter( s ), null, null, null, null );
