@@ -28,6 +28,7 @@ import de.axone.web.SuperURLPrinter;
 import de.axone.web.encoding.Encoder;
 import de.axone.web.encoding.Encoder_Amp;
 import de.axone.web.encoding.Encoder_Attribute;
+import de.axone.web.encoding.Encoder_AttributeId;
 import de.axone.web.encoding.Encoder_Html;
 import de.axone.web.encoding.Encoder_Text;
 import de.axone.web.encoding.Encoder_Url;
@@ -60,6 +61,7 @@ public final class DataHolder implements Serializable {
 	                           P_REAL_FILE = "realfile",
 	                           P_TIMESTAMP = "timestamp",
 	                           P_SOURCE = "source",
+	                           P_CALLSTACK = "callstack",
 	                           P_TRUE = "true",
 	                           P_FALSE = "false";
 	
@@ -558,6 +560,7 @@ public final class DataHolder implements Serializable {
 
 		none('(',')', null ),
 		attribute('#','#', Encoder_Attribute.instance() ),
+		attribute_id('%','%', Encoder_AttributeId.instance() ),
 		amp('&','&', Encoder_Amp.instance() ),
 		text('[',']', Encoder_Text.instance() ),
 		url('@', '@', Encoder_Url.instance() ),

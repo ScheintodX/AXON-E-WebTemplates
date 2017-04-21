@@ -5,8 +5,11 @@ import java.util.Map;
 import java.util.Set;
 
 import de.axone.tools.E;
+import de.axone.tools.Stack;
 
 public abstract class AbstractWebTemplate implements WebTemplate {
+	
+	private final Throwable callstack;
 	
 	private WebTemplateInfo info;
 	
@@ -14,9 +17,13 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 	
 	protected Map<String,Object> parameters = new HashMap<String,Object>();
 
-	protected AbstractWebTemplate() {}
+	protected AbstractWebTemplate() {
+		callstack = new Throwable();
+	}
 	
 	protected AbstractWebTemplate( DataHolder holder ) {
+		
+		this();
 
 		setHolder( holder );
 	}
@@ -26,6 +33,8 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 	protected void setHolder( DataHolder holder ) {
 
 		this.holder = holder;
+		
+		holder.setValue( DataHolder.P_CALLSTACK, () -> Stack.quick( callstack ) );
 	}
 
 	public DataHolder getHolder() {

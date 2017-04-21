@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -137,13 +138,13 @@ public class WebFormImpl implements WebForm {
 	}
 
 	@Override
-	public List<String> validate() {
+	public List<String> validate( @Nullable Translator t ) {
 
 		LinkedList<String> result = new LinkedList<String>();
 
 		for( FormValue<?> value : connectorValues.values() ) {
 
-			List<String> r = value.validate();
+			List<String> r = value.validate( t );
 
 			if( r == null || r.size() == 0 )
 				continue;

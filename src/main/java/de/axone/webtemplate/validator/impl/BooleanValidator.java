@@ -1,6 +1,9 @@
 package de.axone.webtemplate.validator.impl;
 
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 /**
@@ -15,7 +18,7 @@ public class BooleanValidator extends AbstractValidator<Integer> {
 	public BooleanValidator(){}
 
 	@Override
-	public String validate(Integer value) {
+	public String validate( Integer value, @Nullable Translator t ) {
 		
 		if( value == null ) return null;
 		

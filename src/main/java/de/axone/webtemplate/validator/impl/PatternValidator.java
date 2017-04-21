@@ -3,6 +3,9 @@ package de.axone.webtemplate.validator.impl;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 public class PatternValidator extends AbstractValidator<String> {
@@ -25,7 +28,7 @@ public class PatternValidator extends AbstractValidator<String> {
 	}
 
 	@Override
-	public String validate( String value ) {
+	public String validate( String value, @Nullable Translator t ) {
 		
 		if( value == null || value.length() == 0 ) return null;
 		

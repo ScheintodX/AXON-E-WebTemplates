@@ -47,12 +47,12 @@ public class WebFormTest {
 
 		// Validation
 		assertTrue( webForm.isValid() );
-		assertNull( webForm.validate() );
+		assertNull( webForm.validate( null ) );
 
 		inputText2.setValue( "" );
 
 		assertFalse( webForm.isValid() );
-		List<String> result = webForm.validate();
+		List<String> result = webForm.validate( null );
 		assertNotNull( result );
 		assertEquals( result.size(), 1 );
 		assertEquals( result.get( 0 ), VALIDATOR_IS_EMPTY );
@@ -60,7 +60,7 @@ public class WebFormTest {
 		// Translation
 		webForm.setTranslationProvider( new TestTextProvider() );
 
-		result = webForm.validate();
+		result = webForm.validate( null );
 		assertNotNull( result );
 		assertEquals( result.size(), 1 );
 		assertEquals( result.get( 0 ), "valisempty" );

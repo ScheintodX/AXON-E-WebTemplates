@@ -1,7 +1,10 @@
 package de.axone.webtemplate.converter.impl;
 
+import javax.annotation.Nullable;
+
 import de.axone.webtemplate.converter.AbstractConverter;
 import de.axone.webtemplate.converter.ConverterException;
+import de.axone.webtemplate.form.Translator;
 
 /**
  * Convert String to String
@@ -24,7 +27,7 @@ public class StringConverter extends AbstractConverter<String> {
 	}
 
 	@Override
-	public String validate( String value ){
+	public String validate( String value, @Nullable Translator t ){
 		return null; // Doing nothing always works
 	}
 

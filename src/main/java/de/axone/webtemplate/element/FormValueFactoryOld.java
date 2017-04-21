@@ -40,7 +40,7 @@ import de.axone.webtemplate.validator.impl.MinMaxValidator;
 import de.axone.webtemplate.validator.impl.NotNullValidator;
 import de.axone.webtemplate.validator.impl.PhoneValidator;
 import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic;
-import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic.CountryProvider;
+import de.axone.webtemplate.validator.impl.TinValidator_Dynamic;
 import de.axone.webtemplate.validator.impl.UrlValidator;
 
 public class FormValueFactoryOld extends AbstractFormValueFactory implements FormValueFactory {
@@ -250,26 +250,21 @@ public class FormValueFactoryOld extends AbstractFormValueFactory implements For
 	public FormValue<String> createInputPostalcodeValue( String name, boolean nullable, final String countryCode ) {
 
 		FormValue<String> result = createInputTextValue( name, 12, nullable );
-		result.addValidator( new PostalcodeValidator_Dynamic(
-				new CountryProvider(){
-					@Override public String getCode(){
-						return countryCode;
-					}
-				}
-		) );
+		result.addValidator( new PostalcodeValidator_Dynamic( () -> countryCode ) );
 		return result;
 	}
 	@Override
 	public FormValue<String> createInputPostalcodeValue( String name, boolean nullable, final FormValue<String> countryProvider ) {
 
 		FormValue<String> result = createInputTextValue( name, 12, nullable );
-		result.addValidator( new PostalcodeValidator_Dynamic(
-				new CountryProvider(){
-					@Override public String getCode(){
-						return countryProvider.getPlainValue();
-					}
-				}
-		) );
+		result.addValidator( new PostalcodeValidator_Dynamic( () -> countryProvider.getPlainValue() ) );
+		return result;
+	}
+	@Override
+	public FormValue<String> createInputTinValue( String name, boolean nullable, final FormValue<String> countryProvider ) {
+
+		FormValue<String> result = createInputTextValue( name, 12, nullable );
+		result.addValidator( new TinValidator_Dynamic( () -> countryProvider.getPlainValue() ) );
 		return result;
 	}
 

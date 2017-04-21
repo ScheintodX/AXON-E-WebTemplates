@@ -1,5 +1,8 @@
 package de.axone.webtemplate.validator.impl;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 
@@ -20,7 +23,7 @@ public class CreditCardNumberValidator extends AbstractValidator<String> {
 	
 
 	@Override
-	public String validate( String value ) {
+	public String validate( String value, @Nullable Translator t ) {
 		
 		// Empty values are valid
 		if( value == null || value.length() == 0 ) return null;

@@ -1,5 +1,8 @@
 package de.axone.webtemplate.validator.impl;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 /**
@@ -21,7 +24,7 @@ public class MinMaxValidator extends AbstractValidator<Number> {
 	}
 
 	@Override
-	public String validate( Number value ) {
+	public String validate( Number value, @Nullable Translator t ) {
 		
 		if( value == null ) return null;
 			

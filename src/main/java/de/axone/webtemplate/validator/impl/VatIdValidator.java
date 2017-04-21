@@ -1,5 +1,9 @@
 package de.axone.webtemplate.validator.impl;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
+
 
 public class VatIdValidator extends AbstractAlphaNumValidator {
 	
@@ -16,8 +20,8 @@ public class VatIdValidator extends AbstractAlphaNumValidator {
 	}
 	
 	@Override
-	protected String error( String originalPattern ){
-		return NO_VALID_POSTAL_CODE + ":" + examplify( originalPattern );
+	protected String error( String originalPattern, @Nullable Translator t ){
+		return NO_VALID_POSTAL_CODE + ":" + examplify( originalPattern, t );
 	}
 
 }

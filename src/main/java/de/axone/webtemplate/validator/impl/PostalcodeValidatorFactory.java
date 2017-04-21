@@ -9,7 +9,7 @@ package de.axone.webtemplate.validator.impl;
  */
 public class PostalcodeValidatorFactory {
 	
-	private static PostalcodePatternProvider provider
+	private static PatternProvider provider
 		= new PostalcodePatternProviderIntern();
 	
 	public static PostalcodeValidator validatorFor( String iso2 ){
@@ -30,7 +30,7 @@ public class PostalcodeValidatorFactory {
 			return new PostalcodeValidator( pattern );
 		}
 	}
-	public static void setPatternProvider( PostalcodePatternProvider provider ){
+	public static void setPatternProvider( PatternProvider provider ){
 		
 		PostalcodeValidatorFactory.provider = provider;
 	}

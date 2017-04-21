@@ -17,6 +17,7 @@ public class HtmlInputElement extends AbstractHtmlInputElement {
 	private static String ATTRIBUTE_READONLY = "readonly";
 	private static String ATTRIBUTE_SIZE = "size";
 	private static String ATTRIBUTE_MAXLENGTH = "maxlength";
+	private static String ATTRIBUTE_PLACEHOLDER = "placeholder";
 	private static String ATTRIBUTE_ACCEPT = "accept";
 
 	private static List<String> ATTRIBUTES = Arrays.asList(
@@ -131,6 +132,14 @@ public class HtmlInputElement extends AbstractHtmlInputElement {
 		String maxLengthStr = getAttribute( ATTRIBUTE_MAXLENGTH  );
 		if( maxLengthStr == null ) return null;
 		return Integer.parseInt( maxLengthStr );
+	}
+	
+	// --- Placeholder --
+	public void setPlaceholder( String placeholder ){
+		setAttribute( ATTRIBUTE_PLACEHOLDER, placeholder );
+	}
+	public String getPlaceholder(){
+		return getAttribute( ATTRIBUTE_PLACEHOLDER );
 	}
 	
 	// --- Accept ---

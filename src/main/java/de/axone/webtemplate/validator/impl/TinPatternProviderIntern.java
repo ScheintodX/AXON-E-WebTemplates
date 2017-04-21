@@ -2,7 +2,7 @@ package de.axone.webtemplate.validator.impl;
 
 import de.axone.i18n.StaticCountries;
 
-public class PostalcodePatternProviderIntern implements PatternProvider{
+public class TinPatternProviderIntern implements PatternProvider{
 	
 	@Override
 	public String forCode( String iso2 ) {
@@ -11,7 +11,7 @@ public class PostalcodePatternProviderIntern implements PatternProvider{
 		if( country == null )
 			throw new IllegalArgumentException( "No country for " + iso2 );
 		
-		return country.getPostalcode();
+		return country.getTin();
 	}
 
 }

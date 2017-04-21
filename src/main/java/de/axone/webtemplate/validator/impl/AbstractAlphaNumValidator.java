@@ -3,6 +3,10 @@ package de.axone.webtemplate.validator.impl;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.TKeysCommon;
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 public abstract class AbstractAlphaNumValidator extends AbstractValidator<String> {
@@ -40,35 +44,36 @@ public abstract class AbstractAlphaNumValidator extends AbstractValidator<String
 	}
 	
 	@Override
-	public String validate( String check ){
+	public String validate( String check, @Nullable Translator t ){
 		
 		if( check == null ) return null;
 		if( pattern == null ) return null;
 		
 		Matcher matcher = pattern.matcher( check.toUpperCase() );
 		if( ! matcher.matches() ) {
-			return error( originalPattern );
+			return error( originalPattern, t );
 		}
 		
 		return null;
 	}
 	
-	protected abstract String error( String originalPattern );
+	protected abstract String error( String originalPattern, @Nullable Translator t );
 
-	protected String examplify( String format ){
+	protected String examplify( String format, Translator t ){
 		
 		StringBuilder result = new StringBuilder();
 		
-		char a='A';
+		char a='A', u='U';
 		char n='1';
 		
 		for( char c : format.toCharArray() ){
 			
 			if( c=='a' ) result.append( a++ );
 			else if( c=='n' ) result.append( n++ );
+			else if( c=='x' ) result.append( u++ );
+			else if( c=='|' ) result.append( ' ' ).append( t != null ? t.translate( TKeysCommon.or ) : "|" ).append( ' ' );
 			else result.append( c );
 		}
-		
 		
 		return result.toString();
 	}

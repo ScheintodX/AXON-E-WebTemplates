@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 
 import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic.CountryProvider;
 
-@Test
+@Test( groups="helper.validator.postalcode" )
 public class PostalcodeValidatorTest {
 	
 	static final String[] exsGb = new String[]{ 
@@ -62,32 +62,32 @@ public class PostalcodeValidatorTest {
 		
 		assertTrue( validatorJe instanceof PostalcodeValidator_Uk );
 		
-		assertNull( validatorDe.validate( "12345" ) );
-		assertNotNull( validatorDe.validate( "2345" ) );
-		assertNotNull( validatorDe.validate( "123456" ) );
+		assertNull( validatorDe.validate( "12345", null ) );
+		assertNotNull( validatorDe.validate( "2345", null ) );
+		assertNotNull( validatorDe.validate( "123456", null ) );
 		
-		assertNull( validatorAt.validate( "1234" ) );
-		assertNotNull( validatorAt.validate( "234" ) );
-		assertNotNull( validatorAt.validate( "12345" ) );
+		assertNull( validatorAt.validate( "1234", null ) );
+		assertNotNull( validatorAt.validate( "234", null ) );
+		assertNotNull( validatorAt.validate( "12345", null ) );
 		
 		for( String exGb : exsGb ){
-			assertNull( validatorGb.validate( exGb ), exGb );
+			assertNull( validatorGb.validate( exGb, null ), exGb );
 		}
 		
 		for( String exGb : exsGbErr ){
-			assertNotNull( validatorGb.validate( exGb ), exGb );
+			assertNotNull( validatorGb.validate( exGb, null ), exGb );
 		}
 		
 		for( String exJe : exsJe ){
-			assertNull( validatorJe.validate( exJe ), exJe );
+			assertNull( validatorJe.validate( exJe, null ), exJe );
 		}
 		
 		for( String exJe : exsJeErr ){
-			assertNotNull( validatorJe.validate( exJe ), exJe );
+			assertNotNull( validatorJe.validate( exJe, null ), exJe );
 		}
 		
 		for( String exIe : exsIe ) {
-			assertNull( validatorIe.validate( exIe ), exIe );
+			assertNull( validatorIe.validate( exIe, null ), exIe );
 		}
 	}
 	
@@ -99,60 +99,60 @@ public class PostalcodeValidatorTest {
 				= new PostalcodeValidator_Dynamic( tcp );
 		
 		// Always validate without country
-		val.validate( "abc123" );
+		val.validate( "abc123", null );
 		
 		tcp.setIso2( "de" );
-		assertNull( val.validate( "12345" ) );
-		assertNotNull( val.validate( "2345" ) );
-		assertNotNull( val.validate( "123456" ) );
+		assertNull( val.validate( "12345", null ) );
+		assertNotNull( val.validate( "2345", null ) );
+		assertNotNull( val.validate( "123456", null ) );
 		
 		tcp.setIso2( "at" );
-		assertNull( val.validate( "1234" ) );
-		assertNotNull( val.validate( "234" ) );
-		assertNotNull( val.validate( "12345" ) );
+		assertNull( val.validate( "1234", null ) );
+		assertNotNull( val.validate( "234", null ) );
+		assertNotNull( val.validate( "12345", null ) );
 		
 		tcp.setIso2( "gb" );
 		for( String exGb : exsGb ){
-			assertNull( val.validate( exGb ) );
+			assertNull( val.validate( exGb, null ) );
 		}
 		
 		for( String exGb : exsGbErr ){
-			assertNotNull( val.validate( exGb ) );
+			assertNotNull( val.validate( exGb, null ) );
 		}
 	}
 	
 	public void testWildcardHandling(){
 		
 		PostalcodeValidator a = new PostalcodeValidator( "an" );
-		assertNull( a.validate( "A1" ) );
-		assertNotNull( a.validate( "A-1" ) );
-		assertNotNull( a.validate( "A 1" ) );
+		assertNull( a.validate( "A1", null ) );
+		assertNotNull( a.validate( "A-1", null ) );
+		assertNotNull( a.validate( "A 1", null ) );
 		
 		PostalcodeValidator b = new PostalcodeValidator( "a n" );
-		assertNull( b.validate( "A 1" ) );
-		assertNotNull( b.validate( "A-1" ) );
-		assertNotNull( b.validate( "A1" ) );
+		assertNull( b.validate( "A 1", null ) );
+		assertNotNull( b.validate( "A-1", null ) );
+		assertNotNull( b.validate( "A1", null ) );
 		
 		PostalcodeValidator c = new PostalcodeValidator( "a.n" );
-		assertNull( c.validate( "A 1" ) );
-		assertNull( c.validate( "A-1" ) );
-		assertNotNull( b.validate( "A1" ) );
+		assertNull( c.validate( "A 1", null ) );
+		assertNull( c.validate( "A-1", null ) );
+		assertNotNull( b.validate( "A1", null ) );
 		
 		PostalcodeValidator d = new PostalcodeValidator( "a ?n" );
-		assertNull( d.validate( "A1" ) );
-		assertNull( d.validate( "A 1" ) );
-		assertNotNull( d.validate( "A-1" ) );
+		assertNull( d.validate( "A1", null ) );
+		assertNull( d.validate( "A 1", null ) );
+		assertNotNull( d.validate( "A-1", null ) );
 		
 		PostalcodeValidator e = new PostalcodeValidator( "a?n" );
-		assertNull( e.validate( "A1" ) );
-		assertNotNull( e.validate( "A 1" ) );
-		assertNotNull( e.validate( "A-1" ) );
-		assertNull( e.validate( "1" ) );
+		assertNull( e.validate( "A1", null ) );
+		assertNotNull( e.validate( "A 1", null ) );
+		assertNotNull( e.validate( "A-1", null ) );
+		assertNull( e.validate( "1", null ) );
 		
 		PostalcodeValidator f = new PostalcodeValidator( "a n", true );
-		assertNull( f.validate( "A 1" ) );
-		assertNull( f.validate( "A1" ) );
-		assertNotNull( f.validate( "A-1" ) );
+		assertNull( f.validate( "A 1", null ) );
+		assertNull( f.validate( "A1", null ) );
+		assertNotNull( f.validate( "A-1", null ) );
 		
 	}
 	

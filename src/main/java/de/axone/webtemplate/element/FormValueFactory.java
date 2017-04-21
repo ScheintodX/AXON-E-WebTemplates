@@ -87,6 +87,9 @@ public interface FormValueFactory {
 	public abstract FormValue<String> createInputPostalcodeValue( String name,
 			boolean nullable, FormValue<String> countryProvider );
 
+	public abstract FormValue<String> createInputTinValue( String name,
+			boolean nullable, FormValue<String> countryProvider );
+
 	public abstract FormValue<String> createInputEMailValue( String name,
 			int length, boolean nullable );
 

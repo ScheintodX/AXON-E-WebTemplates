@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -83,7 +84,7 @@ public interface WebForm {
 	public HtmlInput getHtmlInput( String name ) throws WebTemplateException;
 
 	public boolean isValid();
-	public List<String> validate();
+	public List<String> validate( @Nullable Translator t );
 
 	public String getPlainValue( String name )
 		throws WebTemplateException;

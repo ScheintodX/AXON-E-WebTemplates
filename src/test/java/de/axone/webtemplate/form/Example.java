@@ -70,7 +70,7 @@ public class Example {
 					return;
 				} else {
 					
-					List<String> failures = form.validate();
+					List<String> failures = form.validate( null );
 					
 					template.setParameter( "message", Str.join( ", ", failures ) );
 					

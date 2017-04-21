@@ -2,6 +2,9 @@ package de.axone.webtemplate.validator.impl;
 
 import java.util.Collection;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 /**
@@ -22,7 +25,7 @@ public class InCollectionValidator<T> extends AbstractValidator<T> {
 	}
 
 	@Override
-	public String validate( T value ) {
+	public String validate( T value, @Nullable Translator t ) {
 		
 		if( value == null ) return null;
 		

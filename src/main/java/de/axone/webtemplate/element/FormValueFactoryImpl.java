@@ -41,6 +41,7 @@ import de.axone.webtemplate.validator.impl.NotNullValidator;
 import de.axone.webtemplate.validator.impl.PhoneValidator;
 import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic;
 import de.axone.webtemplate.validator.impl.PostalcodeValidator_Dynamic.CountryProvider;
+import de.axone.webtemplate.validator.impl.TinValidator_Dynamic;
 import de.axone.webtemplate.validator.impl.UrlValidator;
 
 public class FormValueFactoryImpl extends AbstractFormValueFactory implements FormValueFactory {
@@ -188,8 +189,8 @@ public class FormValueFactoryImpl extends AbstractFormValueFactory implements Fo
 	 */
 	@Override
 	public FormValue<String> createInputTextValue(
-			HtmlInputElement.InputType type, String name, int length,
-			boolean nullable, AjaxValidate ajaxValidate ) {
+			HtmlInputElement.InputType type, String name,
+			int length, boolean nullable, AjaxValidate ajaxValidate ) {
 
 		FormValueImpl<String> result = FormValueImpl.create( String.class );
 
@@ -264,6 +265,7 @@ public class FormValueFactoryImpl extends AbstractFormValueFactory implements Fo
 		) );
 		return result;
 	}
+	
 	@Override
 	public FormValue<String> createInputPostalcodeValue( String name, boolean nullable, final FormValue<String> countryProvider ) {
 
@@ -278,7 +280,22 @@ public class FormValueFactoryImpl extends AbstractFormValueFactory implements Fo
 		) );
 		return result;
 	}
+	
+	@Override
+	public FormValue<String> createInputTinValue( String name, boolean nullable, final FormValue<String> countryProvider ) {
 
+		FormValue<String> result = createInputTextValue( name, 12, nullable );
+		
+		result.addValidator( new TinValidator_Dynamic(
+				new CountryProvider(){
+					@Override public String getCode(){
+						return countryProvider.getPlainValue();
+					}
+				}
+		) );
+		return result;
+	}
+	
 	@Override
 	public FormValue<String> createInputEMailValue( String name, int length,
 			boolean nullable ) {

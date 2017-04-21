@@ -3,6 +3,9 @@ package de.axone.webtemplate.validator.impl;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 /**
@@ -17,7 +20,7 @@ public class UrlValidator extends AbstractValidator<String> {
 	public UrlValidator(){}
 
 	@Override
-	public String validate( String url ) {
+	public String validate( String url, @Nullable Translator t ) {
 		
 		if( url == null || url.length() == 0 ) return null;
 		

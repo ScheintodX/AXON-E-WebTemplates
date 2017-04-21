@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import de.axone.webtemplate.converter.Converter;
@@ -92,11 +93,11 @@ public class FormValueImpl<T> implements FormValue<T> {
 	@Override
 	public boolean isValid() {
 		
-		return validate().size() == 0;
+		return validate( null ).size() == 0;
 	}
 
 	@Override
-	public List<String> validate() {
+	public List<String> validate( @Nullable Translator t ) {
 		
 		LinkedList<String> result = new LinkedList<String>();
 		
@@ -113,7 +114,7 @@ public class FormValueImpl<T> implements FormValue<T> {
 		
 		for( Validator<? super T> validator : validators ){
 			
-			String text = validator.validate( value );
+			String text = validator.validate( value, t );
 			
 			if( text != null ){
 				result.addLast( text );

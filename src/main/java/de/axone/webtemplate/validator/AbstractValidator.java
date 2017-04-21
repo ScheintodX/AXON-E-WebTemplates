@@ -7,7 +7,7 @@ public abstract class AbstractValidator<T> implements Validator<T> {
 	@Override
 	public boolean isValid( T value ) {
 		
-		return ( validate( value ) == null );
+		return ( validate( value, null ) == null );
 	}
 	
 }

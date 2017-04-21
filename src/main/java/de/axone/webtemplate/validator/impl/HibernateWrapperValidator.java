@@ -1,11 +1,14 @@
 package de.axone.webtemplate.validator.impl;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 public class HibernateWrapperValidator extends AbstractValidator<Object> {
 
 	@Override
-	public String validate( Object value ) {
+	public String validate( Object value, @Nullable Translator t ) {
 		throw new UnsupportedOperationException( "This is removed to remove dependency" );
 	}
 	

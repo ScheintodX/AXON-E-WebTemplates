@@ -30,23 +30,23 @@ public class BigDecimalConverterTest {
 		BigDecimal number = new BigDecimal( asDouble );
 		String coolString = asString;
 		assertTrue( converter.isValid( coolString ) );
-		assertNull( converter.validate( coolString ) );
+		assertNull( converter.validate( coolString, null ) );
 		assertEquals( converter.convertFromString( coolString ), number );
 		assertEquals( converter.convertToString( number ), coolString );
 		
 		String emptyString = "";
 		assertTrue( converter.isValid( emptyString ) );
-		assertNull( converter.validate( emptyString ) );
+		assertNull( converter.validate( emptyString, null ) );
 		assertNull( converter.convertFromString( emptyString ) );
 		
 		String nullString = null;
 		assertTrue( converter.isValid( nullString ) );
-		assertNull( converter.validate( nullString ) );
+		assertNull( converter.validate( nullString, null ) );
 		assertNull( converter.convertFromString( nullString ) );
 		
 		String badString = "Blah";
 		assertFalse( converter.isValid( badString ) );
-		assertNotNull( converter.validate( badString ) );
+		assertNotNull( converter.validate( badString, null ) );
 		
 	}
 	

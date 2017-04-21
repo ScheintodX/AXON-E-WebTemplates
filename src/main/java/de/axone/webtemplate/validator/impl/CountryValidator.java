@@ -2,12 +2,15 @@ package de.axone.webtemplate.validator.impl;
 
 import java.util.Locale;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 /**
  * Checks a given country for validity
  * 
- * @author hexxter
+ * @author flo
  */
 public class CountryValidator extends AbstractValidator<String> {
 	
@@ -16,7 +19,7 @@ public class CountryValidator extends AbstractValidator<String> {
 	public CountryValidator(){}
 
 	@Override
-	public String validate( String value ) {
+	public String validate( String value, @Nullable Translator t ) {
 		
 		if( value == null || value.length() == 0 ) return null;
 		

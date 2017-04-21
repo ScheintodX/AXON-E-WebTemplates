@@ -1,5 +1,7 @@
 package de.axone.webtemplate.validator.impl;
 
+import de.axone.webtemplate.form.Translator;
+
 
 public class PostalcodeValidator extends AbstractAlphaNumValidator {
 	
@@ -17,8 +19,8 @@ public class PostalcodeValidator extends AbstractAlphaNumValidator {
 	}
 	
 	@Override
-	protected String error( String originalPattern ){
-		return NO_VALID_POSTAL_CODE + ":" + examplify( originalPattern );
+	protected String error( String originalPattern, Translator t ){
+		return NO_VALID_POSTAL_CODE + ":" + examplify( originalPattern, t );
 	}
 
 }

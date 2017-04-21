@@ -13,12 +13,12 @@ public class EMailValidatorTest {
 		
 		String testCoolEMail = "f.bantner@axon-e.de";
 		assertTrue( validator.isValid( testCoolEMail ) );
-		assertNull( validator.validate( testCoolEMail ) );
+		assertNull( validator.validate( testCoolEMail, null ) );
 		
 		String testWrongEMail1 = "f.bantner.axon-e.de";
 		assertFalse( validator.isValid( testWrongEMail1 ) );
-		assertNotNull( validator.validate( testWrongEMail1 ) );
-		assertEquals( validator.validate( testWrongEMail1 ), "VALIDATOR_NO_EMAIL" );
+		assertNotNull( validator.validate( testWrongEMail1, null ) );
+		assertEquals( validator.validate( testWrongEMail1, null ), "VALIDATOR_NO_EMAIL" );
 		
 		/* This should fail but doesn't because it is valid (really!)
 		String testWrongEMail2 = "a@b";

@@ -13,16 +13,16 @@ public class NotNullValidatorTest {
 		
 		String testCoolString = "blah";
 		assertTrue( validator.isValid( testCoolString ) );
-		assertNull( validator.validate( testCoolString ) );
+		assertNull( validator.validate( testCoolString, null ) );
 		
 		String testEmptyString = "   ";
 		assertFalse( validator.isValid( testEmptyString ) );
-		assertNotNull( validator.validate( testEmptyString ) );
-		assertEquals( validator.validate( testEmptyString ), "VALIDATOR_IS_EMPTY" );
+		assertNotNull( validator.validate( testEmptyString, null ) );
+		assertEquals( validator.validate( testEmptyString, null ), "VALIDATOR_IS_EMPTY" );
 		
 		String testNoString = null;
 		assertFalse( validator.isValid( testNoString ) );
-		assertNotNull( validator.validate( testNoString ) );
-		assertEquals( validator.validate( testNoString ), "VALIDATOR_IS_NULL" );
+		assertNotNull( validator.validate( testNoString, null ) );
+		assertEquals( validator.validate( testNoString, null ), "VALIDATOR_IS_NULL" );
 	}
 }

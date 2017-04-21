@@ -2,6 +2,9 @@ package de.axone.webtemplate.validator.impl;
 
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
+import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.validator.AbstractValidator;
 
 public class CreditCardDateValidator extends AbstractValidator<Date> {
@@ -11,7 +14,7 @@ public class CreditCardDateValidator extends AbstractValidator<Date> {
 	private static final String TOO_OLD = "VALIDATOR_TOO_OLD";
 
 	@Override
-	public String validate( Date value ) {
+	public String validate( Date value, @Nullable Translator t ) {
 
 		Date now = new Date();
 
