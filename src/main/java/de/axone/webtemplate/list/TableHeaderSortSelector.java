@@ -12,12 +12,12 @@ import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.TKey;
 import de.axone.webtemplate.form.Translator;
 
-public class TableHeaderSortSelector implements SortSelector {
+public class TableHeaderSortSelector<T> implements SortSelector<T> {
 	
 	private String[] sortMethods;
 	
 	private String nameBase;
-	private String sort;
+	private Sorting<T> sort;
 	
 	private boolean keepPageOnSort = false;
 	
@@ -31,12 +31,12 @@ public class TableHeaderSortSelector implements SortSelector {
 	}
 
 	@Override
-	public void setSelectedSort( String sort ) {
+	public void setSelectedSort( Sorting<T> sort ) {
 		this.sort = sort;
 	}
 	
 	@Override
-	public String getSelectedSort( ) {
+	public Sorting<T> getSelectedSort( ) {
 		return this.sort;
 	}
 	

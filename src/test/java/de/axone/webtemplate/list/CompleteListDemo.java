@@ -58,7 +58,7 @@ public class CompleteListDemo {
 			pager = new DefaultPager();
 			pager.setShowArrowheads( false );
 			pager.setShowBoundaries( false );
-			MyListRenderer listRenderer = new MyListRenderer( req, listProvider,
+			MyListRenderer listRenderer = new MyListRenderer( listProvider,
 					itemTemplate );
 			
 			listRenderer.initPager( pager );
@@ -69,19 +69,11 @@ public class CompleteListDemo {
 		}
 	}
 
-	private static class MyListRenderer extends AbstractListRenderer<Integer> {
+	private static class MyListRenderer extends AbstractListRenderer<Integer,MyListRenderer> {
 		
-		private final Renderer itemTemplate;
-
-		public MyListRenderer(HttpServletRequest req, ListProvider<Integer> listProvider,
-				Renderer itemTemplate ) {
-			super( req, "mylist", "name", 10, listProvider );
-			this.itemTemplate = itemTemplate;
-		}
-
-		@Override
-		protected Renderer itemTemplate( Integer item ) {
-			return itemTemplate;
+		public MyListRenderer( ListProvider<Integer> listProvider, Renderer itemTemplate ) {
+			
+			super( MyListRenderer.class, "mylist", 10, listProvider, null, (i)->itemTemplate, null );
 		}
 	}
 
@@ -90,7 +82,7 @@ public class CompleteListDemo {
 		private static final int SIZE = 1234;
 
 		@Override
-		public Iterable<Integer> getList( int beginIndex, int count, String sort ) {
+		public Iterable<Integer> getList( int beginIndex, int count, Sorting<Integer> sort ) {
 
 			if( beginIndex >= SIZE )
 				return new LinkedList<Integer>();

@@ -6,14 +6,14 @@ public class DefaultPager_Form extends DefaultPager {
 		leftContainer = "<form class=\"pager\">";
 		rightContainer = "</form>";
 		
-		leftTemplate = new Template( "<button name=\"link\" value=\"__link__\">&lt;&lt;</button>" );
-		selectedLeftTemplate = new Template( "<button class=\"active\">&lt;&lt;</button>" );
-		rightTemplate = new Template( "<button name=\"link\" value=\"__link__\">&gt;&gt;</button>" );
-		selectedRightTemplate = new Template( "<button class=\"active\">&gt;&gt;</button>" );
-		innerTemplate = new Template( "<button name=\"link\" value=\"__link__\">__no__</button>" );
-		selectedTemplate = new Template( "<button class=\"active\">[__no__]</button>" );
-		skippedTemplate = new Template( "&hellip;" );
-		spaceTemplate = new Template( "&nbsp;" );
+		leftTemplate = new StringTemplate( "<button name=\"link\" value=\"__link__\">&lt;&lt;</button>" );
+		selectedLeftTemplate = new StringTemplate( "<button class=\"active\">&lt;&lt;</button>" );
+		rightTemplate = new StringTemplate( "<button name=\"link\" value=\"__link__\">&gt;&gt;</button>" );
+		selectedRightTemplate = new StringTemplate( "<button class=\"active\">&gt;&gt;</button>" );
+		innerTemplate = new StringTemplate( "<button name=\"link\" value=\"__link__\">__no__</button>" );
+		selectedTemplate = new StringTemplate( "<button class=\"active\">[__no__]</button>" );
+		skippedTemplate = new StringTemplate( "&hellip;" );
+		spaceTemplate = new StringTemplate( "&nbsp;" );
 	}
 	
 	public DefaultPager_Form() {

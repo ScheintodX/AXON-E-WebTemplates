@@ -2,9 +2,10 @@ package de.axone.webtemplate.list;
 
 import de.axone.webtemplate.Renderer;
 
-public interface SortSelector extends Renderer {
+public interface SortSelector<T> extends Renderer {
 	
 	public void setNameBase( String nameBase );
-	public void setSelectedSort( String sort );
-	public String getSelectedSort();
+	
+	public void setSelectedSort( Sorting<T> sort );
+	public Sorting<T> getSelectedSort();
 }

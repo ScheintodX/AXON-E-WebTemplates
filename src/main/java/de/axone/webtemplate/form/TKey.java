@@ -37,6 +37,9 @@ public class TKey implements TranslationKey {
 	public static TranslationKey dynamic( String name ) {
 		return new TKey( name );
 	}
+	public static TranslationKey dynamicStrip( String name ) {
+		return dynamic( Str.strip( name, '@' ) );
+	}
 	public static TranslationKey param( TranslationKey base, String ... params ){
 		if( params == null || params.length == 0 ) return base;
 		return dynamic( base.name() + ":" + Str.join( ":", params ) );

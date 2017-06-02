@@ -2,15 +2,20 @@ package de.axone.webtemplate.list;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.axone.tools.S;
 import de.axone.tools.Text;
 import de.axone.web.HttpLinkBuilder;
+import de.axone.web.Meta;
 import de.axone.web.SuperURL;
 import de.axone.web.SuperURL.FinalEncoding;
 import de.axone.web.SuperURLPrinter;
@@ -53,6 +58,7 @@ public class DefaultPager implements Pager {
 	protected boolean showSelectedArrowheads = true;
 	
 	protected List<String> parametersWhitelist = null;
+	protected Map<String,String> addParameters = null;
 	
 	@Override
 	public String toString(){
@@ -67,16 +73,16 @@ public class DefaultPager implements Pager {
 	/* Templates */
 	protected String leftContainer = "<div class=\"pager\">";
 	protected String rightContainer = "</div>";
-	protected Template leftTemplate = new Template( "<a href=\"__link__\" rel=\"prev\">&lt;&lt;</a>" );
-	protected Template leftOfSelectedTemplate = new Template( "<a rel=\"prev\" href=\"__link__\">__no__</a>" );
-	protected Template selectedLeftTemplate = new Template( "<a class=\"active\">&lt;&lt;</a>" );
-	protected Template rightTemplate = new Template( "<a href=\"__link__\" rel=\"next\">&gt;&gt;</a>" );
-	protected Template rightOfSelectedTemplate = new Template( "<a rel=\"next\" href=\"__link__\">__no__</a>" );
-	protected Template selectedRightTemplate = new Template( "<a class=\"active\">&gt;&gt;</a>" );
-	protected Template innerTemplate = new Template( "<a href=\"__link__\">__no__</a>" );
-	protected Template selectedTemplate = new Template( "<a class=\"active\">[__no__]</a>" );
-	protected Template skippedTemplate = new Template( "&hellip;" );
-	protected Template spaceTemplate = new Template( "" );
+	protected Template leftTemplate = new StringTemplate( "<a href=\"__link__\" rel=\"prev\">&lt;&lt;</a>" );
+	protected Template leftOfSelectedTemplate = new StringTemplate( "<a rel=\"prev\" href=\"__link__\">__no__</a>" );
+	protected Template selectedLeftTemplate = new StringTemplate( "<a class=\"active\">&lt;&lt;</a>" );
+	protected Template rightTemplate = new StringTemplate( "<a href=\"__link__\" rel=\"next\">&gt;&gt;</a>" );
+	protected Template rightOfSelectedTemplate = new StringTemplate( "<a rel=\"next\" href=\"__link__\">__no__</a>" );
+	protected Template selectedRightTemplate = new StringTemplate( "<a class=\"active\">&gt;&gt;</a>" );
+	protected Template innerTemplate = new StringTemplate( "<a href=\"__link__\">__no__</a>" );
+	protected Template selectedTemplate = new StringTemplate( "<a class=\"active\">[__no__]</a>" );
+	protected Template skippedTemplate = new StringTemplate( "&hellip;" );
+	protected Template spaceTemplate = new StringTemplate( "" );
 
 	public DefaultPager(){}
 
@@ -129,11 +135,9 @@ public class DefaultPager implements Pager {
 	public void setShowBoundaries( boolean showBoundaries ) {
 		this.showBoundaries = showBoundaries;
 	}
-
 	public void setShowArrowheads( boolean showArrowheads ) {
 		this.showArrowheads = showArrowheads;
 	}
-
 	public void setShowSelectedArrowheads( boolean showSelectedArrowheads ) {
 		this.showSelectedArrowheads = showSelectedArrowheads;
 	}
@@ -141,60 +145,107 @@ public class DefaultPager implements Pager {
 	public void setParametersWhitelist( String ... parametersWhitelist ) {
 		this.parametersWhitelist = Arrays.asList( parametersWhitelist );
 	}
-
+	public void addParameter( String key, String value ) {
+		if( this.addParameters == null ) this.addParameters = new HashMap<>();
+		this.addParameters.put( key, value );
+	}
+	
 	public void setLeftContainer( String leftContainer ) {
 		this.leftContainer = leftContainer;
 	}
-
 	public void setRightContainer( String rightContainer ) {
 		this.rightContainer = rightContainer;
 	}
 
 
 	public void setLeftTemplate( String leftTemplate ){
-
-		this.leftTemplate = new Template( leftTemplate );
+		setLeftTemplate( leftTemplate != null ? new StringTemplate( leftTemplate ) : EMPTY_TEMPLATE );
 	}
+	public void setLeftTemplate( Template leftTemplate ){
+		this.leftTemplate = leftTemplate;
+	}
+	
 	public void setRightTemplate( String rightTemplate ){
-
-		this.rightTemplate = new Template( rightTemplate );
+		setRightTemplate( rightTemplate != null ? new StringTemplate( rightTemplate ) : EMPTY_TEMPLATE );
 	}
+	public void setRightTemplate( Template rightTemplate ){
+		this.rightTemplate = rightTemplate;
+	}
+	
 	public void setSelectedLeftTemplate( String selectedLeftTemplate ){
-
-		this.selectedLeftTemplate = new Template( selectedLeftTemplate );
+		setSelectedLeftTemplate( selectedLeftTemplate != null ? new StringTemplate( selectedLeftTemplate ) : EMPTY_TEMPLATE );
 	}
+	public void setSelectedLeftTemplate( Template selectedLeftTemplate ){
+		this.selectedLeftTemplate = selectedLeftTemplate;
+	}
+	
 	public void setLeftOfSelectedTemplate( String leftOfSelectedTemplate ){
-
-		this.leftOfSelectedTemplate = new Template( leftOfSelectedTemplate );
+		setLeftOfSelectedTemplate( leftOfSelectedTemplate != null ? new StringTemplate( leftOfSelectedTemplate ) : EMPTY_TEMPLATE );
 	}
+	public void setLeftOfSelectedTemplate( Template leftOfSelectedTemplate ){
+		this.leftOfSelectedTemplate = leftOfSelectedTemplate;
+	}
+	
 	public void setSelectedRightTemplate( String selectedRightTemplate ){
-
-		this.selectedRightTemplate = new Template( selectedRightTemplate );
+		setSelectedRightTemplate( selectedRightTemplate != null ? new StringTemplate( selectedRightTemplate ) : EMPTY_TEMPLATE );
 	}
+	public void setSelectedRightTemplate( Template selectedRightTemplate ){
+		this.selectedRightTemplate = selectedRightTemplate;
+	}
+	
 	public void setRightOfSelectedTemplate( String rightOfSelectedTemplate ){
-
-		this.rightOfSelectedTemplate = new Template( rightOfSelectedTemplate );
+		setRightOfSelectedTemplate( rightOfSelectedTemplate != null ? new StringTemplate( rightOfSelectedTemplate ) : EMPTY_TEMPLATE );
 	}
+	public void setRightOfSelectedTemplate( Template rightOfSelectedTemplate ){
+		this.rightOfSelectedTemplate = rightOfSelectedTemplate;
+	}
+	
 	public void setInnerTemplate( String innerTemplate ){
-
-		this.innerTemplate = new Template( innerTemplate );
+		setInnerTemplate( innerTemplate != null ? new StringTemplate( innerTemplate ) : EMPTY_TEMPLATE );
 	}
+	public void setInnerTemplate( Template innerTemplate ){
+		this.innerTemplate = innerTemplate;
+	}
+	
 	public void setSelectedTemplate( String selectedTemplate ){
-
-		this.selectedTemplate = new Template( selectedTemplate );
+		setSelectedTemplate( selectedTemplate != null ? new StringTemplate( selectedTemplate ) : EMPTY_TEMPLATE );
 	}
+	public void setSelectedTemplate( Template selectedTemplate ){
+		this.selectedTemplate = selectedTemplate;
+	}
+	
 	public void setSkippedTemplate( String skippedTemplate ){
-
-		this.skippedTemplate = new Template( skippedTemplate );
+		setSkippedTemplate( skippedTemplate != null ? new StringTemplate( skippedTemplate ) : EMPTY_TEMPLATE );
 	}
-	public void setSpaceTemplalte( String spaceTemplate ){
-
-		this.spaceTemplate = new Template( spaceTemplate );
+	public void setSkippedTemplate( Template skippedTemplate ){
+		this.skippedTemplate = skippedTemplate;
+	}
+	
+	public void setSpaceTemplate( String spaceTemplate ){
+		setSpaceTemplate( spaceTemplate != null ? new StringTemplate( spaceTemplate ) : EMPTY_TEMPLATE );
+	}
+	public void setSpaceTemplate( Template spaceTemplate ){
+		this.spaceTemplate = spaceTemplate;
+	}
+	
+	public List<Meta> makeMetas( HttpServletRequest request ) {
+		
+		if( numPages <= 1 ) return Collections.emptyList();
+		
+		List<Meta> result = new ArrayList<>( 2 );
+		
+		if( selectedPage > 0 ) {
+			result.add( Meta.link( "prev", makePageLink( request, selectedPage-1 ) ) );
+		}
+		if( selectedPage < numPages-1 ) {
+			result.add( Meta.link( "next", makePageLink( request, selectedPage+1 ) ) );
+		}
+		return result;
 	}
 
 	@Override
-	public void render( Object object , PrintWriter out ,
-			HttpServletRequest request , HttpServletResponse response , Translator translator , ContentCache cache  )
+	public void render( Object object, PrintWriter out,
+			HttpServletRequest request, HttpServletResponse response, Translator translator, ContentCache cache  )
 			throws IOException, WebTemplateException, Exception {
 		
 		if( ! renderIfOnlyOnePage && numPages <= 1 ) return;
@@ -304,11 +355,12 @@ public class DefaultPager implements Pager {
 	protected SuperURL makePageLink( HttpServletRequest request, int page ){
 
 		HashMap<String, String> parameters = new HashMap<String,String>();
+		if( this.addParameters != null ) parameters.putAll( addParameters );
 		List<String> removeParameters = null;
 		
 		String pageParameter = nameBase + "-page";
 
-		if( page > 0 || numeratePageZero ) parameters.put( pageParameter, ""+page );
+		if( page > 0 || numeratePageZero ) parameters.put( pageParameter, ""+(page+1) ); // human friendly page
 		else removeParameters = Arrays.asList( pageParameter );
 		
 		SuperURL result = HttpLinkBuilder.makeLink( request,
@@ -316,42 +368,90 @@ public class DefaultPager implements Pager {
 		
 		return result;
 	}
+	
+	// see AbstractListRenderer.readPage for reading pagelink-parameters
+	
+	protected interface Template {
+		
+		String toString( int index, SuperURLPrinter printer, SuperURL link );
+		String toString( int index );
+	}
 
-	protected static class Template {
+	protected static final class StringTemplate implements Template {
 
-		String str;
-		boolean hasLink;
-		boolean hasIndex;
-		boolean hasNo;
+		private static final String _NO_ = "__no__",
+		                            _INDEX_ = "__index__",
+		                            _LINK_ = "__link__";
+		
+		private final String template;
+		private final boolean hasLink;
+		private final boolean hasIndex;
+		private final boolean hasNo;
 
-		Template( String str ){
-			this.str = str;
-
-			hasLink = str.contains( "__link__" );
-			hasIndex = str.contains( "__index__" );
-			hasNo = str.contains( "__no__" );
+		public StringTemplate( String str ){
+			
+			template = str;
+				
+			if( str == null ) {
+				hasLink = false;
+				hasIndex = false;
+				hasNo = false;
+			} else {
+				hasLink = str.contains( _LINK_ );
+				hasIndex = str.contains( _INDEX_ );
+				hasNo = str.contains( _NO_ );
+			}
+			
 		}
 
-		String toString( int index, SuperURLPrinter printer, SuperURL link ){
+		@Override
+		public String toString( int index, SuperURLPrinter printer, SuperURL link ){
+			
+			if( template == null ) return S.EMPTY;
 
-			String s = str;
-			if( hasLink ) s = s.replaceAll( "__link__", printer.toString( link ) );
-			if( hasIndex ) s = s.replaceAll( "__index__", ""+index );
-			if( hasNo ) s = s.replaceAll( "__no__", ""+(index+1) );
+			String s = template;
+			if( hasLink ) s = s.replaceAll( _LINK_, printer.toString( link ) );
+			if( hasIndex ) s = s.replaceAll( _INDEX_, ""+index );
+			if( hasNo ) s = s.replaceAll( _NO_, ""+(index+1) );
 
 			return s;
 		}
-		String toString( int index ){
+		
+		@Override
+		public String toString( int index ){
+			
+			if( template == null ) return S.EMPTY;
 
-			String s = str;
-			if( hasIndex ) s = s.replaceAll( "__index__", ""+index );
-			if( hasNo ) s = s.replaceAll( "__no__", ""+(index+1) );
+			String s = template;
+			if( hasIndex ) s = s.replaceAll( _INDEX_, ""+index );
+			if( hasNo ) s = s.replaceAll( _NO_, ""+(index+1) );
 			return s;
 		}
+		
 		@Override
 		public String toString(){
-			return str;
+			return template;
 		}
 	}
+	
+	private static final class EmptyTemplate implements Template {
+
+		@Override
+		public String toString( int index, SuperURLPrinter printer, SuperURL link ) {
+			return S.EMPTY;
+		}
+
+		@Override
+		public String toString( int index ) {
+			return S.EMPTY;
+		}
+		
+		@Override
+		public String toString() {
+			return S.EMPTY;
+		}
+	}
+	
+	protected static final Template EMPTY_TEMPLATE = new EmptyTemplate();
 
 }

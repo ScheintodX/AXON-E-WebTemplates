@@ -114,7 +114,7 @@ public class DefaultPagerTest {
     		setRightTemplate( "-__index__>>" );
     		setSelectedRightTemplate( "-[__index__>>]" );
     		setSkippedTemplate( "..." );
-    		setSpaceTemplalte( "" );
+    		setSpaceTemplate( "" );
     		
     		setLeftContainer( "{" );
     		setRightContainer( "}" );
