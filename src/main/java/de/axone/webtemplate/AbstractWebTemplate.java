@@ -76,7 +76,6 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 	
 	@Override
 	public WebTemplate print() {
-		E.x();
 		E.rr( info );
 		return this;
 	}

@@ -41,7 +41,7 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 		Renderer itemTemplate( X item );
 	}
 	public interface Decorator<T> {
-		public void decorate( Renderer itemTemplate, T item, int index, int currentPage, int itemsPerPage, boolean hasNext );
+		public void decorate( Renderer itemTemplate, T item, String active, int index, int currentPage, int itemsPerPage, boolean hasNext );
 	}
 	
 	public AbstractListRenderer( Class<S> selfType, String name, int itemsPerPage,
@@ -160,6 +160,7 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 		if( !initComplete ) parseRequest( request );
 		
 		Iterable<T> list = getList();
+		String active = getActive();
 		
 		int i=0;
 		for( Iterator<T> it = list.iterator(); it.hasNext(); ){
@@ -168,7 +169,7 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 			
 			Renderer itemTemplate = itemTemplateProvider.itemTemplate( item );
 			
-			if( decorator != null ) decorator.decorate( itemTemplate, item, i, currentPage, itemsPerPage, it.hasNext() );
+			if( decorator != null ) decorator.decorate( itemTemplate, item, active, i, currentPage, itemsPerPage, it.hasNext() );
 			
 			itemTemplate.render( item, out, request, response, translator, cache );
 			i++;
@@ -180,6 +181,13 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 		return listProvider.getList( getStartIndex(), itemsPerPage, sort );
 	}
 
+	protected String getActive() {
+		
+		if( !( listProvider instanceof Activatable )) return null;
+		
+		return ((Activatable)listProvider).getActiveIdentifier();
+	}
+	
 	protected int getStartIndex() {
 
 		return currentPage * itemsPerPage; 
@@ -197,7 +205,7 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 	public static class ListableDecorator<T> implements Decorator<T> {
 
 		@Override
-		public void decorate( Renderer itemTemplate, T item, int index, int currentPage, int itemsPerPage, boolean hasNext ) {
+		public void decorate( Renderer itemTemplate, T item, String active, int index, int currentPage, int itemsPerPage, boolean hasNext ) {
 			
 			if( itemTemplate instanceof Listable ){
 				Listable listableItemTemplate = (Listable) itemTemplate;
@@ -207,12 +215,19 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 				else if( hasNext ) pos = Position.MIDDLE;
 				else pos = Position.BOTTOM;
 				listableItemTemplate.setPositionInList( pos );
-				listableItemTemplate.setHighlight( isHighlight( item ) );
+				listableItemTemplate.setHighlight( isHighlight( item, active ) );
 			}
 
 		}
-		protected boolean isHighlight( T t ){
-			return false;
+		
+		protected boolean isHighlight( T t, String active ){
+			if( active != null ) {
+				if( !( t instanceof Identifiable ) ) throw new IllegalArgumentException( "Cannot identify: " + t );
+				
+				return active.equals( ((Identifiable)t).getIdentifier() );
+			} else {
+				return false;
+			}
 		}
 	}
 

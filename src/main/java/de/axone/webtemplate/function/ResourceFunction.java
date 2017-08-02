@@ -91,16 +91,16 @@ public class ResourceFunction implements Function {
 	public static final String ATTRIBUTE_CDN = "cdn";
 	
 	public enum Runmode {
-		dev, live;
+		DEV, LIVE;
 	}
 	public enum Type {
-		css, js;
+		CSS, JS;
 	}
 	public enum Cache {
-		yes, rand, file;
+		YES, RAND, FILE;
 	}
 	public enum Sync {
-		sync, defer, async
+		SYNC, DEFER, ASYNC
 	}
 	
 	private final ResourceProvider provider;
@@ -141,7 +141,7 @@ public class ResourceFunction implements Function {
 	public ResourceFunction( @Nonnull ResourceProvider provider, @Nonnull Runmode mode, boolean combine,
 			@Nullable CDNProvider cdn, @Nonnull String base, @Nonnull File fsBase, int rand ){
 		
-		this( provider, mode, combine, Cache.file, null, cdn, base, fsBase, rand );
+		this( provider, mode, combine, Cache.FILE, null, cdn, base, fsBase, rand );
 	}
 	
 	private static final char FS = ';';
@@ -186,7 +186,7 @@ public class ResourceFunction implements Function {
 		
 		Cache pCache = attributes.getEnum( Cache.class, ATTRIBUTE_CACHE, this.cache );
 		
-		Sync sync = attributes.getEnum( Sync.class, ATTRIBUTE_SYNC, Sync.sync );
+		Sync sync = attributes.getEnum( Sync.class, ATTRIBUTE_SYNC, Sync.SYNC );
 		
 		String pMedia = attributes.get( ATTRIBUTE_MEDIA, this.media );
 		
@@ -201,7 +201,7 @@ public class ResourceFunction implements Function {
 			}
 		}
 		
-		if( pMode != Runmode.dev && ( pBase.length() < 2 || ! ( pBase.startsWith( "//" ) || pBase.startsWith( "http" ) ) ) ) {
+		if( pMode != Runmode.DEV && ( pBase.length() < 2 || ! ( pBase.startsWith( "//" ) || pBase.startsWith( "http" ) ) ) ) {
 			String lCdn = attributes.get( ATTRIBUTE_CDN, this.cdn );
 			if( lCdn != null ) pBase = lCdn + pBase;
 		}
@@ -238,21 +238,21 @@ public class ResourceFunction implements Function {
 			
 			char PS = '?';
 			
-			if( pMode == Runmode.dev ){
+			if( pMode == Runmode.DEV ){
 				ext += PS+"yui=0";
 				PS='&';
 			}
 			
 			switch( pCache ){
-			case rand:
+			case RAND:
 				ext += PS + "nc=" + rand;
 				PS='&';
 				break;
-			case file:
+			case FILE:
 				ext += PS + "nc=" + ( pCombine ? newest : filetime( path, base ) );
 				PS='&';
 				break;
-			case yes:
+			case YES:
 			default:
 				break;
 			}
@@ -261,7 +261,7 @@ public class ResourceFunction implements Function {
 			
 			String tag;
 			switch( pType ){
-			case css: {
+			case CSS: {
 				
 				Map<String,String> args = Mapper.treeMap(
 						"rel", "stylesheet",
@@ -274,14 +274,14 @@ public class ResourceFunction implements Function {
 				tag = Tag.simple( "link", null, args );
 				
 			} break;
-			case js:
+			case JS:
 			default: {
 					
 				Map<String,String> args = Mapper.treeMap(
 						"type", "text/javascript",
 						"src", path+ext
 				);
-				if( sync != Sync.sync ) args.put( sync.name(), sync.name() );
+				if( sync != Sync.SYNC ) args.put( sync.name(), sync.name() );
 				if( pId != null ) args.put( "id", pId.trim() );
 				tag = Tag.simple( "script", "", args );
 			} break;

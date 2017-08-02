@@ -210,7 +210,6 @@ public final class DataHolder implements Serializable {
 		
 		return this;
 	}
-
 	
 	/**
 	 * Set more than one value
