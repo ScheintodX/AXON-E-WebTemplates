@@ -2,13 +2,16 @@ package de.axone.webtemplate.list;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.axone.exception.Assert;
 import de.axone.webtemplate.Renderer;
+import de.axone.webtemplate.WebTemplate;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.form.Translator;
 import de.axone.webtemplate.list.Listable.Position;
@@ -36,6 +39,8 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 	private Sorting<T> sort;
 	private int currentPage;
 	private boolean initComplete = false;
+	
+	private Map<String,Object> options;
 	
 	public interface ItemTemplateProvider<X> {
 		Renderer itemTemplate( X item );
@@ -71,6 +76,28 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 		this.sort = readSort( name, sortProvider, request );
 		
 		this.initComplete = true;
+		
+		@SuppressWarnings( "unchecked" )
+		S result = (S)this;
+		
+		return result;
+	}
+	
+	public S addOption( String key, Object value ) {
+		
+		if( options == null ) options = new HashMap<>();
+		
+		options.put( key, value );
+		
+		@SuppressWarnings( "unchecked" )
+		S result = (S)this;
+		
+		return result;
+	}
+	
+	public S setOptions( Map<String, Object> options ) {
+		
+		this.options = options;
 		
 		@SuppressWarnings( "unchecked" )
 		S result = (S)this;
@@ -171,6 +198,13 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 			
 			if( decorator != null ) decorator.decorate( itemTemplate, item, active, i, currentPage, itemsPerPage, it.hasNext() );
 			
+			if( options != null && itemTemplate instanceof WebTemplate ) {
+				
+				for( Map.Entry<String,Object> e : options.entrySet() ) {
+					((WebTemplate)itemTemplate).setParameter( e.getKey(), e.getValue() );
+				}
+			}
+			
 			itemTemplate.render( item, out, request, response, translator, cache );
 			i++;
 		}
@@ -232,105 +266,3 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 	}
 
 }
-
-/*
- * Old AbstractListRenderer only used by MailOrderListRenderer
- * 
-package de.axone.shop.template;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import de.axone.refactor.Refactor;
-import de.axone.shop.EMogul;
-import de.axone.shop.selector.SelectorException;
-import de.axone.webtemplate.Renderer;
-import de.axone.webtemplate.WebTemplate;
-import de.axone.webtemplate.WebTemplateException;
-import de.axone.webtemplate.form.Translator;
-import de.emogul.object.TemplateMailOrder;
-
-
-@Refactor( action="REWRITE", reason="wofür ist das ganze parameter gesetze" )
-public class AbstractListRenderer<T> implements Renderer {
-
-	protected final PageInfo pageInfo;
-	protected final ObjectInfo objectInfo;
-	protected Collection<T> items;
-
-	public AbstractListRenderer( ObjectInfo objectInfo, PageInfo pageInfo, Collection<T> items ){
-
-		this.pageInfo = pageInfo;
-		this.objectInfo = objectInfo;
-		this.items = items;
-	}
-
-	@Override
-	public void render( Object object, PrintWriter out,
-			HttpServletRequest request, HttpServletResponse response, Translator translator, ContentCache cache )
-			throws IOException, WebTemplateException, Exception {
-
-		int c = 0;
-		for( T item : items ){
-
-			WebTemplate template = getTemplate( item );
-
-			String pos = pos( c, items.size() );
-
-			template.setParameter( "index", "index-" + c );
-			template.setParameter( "pos", pos );
-			if( pageInfo != null ){
-				if( pageInfo.getPage() != null ) template.setParameter( "page", pageInfo.getPage() );
-				if( pageInfo.getSubpage() != null ) template.setParameter( "subpage", pageInfo.getSubpage() );
-				if( pageInfo.getPlace() != null ) template.setParameter( "place", pageInfo.getPlace() );
-				if( pageInfo.getSubplace() != null ) template.setParameter( "subplace", pageInfo.getSubplace() );
-				if( pageInfo.getOption() != null ) template.setParameter( "option", pageInfo.getOption() );
-			}
-			if( objectInfo != null ){
-				if( objectInfo.getObjectGroup() != null ) template.setParameter( "group", objectInfo.getObjectGroup() );
-				if( objectInfo.getObjectSubgroup() != null ) template.setParameter( "subgroup", objectInfo.getObjectSubgroup() );
-				if( objectInfo.getObjectType() != null ) template.setParameter( "type", objectInfo.getObjectType() );
-				if( objectInfo.getObjectSubtype() != null ) template.setParameter( "subtype", objectInfo.getObjectSubtype() );
-			}
-
-			template.render( item, out, request, response, translator, cache );
-
-			c++;
-		}
-	}
-
-	private static String pos( int index, int size ){
-
-		StringBuilder builder = new StringBuilder();
-
-		if( index== 0 ) builder.append( " pos-top" );
-		if( index > 0 && index < size-1 ) builder.append( " pos-middle" );
-		if( index== size-1 ) builder.append( " pos-bottom" );
-
-		if( builder.length() > 0 ){
-			return builder.toString().substring( 1 );
-		} else {
-			return "";
-		}
-	}
-
-	private WebTemplate template;
-	protected WebTemplate getTemplate( T t ) throws SelectorException, WebTemplateException{
-
-		if( template == null ){
-			
-			template = EMogul.rt().templates()
-					.getObjectTemplate( objectInfo, pageInfo )
-					.expectIsInstanceOf( TemplateMailOrder.class )
-					;
-		}
-		return template;
-	}
-
-
-}
-*/

@@ -94,7 +94,7 @@ public class DefaultPagerTest {
 		String content = response.getContent();
 		response.resetBuffer();
 		
-		assertEquals( content, "{[<<-1]-1: /blah?test=1&amp;test=2&amp;pageme-page=0-[1>>]}" );
+		assertEquals( content, "{[<<-1]-1: /blah?test=1&amp;test=2&amp;pageme-page=1-[1>>]}" );
 			
 	}
 	
