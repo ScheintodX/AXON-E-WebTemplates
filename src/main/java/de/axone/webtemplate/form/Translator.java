@@ -40,7 +40,7 @@ public interface Translator {
 	
 	public Locale locale();
 	
-	public static final Translator NO_TRANSLATOR = new AbstractTranslator(){
+	static class NoTranslator extends AbstractTranslator{
 
 		@Override
 		protected String getPlainTranslation( String key, String defaultValue ) {
@@ -63,4 +63,20 @@ public interface Translator {
 		}
 		
 	};
+	
+	public static final Translator NO_TRANSLATOR = new NoTranslator();
+	
+	public static final class Stub extends NoTranslator {
+		
+		private final Locale locale;
+		
+		public Stub( Locale locale ) {
+			this.locale = locale;
+		}
+		
+		@Override
+		public Locale locale() {
+			return locale;
+		}
+	}
 }
