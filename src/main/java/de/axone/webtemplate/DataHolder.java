@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -421,92 +422,112 @@ public final class DataHolder implements Serializable {
 				
 				if( isRendering() ){
 					
-					if( value != null && value instanceof ValueProvider ){
-						
-						value = ( (ValueProvider) value ).provide();
-					}
+					renderValue( value, object, item, out, request, response, translator, cache );
 					
-					if( value != null ) {
-		
-						// ==== RENDERER ====
-						if( value instanceof Renderer ) {
-							
-							if(
-									cache != null
-									&& value instanceof CacheableRenderer 
-									&& ((CacheableRenderer)value).cacheable()
-							) {
-								
-								CacheableRenderer renderer = (CacheableRenderer)value;
-								Object cacheK = renderer.cacheKey();
-								
-								String cachedS = cache.fetch( cacheK,
-										k -> renderer.renderToString( object, request, response, translator, cache ) );
-									
-								response.getWriter().write( cachedS );
-									
-							} else {
-		
-								Renderer renderer = (Renderer)value;
-								
-								renderer.render( object, out, request, response, translator, cache );
-							}
-		
-						// ==== COLLECTION  ====
-						} else if( value instanceof Collection<?> ) {
-		
-							Collection<?> collection = (Collection<?>) value;
-		
-							for( Object o : collection ) {
-		
-								Renderer renderer = (Renderer) o;
-								renderer.render( object, out, request, response, translator, cache );
-							}
-		
-						// ==== SUPERURL  ====
-						} else if( value instanceof SuperURL ){
-							
-							URL_PRINTER.write( out, (SuperURL)value );
-							
-						// === Labels are mostly enum constants implementing this
-						} else if( value instanceof Label ){
-							
-							out.write( ((Label)value).label() );
-							
-						// ==== STRING / OBJECT  ====
-						} else {
-							
-							String stringValue;
-							
-							if( value instanceof Translatable ){
-								
-								if( translator != null ) {
-									stringValue = ((Translatable)value).translated( translator );
-								} else {
-									stringValue = ((Translatable)value).plain();
-								}
-								
-							} else {
-								
-								stringValue = value.toString(); // Does nothing for String anyway
-								
-								if( item.isTranslate() && translator != null ){
-									
-									stringValue = translator.translate( TKey.dynamic( stringValue ) );
-								}
-							}
-							
-							if( item.encoding != null && item.encoding.encoder != null ){
-				    			stringValue = item.encoding.encoder.encode( stringValue );
-				    		}
-							
-							out.write( stringValue );
-						}
-					}
 				}
 			}
 		}
 	}
+	
+	public void renderValue( Object value, Object object, DataHolderItem item, PrintWriter out, HttpServletRequest request,
+			HttpServletResponse response, Translator translator, ContentCache cache )
+	throws IOException, WebTemplateException, Exception {
+		
+			if( value != null && value instanceof ValueProvider ){
+				
+				value = ( (ValueProvider) value ).provide();
+			}
+			
+			if( value != null ) {
+
+				// ==== RENDERER ====
+				if( value instanceof Renderer ) {
+					
+					if(
+							cache != null
+							&& value instanceof CacheableRenderer 
+							&& ((CacheableRenderer)value).cacheable()
+					) {
+						
+						CacheableRenderer renderer = (CacheableRenderer)value;
+						Object cacheK = renderer.cacheKey();
+						
+						String cachedS = cache.fetch( cacheK,
+								k -> renderer.renderToString( object, request, response, translator, cache ) );
+							
+						response.getWriter().write( cachedS );
+							
+					} else {
+
+						Renderer renderer = (Renderer)value;
+						
+						renderer.render( object, out, request, response, translator, cache );
+					}
+
+				// ==== COLLECTION  ====
+				} else if( value instanceof Collection<?> ) {
+
+					Collection<?> collection = (Collection<?>) value;
+					
+					for( Object o : collection ) {
+
+						renderValue( o, object, item, out, request, response, translator, cache );
+					}
+					
+				} else if( value instanceof Stream<?> ){
+					
+						( (Stream<?>) value ).forEach( v -> {
+								try {
+									renderValue( v, object, item, out, request, response, translator, cache );
+								} catch( Exception e ) {
+									throw new RenderException( "Error in rendering value stream", e );
+								} }
+						);
+					
+
+				// ==== SUPERURL  ====
+				} else if( value instanceof SuperURL ){
+					
+					URL_PRINTER.write( out, (SuperURL)value );
+					
+				// === Labels are mostly enum constants implementing this
+				} else if( value instanceof Label ){
+					
+					out.write( ((Label)value).label() );
+					
+				// ==== STRING / OBJECT  ====
+				} else {
+					
+					String stringValue;
+					
+					if( value instanceof Translatable ){
+						
+						if( translator != null ) {
+							stringValue = ((Translatable)value).translated( translator );
+						} else {
+							stringValue = ((Translatable)value).plain();
+						}
+						
+					} else {
+						
+						stringValue = value.toString(); // Does nothing for String anyway
+						
+						if( item.isTranslate() && translator != null ){
+							
+							stringValue = translator.translate( TKey.dynamic( stringValue ) );
+						}
+					}
+					
+					if( item.encoding != null && item.encoding.encoder != null ){
+		    			stringValue = item.encoding.encoder.encode( stringValue );
+		    		}
+					
+					out.write( stringValue );
+				}
+			}
+		
+	}
+	
 
 	
 	@Override
