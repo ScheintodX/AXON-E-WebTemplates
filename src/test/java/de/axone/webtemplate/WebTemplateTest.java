@@ -66,7 +66,7 @@ public class WebTemplateTest {
 	
 	// Moved here because it is in no use but in this test
 	// And this test is good because it tests more WT functionality
-	private static final class TestFileWebTemplate extends AbstractFileWebTemplate {
+	private static final class TestFileWebTemplate extends AbstractWebTemplate {
 		
 		public TestFileWebTemplate( DataHolder holder ) {
 			super( holder );

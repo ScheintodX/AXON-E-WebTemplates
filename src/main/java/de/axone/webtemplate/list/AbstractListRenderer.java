@@ -46,7 +46,8 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 		Renderer itemTemplate( X item );
 	}
 	public interface Decorator<T> {
-		public void decorate( Renderer itemTemplate, T item, String active, int index, int currentPage, int itemsPerPage, boolean hasNext );
+		public void decorate( String listName, Renderer itemTemplate, T item, String active,
+				int index, int currentPage, int itemsPerPage, boolean hasNext );
 	}
 	
 	public AbstractListRenderer( Class<S> selfType, String name, int itemsPerPage,
@@ -133,8 +134,8 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 				page = page-1; // restore from human friendly
 				if( page < 0 )
 						page = 0;
-				if( page >= numPages )
-						page = numPages - 1;
+				// if( page >= numPages )
+				//		page = numPages - 1;
 			} catch( NumberFormatException e ) {
 				page = 0;
 			}
@@ -196,7 +197,7 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 			
 			Renderer itemTemplate = itemTemplateProvider.itemTemplate( item );
 			
-			if( decorator != null ) decorator.decorate( itemTemplate, item, active, i, currentPage, itemsPerPage, it.hasNext() );
+			if( decorator != null ) decorator.decorate( name, itemTemplate, item, active, i, currentPage, itemsPerPage, it.hasNext() );
 			
 			if( options != null && itemTemplate instanceof WebTemplate ) {
 				
@@ -239,17 +240,20 @@ public abstract class AbstractListRenderer<T,S extends AbstractListRenderer<T,S>
 	public static class ListableDecorator<T> implements Decorator<T> {
 
 		@Override
-		public void decorate( Renderer itemTemplate, T item, String active, int index, int currentPage, int itemsPerPage, boolean hasNext ) {
+		public void decorate( String listName, Renderer itemTemplate, T item, String active, int index, int currentPage, int itemsPerPage, boolean hasNext ) {
 			
 			if( itemTemplate instanceof Listable ){
-				Listable listableItemTemplate = (Listable) itemTemplate;
+				Listable<?> listableItemTemplate = (Listable<?>) itemTemplate;
 				listableItemTemplate.setIndexInList( currentPage * itemsPerPage + index );
 				Position pos;
 				if( index == 0 ) pos = Position.TOP;
 				else if( hasNext ) pos = Position.MIDDLE;
 				else pos = Position.BOTTOM;
-				listableItemTemplate.setPositionInList( pos );
-				listableItemTemplate.setHighlight( isHighlight( item, active ) );
+				listableItemTemplate
+						.setPositionInList( pos )
+						.setHighlight( isHighlight( item, active ) )
+						.setListName( listName )
+						;
 			}
 
 		}

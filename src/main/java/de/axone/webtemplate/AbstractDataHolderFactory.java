@@ -5,10 +5,16 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.axone.tools.Str;
 import de.axone.webtemplate.DataHolder.DataHolderItemType;
 import de.axone.webtemplate.processor.WebTemplateProcessor;
 
 public abstract class AbstractDataHolderFactory {
+	
+	private static final Logger log = LoggerFactory.getLogger( AbstractDataHolderFactory.class );
 	
 	private static final char PARAMETER_SEP = ':';
 	
@@ -32,6 +38,8 @@ public abstract class AbstractDataHolderFactory {
 
 	protected static DataHolder instantiate( String source, String data ) throws IOException,
 			AttributeParserByHand.ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		
+		log.debug( "instantiate", source, Str.trimAtWordBoundary( data, 40 ) + "..." );
 				
 		DataHolder holder = new DataHolder( source );
 		

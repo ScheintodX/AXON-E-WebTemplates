@@ -1,8 +1,14 @@
 package de.axone.webtemplate.form;
 
 
-public interface TranslationKey {
+@FunctionalInterface
+public interface TranslationKey extends Translatable {
 	
 	public String name();
 	
+	@Override
+	public default String translated( Translator t ) {
+		
+		return t.translate( this );
+	}
 }

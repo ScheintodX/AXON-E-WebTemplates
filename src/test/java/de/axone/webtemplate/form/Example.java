@@ -13,8 +13,9 @@ import de.axone.tools.E;
 import de.axone.tools.Str;
 import de.axone.web.TestHttpServletRequest;
 import de.axone.web.TestHttpServletResponse;
-import de.axone.webtemplate.AbstractFileWebTemplate;
+import de.axone.webtemplate.AbstractWebTemplate;
 import de.axone.webtemplate.DataHolder;
+import de.axone.webtemplate.FileDataHolderFactory;
 import de.axone.webtemplate.WebTemplate;
 import de.axone.webtemplate.WebTemplateException;
 import de.axone.webtemplate.converter.ConverterException;
@@ -43,7 +44,7 @@ public class Example {
 		try {
 			
 			// Get WebTemplate. In reality would use Factory
-			WebTemplate template = new ExamplePage();
+			WebTemplate template = ExamplePage.instance();
 			
 			// Instantiate empty form
 			ExampleForm form = new ExampleForm();
@@ -141,10 +142,17 @@ public class Example {
 		}
 	}
 	
-	private static class ExamplePage extends AbstractFileWebTemplate {
+	private static class ExamplePage extends AbstractWebTemplate {
 
-		public ExamplePage() throws Exception {
-			super( new File( "src/test/de/axone/webtemplate/form/example.xhtml" ) );
+		private ExamplePage( DataHolder holder ) {
+			super( holder );
+		}
+		
+		public static ExamplePage instance() throws ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException, IOException {
+			
+			FileDataHolderFactory fac = new FileDataHolderFactory( null, null, null );
+			DataHolder holder = fac.holderFor( new File( "src/test/de/axone/webtemplate/form/example.xhtml" ) );
+			return new ExamplePage( holder );
 		}
 
 		@Override

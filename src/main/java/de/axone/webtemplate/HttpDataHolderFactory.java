@@ -25,36 +25,36 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 	synchronized public DataHolder holderFor( SuperURL url )
 			throws IOException, AttributeParserByHand.ParserException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-		log.debug( url.toDebug() );
+		log.debug( "holderFor", url.toDebug() );
 		
-		DataHolder result=null;
-		HttpUtilResponse r;
+		DataHolder holder=null;
+		HttpUtilResponse resp;
 		
 		HttpDataWatcher<DataHolder> watcher = storage.fetch( url );
 		if( watcher == null ) {
 			
 			watcher = new HttpDataWatcher<>( url );
-			r=watcher.hasChanged();
-			if( r != null ){
-				result = instantiate( url, r );
+			resp=watcher.hasChanged();
+			if( resp != null ){
+				holder = instantiate( url, resp );
 			}
-			watcher.setData( result );
+			watcher.setData( holder );
 			storage.put( url, watcher );
 			
 		} else {
 			
-			r=watcher.hasChanged();
-			if( r == null ) {
-				result = watcher.getData();
+			resp=watcher.hasChanged();
+			if( resp == null ) {
+				holder = watcher.getData();
 			} else {
-				result = instantiate( url, r );
-				watcher.setData( result );
+				holder = instantiate( url, resp );
+				watcher.setData( holder );
 				storage.put( url, watcher );
 			}
 		}
 		
-		if( result != null ){
-			return result.freshCopy();
+		if( holder != null ){
+			return holder.freshCopy();
 		} else {
 			return null;
 		}

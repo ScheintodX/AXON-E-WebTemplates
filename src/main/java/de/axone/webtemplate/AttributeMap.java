@@ -21,10 +21,10 @@ public class AttributeMap implements StringValueAccessor<String> {
 	public static final AttributeMap EMPTY = new AttributeMap( 
 			Collections.unmodifiableMap( Collections.emptyMap() ) );
 	
-	AttributeMap(){
+	public AttributeMap(){
 		this( new HashMap<>() );
 	}
-	AttributeMap( Map<String,Object> backingMap ){
+	public AttributeMap( Map<String,Object> backingMap ){
 		this.m = backingMap;
 	}
 	
@@ -33,7 +33,7 @@ public class AttributeMap implements StringValueAccessor<String> {
 		Object value = m.get( key );
 		if( value == null ) return null;
 		if( !( value instanceof String ) )
-				throw new IllegalArgumentException( "'" + key + "' is not an string" );
+				throw new IllegalArgumentException( "'" + key + "' is not an string but a '" + value.getClass().getSimpleName() + "'" );
 		return (String) value;
 	}
 	
@@ -42,7 +42,7 @@ public class AttributeMap implements StringValueAccessor<String> {
 		Object value = m.get( key );
 		if( value == null ) return null;
 		if( !( value instanceof Integer ) )
-				throw new IllegalArgumentException( "'" + key + "' is not an integer" );
+				throw new IllegalArgumentException( "'" + key + "' is not an integer but a '" + value.getClass().getSimpleName() + "'" );
 		return (Integer) value;
 	}
 	

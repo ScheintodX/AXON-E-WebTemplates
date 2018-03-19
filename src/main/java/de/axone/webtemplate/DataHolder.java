@@ -3,6 +3,8 @@ package de.axone.webtemplate;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -13,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.CaseFormat;
 
 import de.axone.data.Label;
 import de.axone.tools.Stack;
@@ -69,6 +74,8 @@ public final class DataHolder implements Serializable {
 	public static final String NOT_FOUND = "||";
 
 	public static final String NOVAL = "";
+	
+	private static final Pattern PASSTHROUGH = Pattern.compile( "\\|==|==\\|" );
 	
 	public static final SuperURLPrinter URL_PRINTER =
 			SuperURLPrinter.ForAttribute;
@@ -166,6 +173,10 @@ public final class DataHolder implements Serializable {
 		
 		key = vKeyForAdd( key );
 		
+		if( value.contains( "==|" ) || value.contains( "|==" ) ){
+			value = PASSTHROUGH.matcher( value ).replaceAll( "__" );
+		}
+		
 		DataHolderItem item = new DataHolderItem( key, type, encoding, translate, attributes, value );
 		
 		keys.add( key );
@@ -254,6 +265,20 @@ public final class DataHolder implements Serializable {
 			setValue( key, entry.getValue() );
 		}
 		
+	}
+	
+	public void autofill( Object pojo ) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		
+		for( Method m : pojo.getClass().getMethods() ) {
+			
+			if( m.getName().startsWith( "get" ) && m.getParameterCount() == 0 ) {
+				
+				String key = CaseFormat.UPPER_CAMEL.to( CaseFormat.LOWER_CAMEL, m.getName().substring( 3 ) );
+				
+				setValue( key, m.invoke( pojo ) );
+				
+			}
+		}
 	}
 
 	

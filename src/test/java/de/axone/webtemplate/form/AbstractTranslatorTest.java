@@ -17,7 +17,7 @@ public class AbstractTranslatorTest {
 
 	public void testAbstractTranslator() throws Exception {
 		
-		MyTranslator t = new MyTranslator();
+		TranslatorTestTranslator t = new TranslatorTestTranslator();
 		
 		assertEquals( t.translate( TKey.dynamic( "a" ) ), "A" );
 		assertEquals( t.translate( TKey.dynamic( "a" ), (HashMap<String,String>)null ), "A" );
@@ -33,7 +33,7 @@ public class AbstractTranslatorTest {
 	
 	public void scatterTest() throws Exception {
 		
-		MyTranslator t = new MyTranslator();
+		TranslatorTestTranslator t = new TranslatorTestTranslator();
 		
 		for( int i=0; i<000; i++ ){
 			
@@ -43,7 +43,7 @@ public class AbstractTranslatorTest {
 		}
 	}
 	
-	private static class MyTranslator extends AbstractTranslator {
+	private static class TranslatorTestTranslator extends AbstractTranslator {
 		
 		private static final Map<String,String> translations =
 			Mapper.hashMap( "a", "A", "b", "B ###0###/###1###", "p", "P###0###P" );

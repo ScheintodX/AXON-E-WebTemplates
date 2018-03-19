@@ -1,12 +1,13 @@
 package de.axone.webtemplate.list;
 
-public interface Listable {
+public interface Listable<T extends Listable<T>> {
 	
 	public enum Position {
 		TOP, MIDDLE, BOTTOM;
 	}
 
-	public void setIndexInList( int index );
-	public void setPositionInList( Position position );
-	public void setHighlight( boolean highlight );
+	public T setIndexInList( int index );
+	public T setPositionInList( Position position );
+	public T setHighlight( boolean highlight );
+	public T setListName( String name );
 }

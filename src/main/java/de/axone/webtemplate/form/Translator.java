@@ -1,5 +1,7 @@
 package de.axone.webtemplate.form;
 
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -30,6 +32,8 @@ public interface Translator {
 	
 	public String translate( TranslationKey key, String ... arguments );
 	
+	public String translate( TranslationKey key, Translatable ... arguments );
+	
 	public String translate( TranslationKey key, Map<String,String> arguments );
 	
 	public String translateDefault( String key, String defaultValue );
@@ -40,7 +44,11 @@ public interface Translator {
 	
 	public Locale locale();
 	
-	static class NoTranslator extends AbstractTranslator{
+	static class NoTranslator extends AbstractTranslator {
+		
+		private static final NumberFormat NF = NumberFormat.getInstance( Locale.US );
+		private static final DateFormat DF = DateFormat.getDateTimeInstance( DateFormat.SHORT, DateFormat.SHORT );
+		static {}
 
 		@Override
 		protected String getPlainTranslation( String key, String defaultValue ) {
@@ -49,12 +57,12 @@ public interface Translator {
 
 		@Override
 		public String format( Number number ) {
-			return number.toString();
+			return NF.format( number );
 		}
 
 		@Override
 		public String format( int style, Date date ) {
-			return ""+date.getTime();
+			return DF.format( date );
 		}
 
 		@Override

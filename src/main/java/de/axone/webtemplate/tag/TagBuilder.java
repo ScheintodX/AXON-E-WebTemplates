@@ -3,6 +3,7 @@ package de.axone.webtemplate.tag;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import de.axone.web.SuperURL;
 import de.axone.webtemplate.Renderer;
 
 @SuppressWarnings( "unchecked" )
@@ -15,12 +16,16 @@ public class TagBuilder<X extends TagBuilder<X>> {
 	}
 	
 	public X cssClass( String cssClass ) {
-		target.attr( "class", cssClass );
-		return (X)this;
+		return attr( "class", cssClass );
 	}
-	
 	public X cssId( String cssId ) {
-		target.attr( "id", cssId );
+		return attr( "id", cssId );
+	}
+	public X data( String name, String value ) {
+		return attr( "data-" + name, value );
+	}
+	public X attr( String name, String value ) {
+		target.attr( name, value );
 		return (X)this;
 	}
 	
@@ -118,6 +123,21 @@ public class TagBuilder<X extends TagBuilder<X>> {
 		public TagBuilderDiv(){}
 		public TagBuilderDiv( String content ){
 			content( content );
+		}
+	}
+	
+	public static class TagBuilderScript extends TagBuilder<TagBuilderScript> {
+		
+		{ target.name( "script" ); }
+		
+		public TagBuilderScript(){}
+		public TagBuilderScript( String content ){
+			content( content );
+		}
+		
+		public TagBuilderScript src( SuperURL src ) {
+			target.attr( "src", src.toAjax() );
+			return this;
 		}
 	}
 	

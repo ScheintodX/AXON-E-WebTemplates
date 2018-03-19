@@ -96,7 +96,7 @@ public abstract class AttributeParserByHand {
 			}
 			
 			if( attrName.length() < 1 )
-				throw new AttributeParserByHand.ParserException( "Wrong name: \"" + attrName.toString() + "\" last char was: " );
+					throw new AttributeParserByHand.ParserException( "Wrong name: \"" + attrName.toString() + "\" last char was: " );
 			
 			boolean foundSep = false; // Sep+WS
 			for( ; i < len; i++ ){

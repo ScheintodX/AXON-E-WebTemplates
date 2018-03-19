@@ -28,7 +28,7 @@ import de.axone.webtemplate.slicer.SlicerFactory;
  * purposes.
  *
  * @see #templateFor( String )
- * @see AbstractFileWebTemplate
+ * @see AbstractWebTemplate
  *
  * @author flo
  */
@@ -136,7 +136,7 @@ public class WebTemplateFactory {
 	}
 	
 	public WebTemplate templateFor( SuperURL url, String className ) throws WebTemplateException {
-
+		
 		Assert.notNull( url, "url" );
 		
 		try {
@@ -185,9 +185,9 @@ public class WebTemplateFactory {
 			throw new WebTemplateException( "No @Class spezified in template and no default given: " + file.getPath() );
 		}
 
-		AbstractFileWebTemplate template;
+		AbstractWebTemplate template;
 		try {
-    		template = (AbstractFileWebTemplate) instantiateClassByName( className );
+    		template = (AbstractWebTemplate) instantiateClassByName( className );
 		} catch( Exception e ){
 			throw new WebTemplateException( "Cannot instantiate '" + className + "' in file: " + file.getPath(), e );
 		}
@@ -201,7 +201,7 @@ public class WebTemplateFactory {
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, ClassCastException, IOException,
 			KeyException, WebTemplateException {
-
+		
 		// Get Holder
 		DataHolder holder;
 		try {
@@ -220,14 +220,13 @@ public class WebTemplateFactory {
 			}
 	
 			if( className == null ){
-				//throw new WebTemplateException( "No @Class specified in template and no default given: " + url );
 				className = "de.emogul.TemplatePlain";
-				log.warn( "Template missing in: " + url );
+				log.warn( "@Class missing in: " + url );
 			}
 	
-			AbstractFileWebTemplate template;
+			AbstractWebTemplate template;
 			try {
-	    		template = (AbstractFileWebTemplate) instantiateClassByName( className );
+	    		template = (AbstractWebTemplate) instantiateClassByName( className );
 			} catch( Exception e ){
 				throw new WebTemplateException( "Cannot instantiate '" + className + "' in file: " + url, e );
 			}

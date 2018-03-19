@@ -23,34 +23,48 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 	final CacheNG.Cache<File, FileDataWatcher<DataHolder>> cache;
 	static int reloadCount=0;
 	
+	public FileDataHolderFactory(){
+		this( null, null, null );
+	}
+	
 	public FileDataHolderFactory( CacheNG.Cache<File, FileDataWatcher<DataHolder>> cache, SlicerFactory slicerFactory, CacheProvider<String,String> cacheProvider ){
 		this.slicerFactory = slicerFactory;
 		this.cache = cache;
 	}
 
+	@SuppressWarnings( "null" )
 	synchronized public DataHolder holderFor( File file )
 			throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, WebTemplateException {
 		
 		FileDataWatcher<DataHolder> watcher;
 		DataHolder result;
 		
-		if( !cache.isCached( file ) ) {
-
-			result = instantiate( file );
-			watcher = new FileDataWatcher<>( file, result );
+		if( cache == null ) {
 			
-			cache.put( file, watcher );
-			
+				result = instantiate( file );
+				watcher = null; // make the compiler happier
+				
 		} else {
 			
-			watcher = cache.fetch( file );
-			
-			if( !watcher.haveChanged() ) {
-				result = cache.fetch( file ).getData();
-			} else {
+			if( !cache.isCached( file ) ) {
+	
 				result = instantiate( file );
-				watcher.setData( result );
+				
+				watcher = new FileDataWatcher<>( file, result );
+				
 				cache.put( file, watcher );
+				
+			} else {
+				
+				watcher = cache.fetch( file );
+				
+				if( !watcher.haveChanged() ) {
+					result = cache.fetch( file ).getData();
+				} else {
+					result = instantiate( file );
+					watcher.setData( result );
+					cache.put( file, watcher );
+				}
 			}
 		}
 		
@@ -84,8 +98,10 @@ public class FileDataHolderFactory extends AbstractDataHolderFactory {
 				
 				// Store
 				result = instantiate( file );
-				watcher.setData( result );
-				cache.put( file, watcher );
+				if( cache != null ){
+					watcher.setData( result );
+					cache.put( file, watcher );
+				}
 			}
 		}
 		

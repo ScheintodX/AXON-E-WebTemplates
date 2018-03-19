@@ -70,6 +70,16 @@ public abstract class AbstractTranslator implements Translator {
 		if( arguments != null ) for( int i=0; i < arguments.length; i++ ){
 			args.put( ""+i, arguments[i] );
 		}
+		return translate( text, args );
+	}
+	
+	@Override
+	public String translate( TranslationKey text, Translatable ... arguments ) {
+
+		HashMap<String,String> args = new HashMap<String,String>();
+		if( arguments != null ) for( int i=0; i < arguments.length; i++ ){
+			args.put( ""+i, arguments[i].translated( this ) );
+		}
 		
 		return translate( text, args );
 
