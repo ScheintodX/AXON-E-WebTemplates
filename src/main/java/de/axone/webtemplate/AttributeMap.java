@@ -33,7 +33,8 @@ public class AttributeMap implements StringValueAccessor<String> {
 		Object value = m.get( key );
 		if( value == null ) return null;
 		if( !( value instanceof String ) )
-				throw new IllegalArgumentException( "'" + key + "' is not an string but a '" + value.getClass().getSimpleName() + "'" );
+				//throw new IllegalArgumentException( "'" + key + "' is not an string but a '" + value.getClass().getSimpleName() + "'" );
+				value = value.toString();
 		return (String) value;
 	}
 	

@@ -223,6 +223,20 @@ public final class DataHolder implements Serializable {
 		return this;
 	}
 	
+	public DataHolder setValuesStartingWith( String prefix, Object value ) {
+		
+		prefix = vKey( prefix );
+		
+		for( String key : keys ) {
+			
+			if( key.startsWith( prefix ) ){
+				values.put( key, value );
+			}
+		}
+		
+		return this;
+	}
+	
 	/**
 	 * Set more than one value
 	 * 
