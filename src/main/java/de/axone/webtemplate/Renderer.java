@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import de.axone.cache.ng.CacheNG;
+import de.axone.exception.Ex;
+import de.axone.webtemplate.converter.ConverterException;
 import de.axone.webtemplate.form.Translator;
 
 /**
@@ -51,5 +53,23 @@ public interface Renderer {
 	 * @author flo
 	 */
 	public interface ContentCache extends CacheNG.AutomaticClient<Object,String>{}
+	
+	/**
+	 * Cast template to that class
+	 * 
+	 * This is a replacement for casting by parenteses which
+	 * does additional error reporting if it fails
+	 * 
+	 * @param clazz
+	 * @return the ca
+	 */
+	public default <T extends WebTemplate> T expectIsInstanceOf( Class<T> clazz ){
+		try {
+			return clazz.cast( this );
+		} catch( ClassCastException e ){
+			ConverterException w = Ex.up( new ConverterException( "Tried to convert to '" + clazz.getSimpleName() + "' but is '" + this.getClass().getSimpleName() + "'", e ) );
+			throw w;
+		}
+	}
 	
 }

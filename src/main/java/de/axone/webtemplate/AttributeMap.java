@@ -3,7 +3,9 @@ package de.axone.webtemplate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
+import de.axone.exception.Ex;
 import de.axone.tools.StringValueAccessor;
 
 /**
@@ -14,7 +16,7 @@ import de.axone.tools.StringValueAccessor;
  * @author flo
  */
 
-public class AttributeMap implements StringValueAccessor<String> {
+public class AttributeMap implements StringValueAccessor<String,NoSuchElementException> {
 	
 	private final Map<String,Object> m;
 	
@@ -29,13 +31,23 @@ public class AttributeMap implements StringValueAccessor<String> {
 	}
 	
 	@Override
-	public String access( String key ) {
+	public NoSuchElementException exception( String key ) {
+		return Ex.up( new NoSuchElementException( key ) );
+	}
+	
+	@Override
+	public String accessChecked( String key ) {
 		Object value = m.get( key );
 		if( value == null ) return null;
 		if( !( value instanceof String ) )
 				//throw new IllegalArgumentException( "'" + key + "' is not an string but a '" + value.getClass().getSimpleName() + "'" );
 				value = value.toString();
 		return (String) value;
+	}
+	@Override
+	public String access( String key ) throws NoSuchElementException {
+		if( !m.containsKey( key ) ) throw exception( key );
+		return accessChecked( key );
 	}
 	
 	@Override

@@ -113,11 +113,12 @@ public interface WebTemplate extends Renderer {
 	 * @param clazz
 	 * @return the ca
 	 */
+	@Override
 	public default <T extends WebTemplate> T expectIsInstanceOf( Class<T> clazz ){
 		try {
 			return clazz.cast( this );
 		} catch( ClassCastException e ){
-			ConverterException w = Ex.up( new ConverterException( e ) );
+			ConverterException w = Ex.up( new ConverterException( "Tried to convert to '" + clazz.getSimpleName() + "' but is '" + this.getClass().getSimpleName() + "'", e ) );
 			w.setInfo( getInfo() );
 			throw w;
 		}

@@ -35,6 +35,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 			
 			watcher = new HttpDataWatcher<>( url );
 			resp=watcher.hasChanged();
+			
 			if( resp != null ){
 				holder = instantiate( url, resp );
 			}
@@ -44,6 +45,7 @@ public class HttpDataHolderFactory extends AbstractDataHolderFactory {
 		} else {
 			
 			resp=watcher.hasChanged();
+			
 			if( resp == null ) {
 				holder = watcher.getData();
 			} else {
