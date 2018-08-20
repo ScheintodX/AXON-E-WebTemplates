@@ -78,6 +78,12 @@ public abstract class AbstractDataHolderFactory {
 	
 				trimmed = trimmed.substring( 1 ); // remove the @
 				
+				// USe @@ as separator to output parameters
+				if( trimmed.startsWith( PARAMETER_PREFIX ) ) {
+					count += 1;
+					break;
+				}
+				
 			} else {
 				// Quit on first not header line
 				break;

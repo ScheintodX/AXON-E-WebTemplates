@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +27,7 @@ import com.google.common.base.CaseFormat;
 
 import de.axone.data.Label;
 import de.axone.tools.Stack;
+import de.axone.tools.Str;
 import de.axone.tools.Text;
 import de.axone.web.SuperURL;
 import de.axone.web.SuperURLPrinter;
@@ -75,7 +75,7 @@ public final class DataHolder implements Serializable {
 
 	public static final String NOVAL = "";
 	
-	private static final Pattern PASSTHROUGH = Pattern.compile( "\\|==|==\\|" );
+	private static final String PATHTRU = "~~";
 	
 	public static final SuperURLPrinter URL_PRINTER =
 			SuperURLPrinter.ForAttribute;
@@ -173,9 +173,7 @@ public final class DataHolder implements Serializable {
 		
 		key = vKeyForAdd( key );
 		
-		if( value.contains( "==|" ) || value.contains( "|==" ) ){
-			value = PASSTHROUGH.matcher( value ).replaceAll( "__" );
-		}
+		value = Str.replaceFast( value, PATHTRU, "__" );
 		
 		DataHolderItem item = new DataHolderItem( key, type, encoding, translate, attributes, value );
 		
