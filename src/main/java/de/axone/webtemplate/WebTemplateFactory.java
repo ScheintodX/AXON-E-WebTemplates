@@ -33,40 +33,40 @@ import de.axone.webtemplate.slicer.SlicerFactory;
  * @author flo
  */
 public class WebTemplateFactory {
-	
+
 	private static final String P_CLASS = "class";
 
 	public static final Logger log =
 			LoggerFactory.getLogger( WebTemplateFactory.class );
-	
+
 	private final FileDataHolderFactory fileDataHolderFactory;
 	private final HttpDataHolderFactory httpDataHolderFactory;
-	
+
 	public WebTemplateFactory(){
 		this( null );
 	}
-	
+
 	public WebTemplateFactory( SlicerFactory slicerFactory ){
-		
+
 		this( new CacheNoCache<File,FileDataWatcher<DataHolder>>( new RealmImpl<>( "WTF:FileCache" ) ),
 				new CacheNoCache<SuperURL,HttpDataWatcher<DataHolder>>( new RealmImpl<>( "WTF:HttpCache" ) ), slicerFactory );
-		
+
 	}
-	
-	public WebTemplateFactory( 
-			CacheNG.Cache<File,FileDataWatcher<DataHolder>> fileCache, 
+
+	public WebTemplateFactory(
+			CacheNG.Cache<File,FileDataWatcher<DataHolder>> fileCache,
 			CacheNG.Cache<SuperURL,HttpDataWatcher<DataHolder>> httpCache,
 			SlicerFactory slicerFactory ){
-		
+
 		assert fileCache != null;
 		assert httpCache != null;
-		
+
 		fileDataHolderFactory =
 				new FileDataHolderFactory( fileCache, slicerFactory, null );
-		
+
 		httpDataHolderFactory =
 				new HttpDataHolderFactory( httpCache );
-		
+
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class WebTemplateFactory {
 	 * @throws KeyException
 	 */
 	public WebTemplate templateFor( String className ) throws WebTemplateException {
-		
+
 		Assert.notNull( className, "className" );
 
 		try {
@@ -103,19 +103,19 @@ public class WebTemplateFactory {
 	}
 
 	public WebTemplate templateFor( File file ) throws WebTemplateException {
-		
+
 		return templateFor( file, null );
 	}
-	
+
 	public WebTemplate templateFor( SuperURL url ) throws WebTemplateException {
 
 		return templateFor( url, null );
 	}
 
 	public WebTemplate templateFor( File file, String className ) throws WebTemplateException {
-		
+
 		Assert.notNull( file, "file" );
-		
+
 		try {
 			WebTemplate result = instantiateFile( file, className );
 			return result;
@@ -134,11 +134,11 @@ public class WebTemplateFactory {
 			throw new WebTemplateException( "Error parsing: " + file, e );
 		}
 	}
-	
+
 	public WebTemplate templateFor( SuperURL url, String className ) throws WebTemplateException {
-		
+
 		Assert.notNull( url, "url" );
-		
+
 		try {
 			WebTemplate result = instantiateURL( url, className );
 			return result;
@@ -173,7 +173,7 @@ public class WebTemplateFactory {
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In file: " + file.getPath(), e );
 		}
-		
+
 		// First try to get classname from holder
 		String classNameFromHolder = holder.getParameter( P_CLASS );
 
@@ -193,7 +193,7 @@ public class WebTemplateFactory {
 		}
 
 		template.setHolder( holder );
-		
+
 		return template;
 	}
 
@@ -201,7 +201,7 @@ public class WebTemplateFactory {
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, ClassCastException, IOException,
 			KeyException, WebTemplateException {
-		
+
 		// Get Holder
 		DataHolder holder;
 		try {
@@ -209,62 +209,62 @@ public class WebTemplateFactory {
 		} catch( WebTemplateException e ){
 			throw new WebTemplateException( "In url: " + url, e );
 		}
-		
+
 		// First try to get classname from holder
 		if( holder != null ){
-			
+
 			String classNameFromHolder = holder.getParameter( P_CLASS );
-	
+
 			if( classNameFromHolder != null ){
 				className = classNameFromHolder;
 			}
-	
+
 			if( className == null ){
 				className = "de.emogul.TemplatePlain";
 				log.warn( "@Class missing in: " + url );
 			}
-	
+
 			AbstractWebTemplate template;
 			try {
 	    		template = (AbstractWebTemplate) instantiateClassByName( className );
 			} catch( Exception e ){
 				throw new WebTemplateException( "Cannot instantiate '" + className + "' in file: " + url, e );
 			}
-	
+
 			template.setHolder( holder );
-			
+
 			return template;
 		} else {
 			return null;
 		}
 	}
-	
-	
+
+
 	/*
 	private String lastClazzName;
 	private Class<?> lastClazz;
 	private Lock lock = new ReentrantLock();
 	*/
-	
+
 	@Refactor( action="Make faster", reason="Single method which takes the most time" )
 	private WebTemplate instantiateClassByName( String className )
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, ClassCastException {
-		
+
 		Class<?> clazz;
-		
+
 		// IdentityMap wäre auch noch eine Möglichkeit...
 		// pretty simple cache but has about 60% hit rate and is fast
 		/*
 		lock.lock();
 		try {
-			
+
 			if( lastClazzName == className ){
-				
+
 				clazz = lastClazz;
-				
+
 			} else {
-			
+
 				clazz = Class.forName( className );
 				lastClazz = clazz;
 				lastClazzName = className;

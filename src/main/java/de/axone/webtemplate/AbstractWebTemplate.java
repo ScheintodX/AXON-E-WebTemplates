@@ -9,7 +9,7 @@ import de.axone.tools.Stack;
 
 public abstract class AbstractWebTemplate implements WebTemplate {
 	
-	private final Throwable callstack;
+	protected final Throwable callstack;
 	
 	private WebTemplateInfo info;
 	
@@ -71,7 +71,13 @@ public abstract class AbstractWebTemplate implements WebTemplate {
 	
 	@Override
 	public WebTemplateInfo getInfo() {
+		
 		return info;
+	}
+	
+	public StackTraceElement [] getStackTrace() {
+		
+		return this.callstack.getStackTrace();
 	}
 	
 	@Override

@@ -161,6 +161,8 @@ public class HtmlSelectElement extends AbstractHtmlInputElement {
 
 	public static class OptionComparator implements Comparator<Option>, Serializable {
 
+		private static final long serialVersionUID = 1L;
+
 		@Override
 		public int compare( Option o1, Option o2 ) {
 

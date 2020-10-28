@@ -61,10 +61,10 @@ import de.axone.webtemplate.converter.ConverterException;
  *
  */
 public interface WebTemplate extends Renderer {
-	
+
 	/**
 	 * Set value in holder directly
-	 * 
+	 *
 	 * @param name
 	 * @param object
 	 */
@@ -79,7 +79,7 @@ public interface WebTemplate extends Renderer {
 	 * @param object The value
 	 */
 	public void setParameter( String name, Object object );
-	
+
 	/**
 	 * Get a named parameter
 	 *
@@ -87,17 +87,17 @@ public interface WebTemplate extends Renderer {
 	 * @return the value
 	 */
 	public Object getParameter( String name );
-	
+
 	/**
 	 * @return list of parameters' names
 	 */
 	public Set<String> getParameterNames();
-	
+
 	/**
 	 * @return an info for this template
 	 */
 	public WebTemplateInfo getInfo();
-	
+
 	/**
 	 * Print info
 	 * @return this
@@ -106,10 +106,10 @@ public interface WebTemplate extends Renderer {
 
 	/**
 	 * Cast template to that class
-	 * 
+	 *
 	 * This is a replacement for casting by parenteses which
 	 * does additional error reporting if it fails
-	 * 
+	 *
 	 * @param clazz
 	 * @return the ca
 	 */
@@ -118,14 +118,15 @@ public interface WebTemplate extends Renderer {
 		try {
 			return clazz.cast( this );
 		} catch( ClassCastException e ){
-			ConverterException w = Ex.up( new ConverterException( "Tried to convert to '" + clazz.getSimpleName() + "' but is '" + this.getClass().getSimpleName() + "'", e ) );
+			Object query = this.getParameter( "query" );
+			ConverterException w = Ex.up( new ConverterException( "Tried to convert to '" + clazz.getSimpleName() + "' but is '" + this.getClass().getSimpleName() + "' for " + query, e ) );
 			w.setInfo( getInfo() );
 			throw w;
 		}
 	}
-	
+
 	public interface WebTemplateInfo {
-		
+
 		public String getPath();
 	}
 }

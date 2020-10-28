@@ -11,16 +11,16 @@ import de.axone.webtemplate.Renderer.ContentCache;
 import de.axone.webtemplate.form.Translator;
 
 /**
- * Base for all WebTempatle-Functions
- * 
+ * Base for all WebTemplate-Functions
+ *
  * TODO: Common base for all types of functions. Including this and ajax and so on. See uplink fds functions.
- * 
+ *
  * @author flo
  */
 public interface Function {
 
 	public void render( String name, DataHolder holder, PrintWriter out, HttpServletRequest request, HttpServletResponse response, AttributeMap attributes, Object value, Translator translator, ContentCache cache ) throws Exception;
-	
+
 	default boolean has(){
 		return true;
 	}

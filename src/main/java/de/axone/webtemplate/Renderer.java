@@ -30,7 +30,7 @@ public interface Renderer {
 	 *        May be passed through or replaced by another one.
 	 * @param out A PrintWriter which should be used for output.
 	 *        In case of caching this is what gets cached.
-	 *        Normally this is the on gotten by <code>response.getWriter()</code>
+	 *        Normally this is the one gotten by <code>response.getWriter()</code>
 	 *        Passed through
 	 * @param request The HttpServletRequest. Particularilly usefull for accessing the GET/POST parameters
 	 *        Passed through

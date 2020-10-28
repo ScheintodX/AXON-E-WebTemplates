@@ -89,6 +89,8 @@ public class ResourceFunction implements Function {
 	public static final String ATTRIBUTE_BASE = "base";
 	public static final String ATTRIBUTE_SYNC = "sync";
 	public static final String ATTRIBUTE_CDN = "cdn";
+	public static final String ATTRIBUTE_NONL = "nonl";
+	public static final String ATTRIBUTE_REL = "rel";
 	
 	public enum Runmode {
 		DEV, LIVE;
@@ -189,6 +191,7 @@ public class ResourceFunction implements Function {
 		Sync sync = attributes.getEnum( Sync.class, ATTRIBUTE_SYNC, Sync.SYNC );
 		
 		String pMedia = attributes.get( ATTRIBUTE_MEDIA, this.media );
+		String rel = attributes.get( ATTRIBUTE_REL );
 		
 		String pBase = base;
 		if( pBase.endsWith( "/" ) ) pBase = pBase.substring( 0, pBase.length()-2 );
@@ -264,7 +267,7 @@ public class ResourceFunction implements Function {
 			case CSS: {
 				
 				Map<String,String> args = Mapper.treeMap(
-						"rel", "stylesheet",
+						"rel", rel != null ? rel : "stylesheet",
 						"type", "text/css",
 						"href", path+ext
 				);
@@ -278,17 +281,19 @@ public class ResourceFunction implements Function {
 			default: {
 					
 				Map<String,String> args = Mapper.treeMap(
-						"type", "text/javascript",
+						//"type", "text/javascript",
 						"src", path+ext
 				);
 				if( sync != Sync.SYNC ) args.put( sync.name(), sync.name() );
 				if( pId != null ) args.put( "id", pId.trim() );
+				if( rel != null ) args.put( "rel", rel );
 				tag = Tag.simple( "script", "", args );
 			} break;
 			}
 			
 			out.write( tag );
-			out.write( S.NL );
+			if( ! attributes.getBoolean( ATTRIBUTE_NONL, false ) ) 
+					out.write( S.NL );
 		}
 	}
 	
