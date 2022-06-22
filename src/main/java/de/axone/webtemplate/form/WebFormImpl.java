@@ -20,19 +20,19 @@ import de.axone.webtemplate.element.HtmlInput;
 
 /**
  * This is the base implementation a webform.
- * 
+ *
  * @see WebForm
  * @author flo
  *
  */
 public class WebFormImpl implements WebForm {
 
-	private HashMap<String, FormValue<?>> connectorValues = new HashMap<String, FormValue<?>>();
+	private final HashMap<String, FormValue<?>> connectorValues = new HashMap<>();
 
 	private Translator translator;
 
 	private boolean showInvalid = false;
-	
+
 	@Override
 	public String getName(){
 		return this.getClass().getSimpleName();
@@ -49,13 +49,13 @@ public class WebFormImpl implements WebForm {
 
 	@Override
 	public void readFromJsonRequest( RestRequest request ) throws JsonParseException, JsonMappingException, IOException {
-		
+
 		String data = request.getParameter( "data" );
-		
+
 		MapType type = TypeFactory.defaultInstance().constructMapType( HashMap.class, String.class, String.class );
-		
-		HashMap<String,String> map = request.mapper().readValue( data, type );
-		
+
+		HashMap<String,String> map = request.jmb().build().readValue( data, type );
+
 		for( FormValue<?> value : connectorValues.values() ){
 
 			value.readValue( map );
@@ -104,18 +104,18 @@ public class WebFormImpl implements WebForm {
 	public <T> FormValue<T> getFormValue( Class<T> type, String name ) {
 
 		FormValue<?> result = connectorValues.get( name );
-		
+
 		if( type != null && ! type.isAssignableFrom( result.type() ) )
 				throw new IllegalArgumentException( "Requested " + type + " for FormValue '" + name + "' but was: " + result.type() );
-		
+
 		@SuppressWarnings( "unchecked" )
 		FormValue<T> theResult = (FormValue<T>) result;
-		
+
 		return theResult;
 	}
 	@Override
 	public void remFormValue( String name ) {
-		
+
 		connectorValues.remove( name );
 	}
 
@@ -140,7 +140,7 @@ public class WebFormImpl implements WebForm {
 	@Override
 	public List<String> validate( @Nullable Translator t ) {
 
-		LinkedList<String> result = new LinkedList<String>();
+		LinkedList<String> result = new LinkedList<>();
 
 		for( FormValue<?> value : connectorValues.values() ) {
 
@@ -149,7 +149,7 @@ public class WebFormImpl implements WebForm {
 			if( r == null || r.size() == 0 )
 				continue;
 
-			LinkedList<String> messages = new LinkedList<String>();
+			LinkedList<String> messages = new LinkedList<>();
 
 			if( translator != null ) {
 
@@ -186,24 +186,24 @@ public class WebFormImpl implements WebForm {
 	public HtmlInput getHtmlInput( String name ) throws WebTemplateException {
 
 		FormValue<?> value = this.getFormValue( null, name );
-		
+
 		if( value == null )
 			throw new WebTemplateException( "Cannot find " + getName() + "'s value: " + name );
-		
+
 		return value.getHtmlInput();
 	}
-	
+
 	@Override
 	public String toString(){
-		
+
 		StringBuilder result = new StringBuilder();
-		
+
 		result.append( getName() ).append( '\n' );
-		
+
 		for( String name : connectorValues.keySet() ){
-			
+
 			FormValue<?> value = connectorValues.get( name );
-			
+
 			result
 					.append( name )
 					.append( ": " )
@@ -211,7 +211,7 @@ public class WebFormImpl implements WebForm {
 					.append( '\n' )
 			;
 		}
-		
+
 		return result.toString();
 	}
 
